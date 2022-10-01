@@ -11,6 +11,7 @@ async function main() {
   const form = app.querySelector('form')
 
   form.addEventListener('submit', async e => {
+    e.preventDefault()
     const email = e.target.querySelector('#email')
     const pass = e.target.querySelector('#pass')
 
