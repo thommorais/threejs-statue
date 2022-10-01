@@ -9,9 +9,6 @@ import {
     DirectionalLight,
     HemisphereLight,
     SpotLight,
-    CircleGeometry,
-    MeshBasicMaterial,
-    Mesh
 } from 'three'
 
 import { getDefaultSizes } from './utils'
@@ -19,15 +16,15 @@ import { getDefaultSizes } from './utils'
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-import createComposer from './postProcessing'
 
 export function createRenderer() {
     const { width, height, pixelRatio } = getDefaultSizes()
 
     const renderer = new WebGLRenderer({
         powerPreference: 'high-performance',
-        antialias: false,
-        stencil: false,
+        antialias: true,
+        stencil: true,
+        precision: true,
         // depth: false,
         canvas: document.querySelector('canvas.webgl'),
     })
@@ -69,7 +66,7 @@ export function createAmbientLight() {
 
 export function createDirectionalLight() {
     const directionalLight = new DirectionalLight(0xffffff, 1)
-    directionalLight.position.set(0, 0, 230)
+    directionalLight.position.set(-100, 0, 230)
     //Set up shadow properties for the light
     directionalLight.shadow.mapSize.width = 746 // default
     directionalLight.shadow.mapSize.height = 746 // default
@@ -84,8 +81,10 @@ export function createHemisphereLight() {
 }
 
 export function createSpotLight() {
-    const spotLight = new SpotLight(0xffffff, 2, 2, Math.PI * 0.1, 0.25, 1)
-    spotLight.position.set(-3, 4, 3)
+    const spotLight = new SpotLight(0xffff00, 2, 2, Math.PI * 0.1, 1, 1)
+    spotLight.position.set(90, 4, 150)
+    spotLight.shadow.bias = -0.001;
+
     return spotLight
 }
 
@@ -93,7 +92,7 @@ export default function webglStuff() {
     const renderer = createRenderer()
     const scene = createScene()
     const camera = creatPerspectiveCamera()
-    // const orbitControls = createOrbitControls(camera, renderer.domElement)
+    const orbitControls = createOrbitControls(camera, renderer.domElement)
     const ambientLight = createAmbientLight()
     const directionalLight = createDirectionalLight()
 
@@ -103,13 +102,13 @@ export default function webglStuff() {
     scene.add(ambientLight)
     scene.add(directionalLight)
     // scene.add(hemisphereLight)
-    scene.add(spotLight)
+    // scene.add(spotLight)
 
 
     renderer.render(scene, camera)
 
     renderer.setAnimationLoop(() => {
-        // orbitControls.update()
+        orbitControls.update()
         renderer.render(scene, camera)
     })
 
@@ -120,5 +119,5 @@ export default function webglStuff() {
         renderer.setSize(width, height)
     })
 
-    return { renderer, scene, camera }
+    return { renderer, scene, camera, directionalLight }
 }
