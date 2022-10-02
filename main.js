@@ -1,36 +1,52 @@
 import './style.css'
 
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
 import './firebase'
-import {auth} from './firebase'
+import { auth } from './firebase'
 
 async function main() {
-
-  const app = document.querySelector('#app')
-  const login = app.querySelector('#login')
+	const app = document.querySelector('#app')
+	const login = app.querySelector('#login')
   const form = app.querySelector('form')
 
-  form.addEventListener('submit', async e => {
-    e.preventDefault()
-    const email = e.target.querySelector('#email')
-    const pass = e.target.querySelector('#pass')
 
-    try {
-      const res = await signInWithEmailAndPassword(auth, email.value, pass.value)
-      console.log(res)
-      app.removeChild(login)
+  async function onLogin(user) {
+    if (user.uid) {
       const canvas = document.createElement('canvas')
       canvas.classList.add('webgl')
       app.appendChild(canvas)
+      app.removeChild(login)
       const { default: scene } = await import('./scene')
       scene()
+    }
+  }
 
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      onLogin(user)
+    } else {
+      const canvas = app.querySelector('canvas')
+      if (canvas) {
+        app.removeChild(canvas)
+      }
+    }
+  })
+
+  async function onLoginSubmit(email, pass) {
+    try {
+      await signInWithEmailAndPassword(auth, email, pass)
     } catch (error) {
       console.log(error)
       form.reset()
-   }
+    }
+  }
 
-  })
+	form.addEventListener('submit', async (e) => {
+		e.preventDefault()
+		const email = e.target.querySelector('#email')
+		const pass = e.target.querySelector('#pass')
+    onLoginSubmit(email.value, pass.value)
+	})
 }
 
 requestIdleCallback(main)
