@@ -19,10 +19,9 @@ export default function loadModel() {
                     metalness: 0.75
                 })
 
-                let box = gltf.scene;
+                const box = gltf.scene;
                 box.traverse((child) => {
                     if (child.isMesh) {
-                        console.log(child.material)
                         child.material = boxMaterial
                     }
                 });
@@ -33,10 +32,34 @@ export default function loadModel() {
             // called while loading is progressing
             function (xhr) {
 
-                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                // console.log((xhr.loaded / xhr.total * 100) + '% loaded');
 
             },
             e => reject(e)
         )
     })
 }
+
+export function resizeModel(modelSize) {
+    const proportion = (modelSize.y * 4)
+
+    const y = modelSize.y / proportion
+    const x = modelSize.x / proportion
+    const z = modelSize.z / proportion
+
+    return { x, y, z }
+}
+
+
+export async function getModelCenterAndSize(model) {
+
+    const { Vector3, Box3 } = await import('three')
+
+    const box = new Box3().setFromObject(model)
+    const modelCenter = box.getCenter(new Vector3())
+    const modelSize = box.getSize(new Vector3())
+
+    return { center: modelCenter, size: modelSize }
+
+}
+
