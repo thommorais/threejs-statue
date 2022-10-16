@@ -53,7 +53,7 @@ export async function creatPerspectiveCamera() {
     // camera.position.y = 18
     // camera.position.z = 65
 
-    camera.position.set(0, -1.25, 2.5)
+    camera.position.set(0, 1.5, 1)
 
     return camera
 }

@@ -44,7 +44,6 @@ async function scene() {
 
 
     const cameraHelper = new CameraHelper(camera)
-    camera.position.set(0, -1.25, 2.5)
     scene.add(cameraHelper)
 
     cameraHelper.visible = true
