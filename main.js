@@ -28,7 +28,7 @@ async function main() {
       canvas.classList.add('webgl')
       app.removeChild(login)
       app.appendChild(canvas)
-      const { default: scene } = await import('./scene')
+      const { default: scene } = await import('./scene/scene')
       scene()
     }
   }
