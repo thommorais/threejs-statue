@@ -31,9 +31,12 @@ async function scene() {
     scene.add(model)
 
     const tealLight = new RectAreaLight(0x008Ba0, 30, 30, 20)
+    tealLight.position.set(15, 15, 30)
     scene.add(tealLight)
 
     const orangeLight = new RectAreaLight(0xFF3300, 30, 30, 20)
+    orangeLight.position.set(-45, -15, 30)
+
     scene.add(orangeLight)
 
     scene.add(new RectAreaLightHelper(tealLight))
@@ -41,9 +44,10 @@ async function scene() {
 
 
     const cameraHelper = new CameraHelper(camera)
+    camera.position.set(0, -1.25, 2.5)
     scene.add(cameraHelper)
 
-    cameraHelper.visible = false
+    cameraHelper.visible = true
 
     const clock = new Clock()
 

@@ -53,9 +53,8 @@ export async function creatPerspectiveCamera() {
     // camera.position.y = 18
     // camera.position.z = 65
 
-    camera.position.x = 0
-    camera.position.y = 0
-    camera.position.z = 25
+    camera.position.set(0, -1.25, 2.5)
+
     return camera
 }
 
@@ -152,10 +151,6 @@ export default async function webglStuff() {
     const ambientLight = await createAmbientLight()
     const directionalLight = await createDirectionalLight()
 
-    const fireSparks = await createFireSparks()
-
-    scene.add(fireSparks)
-
     // const hemisphereLight = await createHemisphereLight()
     // const spotLight = await createSpotLight()
 
@@ -163,6 +158,10 @@ export default async function webglStuff() {
     scene.add(directionalLight)
     // scene.add(hemisphereLight)
     // scene.add(spotLight)
+
+    const fireSparks = await createFireSparks()
+    scene.add(fireSparks)
+
 
     renderer.render(scene, camera)
     const clock = new Clock()
