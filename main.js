@@ -4,6 +4,7 @@ import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
 import './firebase'
 import { auth } from './firebase'
 
+import scene from './scene'
 
 async function main() {
   const app = document.querySelector('#app')
@@ -28,7 +29,6 @@ async function main() {
       canvas.classList.add('webgl')
       app.removeChild(login)
       app.appendChild(canvas)
-      const { default: scene } = await import('./scene/index')
       scene()
     }
   }
