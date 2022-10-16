@@ -48,14 +48,14 @@ export async function creatPerspectiveCamera() {
     const { getDefaultSizes } = await import('./utils')
 
     const { aspect } = getDefaultSizes()
-    const camera = new PerspectiveCamera(45, aspect, 0.01, 1000)
+    const camera = new PerspectiveCamera(45, aspect, 0.1, 30)
     // camera.position.x = 0
     // camera.position.y = 18
     // camera.position.z = 65
 
     camera.position.x = 0
     camera.position.y = 0
-    camera.position.z = 6
+    camera.position.z = 25
     return camera
 }
 
@@ -70,7 +70,7 @@ export async function createAmbientLight() {
 export async function createDirectionalLight() {
     const { DirectionalLight } = await import('three')
 
-    const directionalLight = new DirectionalLight(0xffffff, 1)
+    const directionalLight = new DirectionalLight(0xffffff, 0.25)
     directionalLight.position.set(-100, 0, 230)
     //Set up shadow properties for the light
     directionalLight.shadow.mapSize.width = 746 // default
@@ -97,28 +97,24 @@ export async function createSpotLight() {
 }
 
 export async function createFireSparks() {
-    const { BufferGeometry, ShaderMaterial, PlaneGeometry, Points, BufferAttribute, TextureLoader, Vector2 } =
+    const { BufferGeometry, ShaderMaterial, Points, BufferAttribute, Vector2, AdditiveBlending } =
         await import('three')
-
-    const textureLoader = new TextureLoader()
-    const flagTexture = textureLoader.load('/textures/flag-french.jpg')
-
 
     const { default: vertexShader } = await import('./shaders/sparks_vertex.glsl')
     const { default: fragmentShader } = await import('./shaders/sparks_fragment.glsl')
 
     const geometry = new BufferGeometry()
 
-    const N = 999
+    const N = 9999
     const vertices = new Float32Array(N)
+
     for (let count = 0; count < N; count += 3) {
         const theta = Math.random() * 2 * Math.PI
-        const phi = Math.acos(2 * Math.random() - 1)
-        const r = Math.pow(Math.random(), 1 / 3)
-        const x = r * Math.sin(phi) * Math.cos(theta)
-        const y = r * Math.sin(phi) * Math.sin(theta)
+        const phi = Math.acos(1.5 * Math.random() - 1)
+        const r = Math.pow(Math.random(), 0.33)
+        const y = r * Math.sin(phi) * Math.cos(theta)
+        const x = r * Math.sin(phi) * Math.sin(theta) + 0.2
         const z = r * Math.cos(phi)
-
         vertices.set([x, y, z], count)
     }
 
@@ -126,20 +122,21 @@ export async function createFireSparks() {
 
     const shaderMaterial = new ShaderMaterial({
         uniforms: {
-            uTime: { value: 0.0 },
-            uTexture: { value: flagTexture },
+            uTime: { value: 1.0 },
             uResolution: { value: new Vector2() },
         },
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
         transparent: true,
-        depthWrite: false
+        depthWrite: false,
+        depthTest: false,
+        blending: AdditiveBlending
         //https://threejs.org/docs/#api/en/constants/CustomBlendingEquations
     })
 
     const points = new Points(geometry, shaderMaterial)
 
-    points.scale.set(2, 2, 1)
+    points.scale.set(15, 15, 15)
 
     return points
 }
@@ -151,7 +148,7 @@ export default async function webglStuff() {
     const renderer = await createRenderer()
     const scene = await createScene()
     const camera = await creatPerspectiveCamera()
-    const orbitControls = await createOrbitControls(camera, renderer.domElement)
+    // const orbitControls = await createOrbitControls(camera, renderer.domElement)
     const ambientLight = await createAmbientLight()
     const directionalLight = await createDirectionalLight()
 
@@ -173,7 +170,7 @@ export default async function webglStuff() {
     renderer.setAnimationLoop(() => {
         const time = clock.getElapsedTime()
         fireSparks.material.uniforms.uTime.value = time
-        orbitControls.update()
+        // orbitControls.update()
         renderer.render(scene, camera)
     })
 

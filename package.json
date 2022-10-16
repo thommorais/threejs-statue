@@ -12,6 +12,9 @@
     "vite": "^3.1.0"
   },
   "dependencies": {
+    "@theatre/core": "^0.5.0",
+    "@theatre/r3f": "^0.5.0",
+    "@theatre/studio": "^0.5.0",
     "animejs": "^3.2.1",
     "firebase": "^9.10.0",
     "postprocessing": "^6.28.7",

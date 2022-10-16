@@ -53,21 +53,6 @@ const API = {
 
 		return this
 	},
-
-	/**
-	 * Convert into a valid JSON object
-	 * @returns {Object} - simple json object from a Proxy
-	 */
-	toJSON() {
-		return Object.keys(this).reduce(
-			(ret, key) => {
-				const value = this[key]
-				ret[key] = value && value.toJSON ? value.toJSON() : value
-				return ret
-			},
-			this[isArray] ? [] : {},
-		)
-	},
 }
 
 /**

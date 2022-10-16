@@ -41,7 +41,7 @@ export default function loadModel() {
 }
 
 export function resizeModel(modelSize) {
-    const proportion = (modelSize.y * 4)
+    const proportion = (modelSize.y * 20)
 
     const y = modelSize.y / proportion
     const x = modelSize.x / proportion
