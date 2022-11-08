@@ -6,6 +6,5 @@ export function getDefaultSizes() {
         width,
         height,
         pixelRatio: Math.min(window.devicePixelRatio, 2),
-        aspect: width / height,
     }
 }
