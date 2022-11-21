@@ -15,12 +15,6 @@
   "dependencies": {
     "@theatre/core": "^0.5.0",
     "@theatre/studio": "^0.5.0",
-    "animejs": "^3.2.1",
-    "easing-js": "^1.1.2",
-    "firebase": "^9.10.0",
-    "gsap": "^3.11.3",
-    "postprocessing": "^6.28.7",
-    "scrollmagic": "^2.0.8",
     "smooth-scrollbar": "^8.8.1",
     "three": "^0.144.0",
     "vite-plugin-glsl": "^0.5.1"
