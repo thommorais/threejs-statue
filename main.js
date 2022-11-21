@@ -1,12 +1,13 @@
 import './style.css'
 
 async function main() {
+	const { default: scene } = await import('./scene/scene')
+	const theaterAPI = await scene()
 
-  if (import.meta.env.MODE === 'development') {
-    const { default: scene } = await import('./scene/scene')
-    await scene()
-  }
-
+	theaterAPI.init({
+		selector: '.chapter',
+		afterEventTimeout: 210,
+	})
 }
 
 requestIdleCallback(main)

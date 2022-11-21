@@ -5,7 +5,6 @@
 	font-weight: 400;
 
 	color-scheme: light dark;
-	color: rgba(255, 255, 255, 0.87);
 	background-color: #242424;
 
 	font-synthesis: none;
@@ -13,6 +12,9 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-text-size-adjust: 100%;
+	--enter: cubic-bezier(0, 0.5, 0.5, 1);
+	--move: cubic-bezier(0, 0.5, 0.5, 1);
+	--exit: cubic-bezier(0.5, 0, 0, 1);
 }
 
 /***
@@ -24,8 +26,7 @@
     Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property
     - The "symbol *" part is to solve Firefox SVG sprite bug
  */
-*:where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol
-			*)) {
+*:where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)) {
 	all: unset;
 	display: revert;
 }
@@ -104,102 +105,34 @@ meter {
 	-webkit-user-drag: element;
 }
 
-
-
-input {
-  background-image: none;
-  border: none;
-  font: inherit;
-  margin: 0;
-  padding: 0;
-  transition: all 0.3s;
+.container-3d {
+	position: relative;
+	height: 100vh;
+	overflow: auto;
+	z-index: 4;
 }
 
-svg {
-  height: auto;
-  max-width: 100%;
-  vertical-align: middle;
+#app {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 2;
 }
 
-/* ---------- ALIGN ---------- */
-.align {
-  display: grid;
-  place-items: center;
+.chapter {
+	position: relative;
+	z-index: 4;
+	height: 100vh;
+	width: 100vw;
+	display: grid;
+	place-items: center;
 }
 
-/* ---------- BUTTON ---------- */
-
-.button {
-  background-color: #33cc77;
-  color: #fff;
-  padding: 0.25em 1.5em;
-}
-
-.button:focus,
-.button:hover {
-  background-color: #28ad63;
-}
-
-/* ---------- ICONS ---------- */
-.icons {
-  display: none;
-}
-
-.icon {
-  fill: currentcolor;
-  display: inline-block;
-  height: 1em;
-  width: 1em;
-}
-
-/* ---------- LOGIN ---------- */
-.login {
-  width: 400px;
-}
-
-.login__header {
-  background-color: #f95252;
-  border-top-left-radius: 1.25em;
-  border-top-right-radius: 1.25em;
-  color: #fff;
-  padding: 1.25em 1.625em;
-}
-
-.login__header :first-child {
-  margin-top: 0;
-}
-
-.login__header :last-child {
-  margin-bottom: 0;
-}
-
-.login h2 .icon {
-  margin-right: 14px;
-}
-
-.login__form {
-  background-color: #fff;
-  border-bottom-left-radius: 1.25em;
-  border-bottom-right-radius: 1.25em;
-  color: #777;
-  display: grid;
-  gap: 0.875em;
-  padding: 1.25em 1.625em;
-}
-
-.login input {
-  border-radius: 0.1875em;
-}
-
-.login input[type="email"],
-.login input[type="password"] {
-  background-color: #eee;
-  color: #777;
-  padding: 0.25em 0.625em;
-  width: 100%;
-}
-
-.login input[type="submit"] {
-  display: block;
-  margin: 0 auto;
+.chapter h2 {
+	font-size: 12vw;
+	opacity: var(--opacity);
+	transition: opacity 0.5s var(--move);
+	color: rgba(255, 255, 255, 0.87);
 }

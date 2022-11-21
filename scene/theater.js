@@ -1,95 +1,239 @@
-
 async function theater(camera) {
-    const { default: studio } = await import('@theatre/studio')
-    studio.initialize()
+	const [{ Vector3 }, { getProject, types }, { default: state }, { default: Scrollbar, ScrollbarPlugin }] =
+		await Promise.all([import('three'), import('@theatre/core'), import('./state.json'), import('smooth-scrollbar')])
 
-    const { getProject, types } = await import('@theatre/core')
+	let scrollState = {
+		current: 0,
+		locked: false,
+		direction: 'normal',
+		timeout: null,
+		subscribers: [],
+	}
 
-    const project = getProject('Camera')
-    const sheet = project.sheet('Scene')
+	let config = {
+		threshold: { desktop: 14, mobile: 30 },
+		afterEventTimeout: 200,
+	}
 
-    const { Vector3 } = await import('three')
+	const project = getProject('Camera', { state })
+	const sheet = project.sheet('Scene')
 
-    const cameraObj = sheet.object('Camera', {
-        position: types.compound({
-            x: types.number(camera.camera.position.x, { range: [0, 200] }),
-            y: types.number(camera.camera.position.y, { range: [0, 200] }),
-            z: types.number(camera.camera.position.z, {
-                range: [-150
-                    , 150]
-            }),
-        }),
-        rotation: types.compound({
-            x: types.number(camera.camera.rotation.x, { range: [-20, 20] }),
-            y: types.number(camera.camera.rotation.y, { range: [-20, 20] }),
-            z: types.number(camera.camera.rotation.z, { range: [-20, 20] }),
-        }),
-        fov: types.number(camera.camera.fov, { range: [10, 100] }),
-        near: types.number(camera.camera.near, { range: [0.1, 10] }),
-        far: camera.camera.far,
-        zoom: types.number(camera.camera.zoom, { range: [0.1, 10] }),
-    })
+	const cameraObj = sheet.object('Camera', {
+		position: types.compound({
+			...camera.camera.position,
+		}),
+		lookAt: types.compound({
+			x: 0,
+			y: 0,
+			z: 0,
+		}),
+	})
 
+	cameraObj.onValuesChange((values) => {
+		camera.camera.position.set(values.position.x, values.position.y, values.position.z)
+		const { x, y, z } = values.lookAt
+		camera.camera.lookAt(new Vector3(x, y, z))
+		camera.camera.updateProjectionMatrix()
+	})
 
-    cameraObj.onValuesChange((values) => {
-        camera.camera.position.set(values.position.x, values.position.y, values.position.z)
-        camera.camera.rotation.set(values.rotation.x, values.rotation.y, values.rotation.z)
-        camera.camera.fov = values.fov
-        camera.camera.near = values.near
-        camera.camera.far = values.far
-        camera.camera.zoom = values.zoom
+	const scroller = document.querySelector('.container-3d')
 
-        const { x, y, z } = values.position
-        // camera.camera.lookAt(new Vector3(x, y, z))
-        camera.camera.updateProjectionMatrix()
-    })
+	class LockPlugin extends ScrollbarPlugin {
+		static pluginName = 'lock'
+		transformDelta(delta, { deltaY }) {
+			if (this.options.isLock || Math.abs(deltaY) < config.threshold.desktop) {
+				return { x: 0, y: 0 }
+			}
 
-    // Shown as a radio switch with a custom label
-    const obj = sheet.object('Camera navigation', {
-        close: types.stringLiteral('close', { zero: 'zero', one: 'one', two: 'two', three: 'three', four: 'four', five: 'five' }),
-    })
+			return delta
+		}
+	}
 
-    obj.onValuesChange((values) => {
-        switch (values.close) {
-            case 'zero': {
-                camera.camera.position.set(0, 30, 66)
-                camera.camera.rotation.set(0, 0, 0)
-                break
-            }
-            case 'one': {
-                camera.camera.position.set(0, 36, 30)
-                camera.camera.rotation.set(0, 0, 0)
-                break
-            }
+	Scrollbar.use(LockPlugin)
 
-            case 'two': {
-                camera.camera.position.set(30, 30, 11)
-                camera.camera.rotation.set(0, -4.95, 0)
-                break
-            }
-            case 'three': {
-                camera.camera.position.set(5.25, 32.5, 12)
-                camera.camera.rotation.set(0, -0.15, 0)
+	const bodyScrollBar = Scrollbar.init(scroller, {
+		damping: 1,
+		continuousScrolling: false,
+		delegateTo: document.body,
+		plugins: {
+			lock: {
+				isLock: false,
+			},
+		},
+	})
 
-                break
-            }
-            case 'four': {
-                camera.camera.position.set(0, 90, 150)
-                camera.camera.rotation.set(0, 0, 0)
-                break
-            }
-            case 'five': {
-                camera.camera.position.set(0, 90, 150)
-                camera.camera.rotation.set(0, 0, 0)
-                break
-            }
+	function lockScroll(isLock = false) {
+		bodyScrollBar.updatePluginOptions('lock', {
+			isLock,
+		})
 
-        }
+		updateState({ locked: isLock })
+	}
 
-        camera.cameraHelper.update()
-        camera.camera.updateProjectionMatrix()
-    })
+	function updateState(update) {
+		scrollState = {
+			...scrollState,
+			...update,
+		}
+	}
 
+	function getState() {
+		return { ...scrollState }
+	}
+
+	function updateConfig(update) {
+		config = {
+			...config,
+			...update,
+			threshold: config.threshold,
+		}
+	}
+
+	function updateProgress(status) {
+		updateState({ progress: status.offset.y / status.limit.y })
+	}
+
+	function updateScrollStatus(status) {
+		updateState({ scrollStatus: status })
+	}
+
+	function updateSubscribers(event) {
+		const { timeout, subscribers, ...currentState } = getState()
+		subscribers.forEach((subscriber) => subscriber({ ...currentState, event }))
+	}
+
+	function updateCssProperties() {
+		const { currentSection } = getState()
+		clearCssProperties()
+		currentSection.style.setProperty('--opacity', 1)
+	}
+
+	function clearCssProperties() {
+		const { sections } = getState()
+		sections.forEach((e) => e.style.setProperty('--opacity', 0))
+	}
+
+	function onResize() {
+		const { sections } = getState()
+
+		const scenes = sections.map((t, e) => {
+			return 0 === e ? 0 : t.getBoundingClientRect().top + t.getBoundingClientRect().height / 2 - window.innerHeight / 2
+		})
+
+		updateState({ scenes })
+	}
+
+	function onBodyScroll(event) {
+		const scrollState = getState()
+		const direction = scrollState.direction
+		const normal = direction === 'normal'
+		const from = normal ? scrollState.current - 1 : scrollState.current
+		const to = normal ? scrollState.current : scrollState.current + 1
+
+		sheet.sequence
+			.play({
+				range: [from, to],
+				direction,
+			})
+			.then(() => {
+				updateSubscribers(event)
+				updateCssProperties()
+			})
+	}
+
+	function setDirection(deltaY) {
+		if (deltaY > config.threshold.desktop) {
+			updateState({ direction: 'normal' })
+		} else if (deltaY < -config.threshold.desktop) {
+			updateState({ direction: 'reverse' })
+		}
+	}
+
+	let onScrollTimeout = null
+
+	function handleWheel(event) {
+		const { deltaY } = event
+		setDirection(deltaY)
+
+		const scrollState = getState()
+		const direction = scrollState.direction
+		const normal = direction === 'normal'
+
+		const scenesLength = scrollState.scenes.length - 1
+
+		if (
+			(scrollState.current === scenesLength && normal) ||
+			(scrollState.current === 0 && !normal) ||
+			scrollState.locked
+		) {
+			return
+		}
+
+		if (Math.abs(deltaY) > config.threshold.desktop) {
+			lockScroll(true)
+			clearCssProperties()
+			clearTimeout(onScrollTimeout)
+			onScrollTimeout = setTimeout(() => {
+				clearTimeout(scrollState.timeout)
+				const direction = scrollState.direction === 'normal' ? +1 : -1
+				const next = Math.max(Math.min(scrollState.current + direction, scenesLength), 0)
+
+				bodyScrollBar.scrollTo(0, scrollState.scenes[next], 600, {
+					callback() {
+						const timeout = setTimeout(lockScroll, 500)
+						updateState({
+							currentSection: scrollState.sections[next],
+							current: next,
+							timeout,
+						})
+						onBodyScroll(event)
+					},
+				})
+			}, config.afterEventTimeout)
+		}
+	}
+
+	function init(options) {
+		const sections = [...(document.querySelectorAll(options.selector) || [])]
+
+		scroller.addEventListener('wheel', handleWheel, { passive: false })
+		document.addEventListener('resize', onResize, { passive: false })
+
+		bodyScrollBar.addListener(updateProgress)
+		bodyScrollBar.addListener(updateScrollStatus)
+
+		updateState({ sections, currentSection: sections[0] })
+		updateConfig(options)
+		onResize()
+		updateCssProperties()
+
+		return getState()
+	}
+
+	return {
+		init,
+		lock() {
+			lockScroll(true)
+			return getState()
+		},
+		unlock() {
+			lockScroll(false)
+			return getState()
+		},
+		subscribe(subscriber) {
+			scrollState.subscribers.push(subscriber)
+			return getState()
+		},
+		unsubscribe(subscriber) {
+			const index = scrollState.subscribers.indexOf(subscriber)
+			if (index > -1) {
+				scrollState.subscribers.splice(index, 1)
+			}
+
+			return getState()
+		},
+		getState,
+	}
 }
 
 export default theater
