@@ -1,15 +1,23 @@
-async function dev(scene, camera) {
+async function dev(scene, camera, lights, model) {
 	if (process.env.NODE_ENV === 'development' && true) {
+		const { default: theatre } = await import('./theatre')
+		await theatre(lights, model, camera)
+
 		const { default: stats } = await import('./stats')
 		await stats()
 
-		const { CameraHelper } = await import('three')
-		const cameraHelper = new CameraHelper(camera)
+		const { SpotLightHelper } = await import('three')
 
-		scene.add(cameraHelper)
-
-		const { AxesHelper } = await import('three')
-		scene.add(new AxesHelper(200))
+		lights.forEach((light) => {
+			const spotLightHelper = new SpotLightHelper(light)
+			scene.add(spotLightHelper)
+			const s = () =>
+				requestAnimationFrame(() => {
+					spotLightHelper.update()
+					s()
+				})
+			s()
+		})
 	}
 }
 

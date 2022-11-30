@@ -110,6 +110,7 @@ meter {
 	height: 100vh;
 	overflow: auto;
 	z-index: 4;
+	/* pointer-events: none; */
 }
 
 #app {
@@ -132,7 +133,7 @@ meter {
 
 .chapter h2 {
 	font-size: 12vw;
-	opacity: var(--opacity);
+	opacity: 0;
 	transition: opacity 0.5s var(--move);
-	color: rgba(255, 255, 255, 0.87);
+	color: rgba(255, 255, 255, 0.85);
 }
