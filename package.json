@@ -9,16 +9,16 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "terser": "^5.15.1",
     "vite": "^3.1.0"
   },
   "dependencies": {
     "@theatre/core": "^0.5.0",
     "@theatre/studio": "^0.5.0",
-    "animejs": "^3.2.1",
-    "firebase": "^9.10.0",
-    "postprocessing": "^6.28.7",
+    "colorjs.io": "^0.4.2",
+    "smooth-scrollbar": "^8.8.1",
     "three": "^0.144.0",
-    "tweakpane": "^3.1.0",
-    "vite-plugin-glsl": "^0.5.1"
+    "vite-plugin-glsl": "^0.5.1",
+    "zustand": "^4.1.4"
   }
 }

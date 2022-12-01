@@ -1,12 +1,11 @@
 import './style.css'
 
-async function main() {
-
-  if (import.meta.env.MODE === 'development') {
-    const { default: scene } = await import('./scene/scene')
-    await scene()
-  }
-
-}
-
-requestIdleCallback(main)
+import main from './scene'
+;(async () => {
+	const api = await main({
+		character: 'angel',
+		sectionSelectors: '.chapter',
+		scrollSelector: '.container-3d',
+		onModelLoading: console.log,
+	})
+})()
