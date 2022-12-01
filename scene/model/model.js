@@ -1,8 +1,10 @@
-export default async function loadModel(modelOption) {
-	const { MeshStandardMaterial } = await import('three')
-	const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js')
-	const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js')
-	const { modelStore } = await import('../store')
+export default async function loadModel() {
+	const [{ MeshStandardMaterial }, { DRACOLoader }, { GLTFLoader }, { modelStore }] = await Promise.all([
+		import('three'),
+		import('three/addons/loaders/DRACOLoader.js'),
+		import('three/addons/loaders/GLTFLoader.js'),
+		import('../store'),
+	])
 
 	const dracoLoader = new DRACOLoader()
 	dracoLoader.setDecoderPath('/draco/')
@@ -11,9 +13,11 @@ export default async function loadModel(modelOption) {
 	const loader = new GLTFLoader()
 	loader.setDRACOLoader(dracoLoader)
 
+	const { modelPath } = modelStore.getState()
+
 	return new Promise((resolve, reject) => {
 		loader.load(
-			modelOption.path,
+			modelPath,
 			(gltf) => {
 				const boxMaterial = new MeshStandardMaterial({
 					roughness: 0.5,

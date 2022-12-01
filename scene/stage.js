@@ -1,9 +1,7 @@
 export async function createRenderer() {
 	const { getDefaultSizes } = await import('./utils')
 	const { width, height, pixelRatio } = getDefaultSizes()
-	const { WebGLRenderer, PCFSoftShadowMap, sRGBEncoding, ACESFilmicToneMapping, ReinhardToneMapping } = await import(
-		'three'
-	)
+	const { WebGLRenderer, PCFSoftShadowMap, sRGBEncoding, ACESFilmicToneMapping } = await import('three')
 
 	const canvas = document.querySelector('.webgl')
 
@@ -51,8 +49,6 @@ export async function creatPerspectiveCamera() {
 	const { width, height } = getDefaultSizes()
 	const camera = new PerspectiveCamera(45, width / height, 0.01, 900)
 	camera.focus = 0
-
-	camera.position.set(0, 0, 20)
 	return camera
 }
 
