@@ -1,6 +1,6 @@
 import './style.css'
 
-import main from './scene'
+import main from './scene/index'
 ;(async () => {
 	const api = await main({
 		character: 'angel',
