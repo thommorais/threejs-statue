@@ -3,15 +3,10 @@ async function theatre(lights, model, camera, points) {
 	const { default: studio } = await import('@theatre/studio')
 	const { Vector3 } = await import('three')
 
-	const { default: state } = await import('./model/angel.json')
-
-	console.log(state)
-
 	studio.initialize()
 
-	const project = getProject('lights', { state })
 	// Create a sheet
-	const sheet = project.sheet('lights')
+	const sheet = getProject('lights').sheet('lights')
 
 	const [leftLight, topLight, rightLight] = lights
 
@@ -30,48 +25,48 @@ async function theatre(lights, model, camera, points) {
 		},
 	]
 
-	// lightSheets.forEach(({ name, light }) => {
-	// 	const leftObj = sheet.object(name, {
-	// 		position: types.compound({
-	// 			x: types.number(light.position.x, { range: [-150, 150] }),
-	// 			y: types.number(light.position.y, { range: [-150, 150] }),
-	// 			z: types.number(light.position.z, { range: [-150, 100] }),
-	// 		}),
-	// 		intensity: types.number(light.intensity, { range: [0, 50] }),
-	// 		penumbra: types.number(light.penumbra, { range: [0, 1] }),
-	// 		angle: types.number(light.angle, { range: [Math.PI / 3, Math.PI / 2] }),
-	// 		power: types.number(light.power, { range: [0, 120] }),
-	// 	})
+	lightSheets.forEach(({ name, light }) => {
+		const leftObj = sheet.object(name, {
+			position: types.compound({
+				x: types.number(light.position.x, { range: [-150, 150] }),
+				y: types.number(light.position.y, { range: [-150, 150] }),
+				z: types.number(light.position.z, { range: [-150, 100] }),
+			}),
+			intensity: types.number(light.intensity, { range: [0, 50] }),
+			penumbra: types.number(light.penumbra, { range: [0, 1] }),
+			angle: types.number(light.angle, { range: [Math.PI / 3, Math.PI / 2] }),
+			power: types.number(light.power, { range: [0, 120] }),
+		})
 
-	// 	leftObj.onValuesChange((values) => {
-	// 		const { x, y, z } = values.position
-	// 		light.position.set(x, y, z)
-	// 		light.intensity = values.intensity
-	// 		light.angle = values.angle
-	// 		light.penumbra = values.penumbra
-	// 	})
-	// })
+		leftObj.onValuesChange((values) => {
+			const { x, y, z } = values.position
+			light.position.set(x, y, z)
+			light.intensity = values.intensity
+			light.angle = values.angle
+			light.penumbra = values.penumbra
+		})
+	})
 
-	// const modelObj = sheet.object('model', {
-	// 	metalness: types.number(model.children[0].material.metalness, { range: [0, 1] }),
-	// 	roughness: types.number(model.children[0].material.roughness, { range: [0, 1] }),
-	// })
+	const modelObj = sheet.object('model', {
+		metalness: types.number(model.children[0].material.metalness, { range: [0, 1] }),
+		roughness: types.number(model.children[0].material.roughness, { range: [0, 1] }),
+	})
 
-	// modelObj.onValuesChange((values) => {
-	// 	model.children[0].material.metalness = values.metalness
-	// 	model.children[0].material.roughness = values.roughness
-	// })
+	modelObj.onValuesChange((values) => {
+		model.children[0].material.metalness = values.metalness
+		model.children[0].material.roughness = values.roughness
+	})
 
 	const cameraObj = sheet.object('Camera', {
 		position: types.compound({
-			x: types.number(camera.position.x, { range: [-50, 50] }),
-			y: types.number(camera.position.y, { range: [-50, 50] }),
-			z: types.number(camera.position.z, { range: [-75, 75] }),
+			x: types.number(camera.position.x, { range: [-100, 100] }),
+			y: types.number(camera.position.y, { range: [-100, 100] }),
+			z: types.number(camera.position.z, { range: [-100, 100] }),
 		}),
 		lookAt: types.compound({
-			x: types.number(camera.position.x, { range: [-50, 50] }),
-			y: types.number(camera.position.y, { range: [-50, 50] }),
-			z: types.number(camera.position.z, { range: [-50, 50] }),
+			x: types.number(camera.position.x, { range: [-100, 100] }),
+			y: types.number(camera.position.y, { range: [-100, 100] }),
+			z: types.number(camera.position.z, { range: [-100, 100] }),
 		}),
 	})
 
@@ -79,32 +74,33 @@ async function theatre(lights, model, camera, points) {
 		camera.position.set(values.position.x, values.position.y, values.position.z)
 		const { x, y, z } = values.lookAt
 		camera.lookAt(new Vector3(x, y, z))
+		console.log(x, y, z)
 		camera.updateProjectionMatrix()
 	})
 
-	// points.forEach((valu) => {
-	// 	const [name, obj] = Object.entries(valu)[0]
-	// 	const leftObj = sheet.object(`Points ${name}`, {
-	// 		position: types.compound({
-	// 			x: types.number(obj.position.x, { range: [-150, 150] }),
-	// 			y: types.number(obj.position.y, { range: [-150, 150] }),
-	// 			z: types.number(obj.position.z, { range: [-150, 100] }),
-	// 		}),
+	points.forEach((valu) => {
+		const [name, obj] = Object.entries(valu)[0]
+		const leftObj = sheet.object(`Points ${name}`, {
+			position: types.compound({
+				x: types.number(obj.position.x, { range: [-150, 150] }),
+				y: types.number(obj.position.y, { range: [-150, 150] }),
+				z: types.number(obj.position.z, { range: [-150, 100] }),
+			}),
 
-	// 		rotation: types.compound({
-	// 			x: types.number(obj.rotation.x, { range: [-2, 2] }),
-	// 			y: types.number(obj.rotation.y, { range: [-2, 2] }),
-	// 			z: types.number(obj.rotation.z, { range: [-2, 2] }),
-	// 		}),
-	// 	})
+			rotation: types.compound({
+				x: types.number(obj.rotation.x, { range: [-2, 2] }),
+				y: types.number(obj.rotation.y, { range: [-2, 2] }),
+				z: types.number(obj.rotation.z, { range: [-2, 2] }),
+			}),
+		})
 
-	// 	leftObj.onValuesChange((values) => {
-	// 		const { x, y, z } = values.position
-	// 		obj.position.set(x, y, z)
-	// 		const rotation = values.rotation
-	// 		obj.rotation.set(rotation.x * Math.PI, rotation.y * Math.PI, rotation.z * Math.PI)
-	// 	})
-	// })
+		leftObj.onValuesChange((values) => {
+			const { x, y, z } = values.position
+			obj.position.set(x, y, z)
+			const rotation = values.rotation
+			obj.rotation.set(rotation.x * Math.PI, rotation.y * Math.PI, rotation.z * Math.PI)
+		})
+	})
 }
 
 async function createPoints(scene, pos) {
@@ -130,10 +126,10 @@ async function dev(scene, camera, lights, model) {
 	if (process.env.NODE_ENV === 'development' && true) {
 		// camera.position.set(0, 20, 90)
 
-		const chest = await createPoints(scene, { x: -0.75, y: 31, z: 4.1 })
+		const chest = await createPoints(scene, { x: 2.5, y: 17, z: 3.5 })
 
 		const face = await createPoints(scene, { x: -0.75, y: 31, z: 4.1 })
-		const aside = await createPoints(scene, { x: 3.75, y: 31, z: -0.75 })
+		const aside = await createPoints(scene, { x: 10, y: 28, z: 5 })
 		aside.material.color.setHex(0xff0000)
 
 		const half_face = await createPoints(scene, { x: 6.25, y: 32, z: -3 })
@@ -159,12 +155,12 @@ async function dev(scene, camera, lights, model) {
 		lights.forEach((light) => {
 			const spotLightHelper = new SpotLightHelper(light)
 			scene.add(spotLightHelper)
-			const s = () =>
-				requestAnimationFrame(() => {
-					spotLightHelper.update()
-					s()
-				})
-			s()
+			// const s = () =>
+			// 	requestAnimationFrame(() => {
+			// 		spotLightHelper.update()
+			// 		s()
+			// 	})
+			// s()
 		})
 	}
 }

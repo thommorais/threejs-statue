@@ -16,20 +16,20 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 	])
 
 	store.subscribe(onModelLoading, 'modelLoadingProgress')
-	console.log('modelLoadingProgress')
+
 	await getModelOption(character)
 
 	const { scene, camera } = await stage()
 	const model = await handleModel(character)
 	scene.add(model)
 
-	await scroll(camera, { sectionSelectors, scrollSelector })
-
 	const lights = await createLights(scene, model)
 
-	if (process.env.NODE_ENV === 'development' && true) {
+	if (process.env.NODE_ENV === 'development' && false) {
 		const { default: dev } = await import('./dev')
 		await dev(scene, camera, lights, model)
+	} else {
+		await scroll(camera, { sectionSelectors, scrollSelector })
 	}
 
 	return {
