@@ -6,6 +6,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		{ default: createLights },
 		{ default: getModelOption },
 		{ default: store },
+		{ default: sparks },
 	] = await Promise.all([
 		import('./stage'),
 		import('./model/model'),
@@ -13,13 +14,14 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		import('./lights'),
 		import('./model/modelOptions'),
 		import('./store'),
+		import('./sparks'),
 	])
 
 	store.subscribe(onModelLoading, 'modelLoadingProgress')
 
 	await getModelOption(character)
 
-	const { scene, camera } = await stage()
+	const { scene, camera, renderer } = await stage()
 	const model = await handleModel(character)
 	scene.add(model)
 
@@ -30,6 +32,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		await dev(scene, camera, lights, model)
 	} else {
 		await scroll(camera, { sectionSelectors, scrollSelector })
+		await sparks(scene, renderer)
 	}
 
 	return {

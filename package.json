@@ -17,7 +17,7 @@
     "@theatre/studio": "^0.5.0",
     "colorjs.io": "^0.4.2",
     "smooth-scrollbar": "^8.8.1",
-    "three": "^0.144.0",
+    "three": "^0.148.0",
     "vite-plugin-glsl": "^0.5.1",
     "zustand": "^4.1.4"
   }

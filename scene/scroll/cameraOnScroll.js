@@ -31,7 +31,6 @@ async function cameraOnScroll(camera) {
 		const normal = direction === 'normal'
 		const from = normal ? scrollState.current - 1 : scrollState.current
 		const to = normal ? scrollState.current : scrollState.current + 1
-		console.log({ from, to })
 		sheet.sequence.play({ range: [from, to], direction })
 	}
 

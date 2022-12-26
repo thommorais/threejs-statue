@@ -85,7 +85,6 @@ async function smoothScroll(scrollerContainer, config) {
 							timeout,
 							currentSection: sections[next],
 						})
-						console.log({ next })
 					},
 				})
 			}, config.afterEventTimeout)

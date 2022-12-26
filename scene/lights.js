@@ -1,12 +1,12 @@
 export default async function createLights(scene, model) {
 	const { HemisphereLight, SpotLight } = await import('three')
 
-	const hemiLight = new HemisphereLight(0x444444, 0x444444, 1)
+	const hemiLight = new HemisphereLight(0x444444, 0x444444, 0.85)
 	scene.add(hemiLight)
 
 	const leftSpotLight = new SpotLight(0xc9bbff, 1)
 	leftSpotLight.position.set(-50, 90, 45)
-	leftSpotLight.intensity = 15
+	leftSpotLight.intensity = 150
 	leftSpotLight.angle = 1.25
 	leftSpotLight.penumbra = 1
 	leftSpotLight.distance = 150
@@ -14,7 +14,7 @@ export default async function createLights(scene, model) {
 	const topSpotLight = new SpotLight(0xff0d0c, 1)
 	topSpotLight.distance = 200
 	topSpotLight.position.set(10, 81, 5.25)
-	topSpotLight.intensity = 15
+	topSpotLight.intensity = 150
 	topSpotLight.angle = 1.25
 	topSpotLight.penumbra = 0.76
 	topSpotLight.distance = 150
@@ -22,7 +22,7 @@ export default async function createLights(scene, model) {
 	const rightSpotLight = new SpotLight(0xee0611, 1)
 	rightSpotLight.distance = 400
 	rightSpotLight.position.set(67, 38.5, 25)
-	rightSpotLight.intensity = 13
+	rightSpotLight.intensity = 1200
 	rightSpotLight.angle = 1.575
 	rightSpotLight.penumbra = 1
 	rightSpotLight.distance = 150
