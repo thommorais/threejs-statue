@@ -11,6 +11,7 @@ async function handleScroll(camera, options) {
 	}
 
 	store.setState({ sections })
+
 	await smoothScroll(options.scrollSelector, config)
 	await cameraOnScroll(camera)
 	await onResize()

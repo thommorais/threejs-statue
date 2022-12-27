@@ -110,7 +110,7 @@ meter {
 	height: 100vh;
 	overflow: auto;
 	z-index: 4;
-	/* pointer-events: none; */
+	pointer-events: none;
 }
 
 #app {

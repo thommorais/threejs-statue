@@ -22,18 +22,20 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 	await getModelOption(character)
 
 	const { scene, camera, renderer } = await stage()
+
 	const model = await handleModel(character)
 	scene.add(model)
 
 	const lights = await createLights(scene, model)
 
-	if (process.env.NODE_ENV === 'development' && false) {
+	if (true) {
 		const { default: dev } = await import('./dev')
 		await dev(scene, camera, lights, model)
 	} else {
 		await scroll(camera, { sectionSelectors, scrollSelector })
-		await sparks(scene, renderer)
 	}
+
+	// await sparks(scene, renderer)
 
 	return {
 		lockScroll: () => store.lockScroll(true),

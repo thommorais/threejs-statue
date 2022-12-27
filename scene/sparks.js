@@ -11,13 +11,13 @@ async function sparks(scene, renderer) {
 	 */
 
 	const parameters = {}
-	parameters.count = 10000
+	parameters.count = 5000
 	parameters.randomness = 0.5
 	parameters.randomnessPower = 5
-	parameters.sizeMin = 50.0
-	parameters.sizeMax = 250.0
+	parameters.sizeMin = 150.0
+	parameters.sizeMax = 400.0
 	parameters.opacityMin = 0.1
-	parameters.opacityMax = 0.75
+	parameters.opacityMax = 1.0
 	parameters.gravity = 180.0
 
 	let wind = {
@@ -123,6 +123,7 @@ async function sparks(scene, renderer) {
 	points.scale.x = 48
 	points.scale.y = 24
 	points.scale.z = 24
+	points.position.z = -10
 	scene.add(points)
 
 	/**

@@ -8,4 +8,6 @@ import main from './scene/index'
 		scrollSelector: '.container-3d',
 		onModelLoading: (percentage) => percentage,
 	})
+
+	// api.subscribe(console.log, 'scrollProgress')
 })()

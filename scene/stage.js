@@ -47,7 +47,7 @@ export async function creatPerspectiveCamera() {
 	const { getDefaultSizes } = await import('./utils')
 
 	const { width, height } = getDefaultSizes()
-	const camera = new PerspectiveCamera(45, width / height, 0.01, 900)
+	const camera = new PerspectiveCamera(45, width / height, 0.01, 1900)
 	camera.focus = 0
 	return camera
 }
@@ -60,11 +60,11 @@ export default async function webglStuff() {
 	const camera = await creatPerspectiveCamera()
 
 	const renderFunc = () => renderer.render(scene, camera)
-	// const controls = await createOrbitControl(camera, renderer)
+	const controls = await createOrbitControl(camera, renderer)
 
 	renderer.setAnimationLoop(() => {
 		renderFunc()
-		// controls.update()
+		controls.update()
 		camera.updateProjectionMatrix()
 	})
 

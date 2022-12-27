@@ -3,6 +3,10 @@ async function theatre(lights, model, camera, points) {
 	const { default: studio } = await import('@theatre/studio')
 	const { Vector3 } = await import('three')
 
+	const { default: store } = await import('./store')
+
+	const { cameraState } = store.getState()
+
 	studio.initialize()
 
 	// Create a sheet
@@ -78,29 +82,29 @@ async function theatre(lights, model, camera, points) {
 		camera.updateProjectionMatrix()
 	})
 
-	points.forEach((valu) => {
-		const [name, obj] = Object.entries(valu)[0]
-		const leftObj = sheet.object(`Points ${name}`, {
-			position: types.compound({
-				x: types.number(obj.position.x, { range: [-150, 150] }),
-				y: types.number(obj.position.y, { range: [-150, 150] }),
-				z: types.number(obj.position.z, { range: [-150, 100] }),
-			}),
+	// points.forEach((valu) => {
+	// 	const [name, obj] = Object.entries(valu)[0]
+	// 	const leftObj = sheet.object(`Points ${name}`, {
+	// 		position: types.compound({
+	// 			x: types.number(obj.position.x, { range: [-150, 150] }),
+	// 			y: types.number(obj.position.y, { range: [-150, 150] }),
+	// 			z: types.number(obj.position.z, { range: [-150, 100] }),
+	// 		}),
 
-			rotation: types.compound({
-				x: types.number(obj.rotation.x, { range: [-2, 2] }),
-				y: types.number(obj.rotation.y, { range: [-2, 2] }),
-				z: types.number(obj.rotation.z, { range: [-2, 2] }),
-			}),
-		})
+	// 		rotation: types.compound({
+	// 			x: types.number(obj.rotation.x, { range: [-2, 2] }),
+	// 			y: types.number(obj.rotation.y, { range: [-2, 2] }),
+	// 			z: types.number(obj.rotation.z, { range: [-2, 2] }),
+	// 		}),
+	// 	})
 
-		leftObj.onValuesChange((values) => {
-			const { x, y, z } = values.position
-			obj.position.set(x, y, z)
-			const rotation = values.rotation
-			obj.rotation.set(rotation.x * Math.PI, rotation.y * Math.PI, rotation.z * Math.PI)
-		})
-	})
+	// 	leftObj.onValuesChange((values) => {
+	// 		const { x, y, z } = values.position
+	// 		obj.position.set(x, y, z)
+	// 		const rotation = values.rotation
+	// 		obj.rotation.set(rotation.x * Math.PI, rotation.y * Math.PI, rotation.z * Math.PI)
+	// 	})
+	// })
 }
 
 async function createPoints(scene, pos) {
@@ -117,7 +121,7 @@ async function createPoints(scene, pos) {
 	mesh.position.x = pos.x
 	mesh.position.y = pos.y
 	mesh.position.z = pos.z
-	scene.add(mesh)
+	// scene.add(mesh)
 
 	return mesh
 }
