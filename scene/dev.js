@@ -80,9 +80,9 @@ async function theatre(lights, model, camera, points) {
 		console.log(light.color)
 		const leftObj = sheet.object(name, {
 			position: types.compound({
-				x: types.number(light.position.x, { range: [-150, 150] }),
-				y: types.number(light.position.y, { range: [-150, 150] }),
-				z: types.number(light.position.z, { range: [-150, 100] }),
+				x: types.number(light.position.x, { range: [-500, 500] }),
+				y: types.number(light.position.y, { range: [-500, 500] }),
+				z: types.number(light.position.z, { range: [-500, 500] }),
 			}),
 			intensity: types.number(light.intensity, { range: [0, 5000] }),
 			penumbra: types.number(light.penumbra, { range: [0, 1] }),
