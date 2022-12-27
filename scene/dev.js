@@ -124,7 +124,7 @@ async function createPoints(scene, pos) {
 }
 
 async function dev(scene, camera, lights, model) {
-	if (process.env.NODE_ENV === 'development' && true) {
+	if (true) {
 		// camera.position.set(0, 20, 90)
 
 		const chest = await createPoints(scene, { x: 2.5, y: 17, z: 3.5 })
