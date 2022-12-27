@@ -1,7 +1,7 @@
 async function theatre(lights, model, camera, points) {
 	const { getProject, types } = await import('@theatre/core')
 	const { default: studio } = await import('@theatre/studio')
-	const { Vector3 } = await import('three')
+	const { Vector3, Color } = await import('three')
 
 	const { default: store } = await import('./store')
 
@@ -10,7 +10,7 @@ async function theatre(lights, model, camera, points) {
 	// Create a sheet
 	const sheet = getProject('lights').sheet('lights')
 
-	const [leftLight, topLight, rightLight] = lights
+	const [leftLight, topLight, rightLight, one, two, three, four, five, six, seven, eight, nine, ten] = lights
 
 	const lightSheets = [
 		{
@@ -25,9 +25,59 @@ async function theatre(lights, model, camera, points) {
 			name: 'right',
 			light: rightLight,
 		},
+		{
+			name: 'one',
+			light: one,
+		},
+		{
+			name: 'two',
+			light: two,
+		},
+		{
+			name: 'three',
+			light: three,
+		},
+		{
+			name: 'four',
+			light: four,
+		},
+		{
+			name: 'five',
+			light: five,
+		},
+		{
+			name: 'six',
+			light: six,
+		},
+		{
+			name: 'seven',
+			light: seven,
+		},
+		{
+			name: 'eight',
+			light: eight,
+		},
+		{
+			name: 'nine',
+			light: nine,
+		},
+		{
+			name: 'ten',
+			light: ten,
+		},
 	]
 
+	function rgbToHex(rgb) {
+		return (
+			'#' +
+			('0' + Math.round(rgb[0] * 255).toString(16)).slice(-2) +
+			('0' + Math.round(rgb[1] * 255).toString(16)).slice(-2) +
+			('0' + Math.round(rgb[2] * 255).toString(16)).slice(-2)
+		)
+	}
+
 	lightSheets.forEach(({ name, light }) => {
+		console.log(light.color)
 		const leftObj = sheet.object(name, {
 			position: types.compound({
 				x: types.number(light.position.x, { range: [-150, 150] }),
@@ -38,6 +88,7 @@ async function theatre(lights, model, camera, points) {
 			penumbra: types.number(light.penumbra, { range: [0, 1] }),
 			angle: types.number(light.angle, { range: [Math.PI / 3, Math.PI / 2] }),
 			power: types.number(light.power, { range: [0, 1200] }),
+			color: types.rgba({ r: light.color.r, g: light.color.g, b: light.color.b, a: 1 }),
 		})
 
 		leftObj.onValuesChange((values) => {
@@ -46,6 +97,7 @@ async function theatre(lights, model, camera, points) {
 			light.intensity = values.intensity
 			light.angle = values.angle
 			light.penumbra = values.penumbra
+			light.color.set(rgbToHex([values.color.r, values.color.g, values.color.b]))
 		})
 	})
 

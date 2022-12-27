@@ -27,9 +27,15 @@ export default async function createLights(scene, model) {
 	rightSpotLight.penumbra = 1
 	rightSpotLight.distance = 150
 
+	const extraLights = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']
+
+	const extras = extraLights.map(() => new SpotLight(0xffffff, 1))
+
 	const lights = [leftSpotLight, topSpotLight, rightSpotLight]
 
-	lights.forEach((spotLight) => {
+	const allLights = [...lights, ...extras]
+
+	allLights.forEach((spotLight) => {
 		spotLight.castShadow = true
 		spotLight.castShadow = true
 		spotLight.shadow.mapSize.width = 1024
@@ -42,5 +48,5 @@ export default async function createLights(scene, model) {
 		scene.add(spotLight)
 	})
 
-	return lights
+	return [...lights, ...extras]
 }
