@@ -5,8 +5,6 @@ async function theatre(lights, model, camera, points) {
 
 	const { default: store } = await import('./store')
 
-	const { cameraState } = store.getState()
-
 	studio.initialize()
 
 	// Create a sheet
@@ -36,10 +34,10 @@ async function theatre(lights, model, camera, points) {
 				y: types.number(light.position.y, { range: [-150, 150] }),
 				z: types.number(light.position.z, { range: [-150, 100] }),
 			}),
-			intensity: types.number(light.intensity, { range: [0, 50] }),
+			intensity: types.number(light.intensity, { range: [0, 5000] }),
 			penumbra: types.number(light.penumbra, { range: [0, 1] }),
 			angle: types.number(light.angle, { range: [Math.PI / 3, Math.PI / 2] }),
-			power: types.number(light.power, { range: [0, 120] }),
+			power: types.number(light.power, { range: [0, 1200] }),
 		})
 
 		leftObj.onValuesChange((values) => {
@@ -78,7 +76,6 @@ async function theatre(lights, model, camera, points) {
 		camera.position.set(values.position.x, values.position.y, values.position.z)
 		const { x, y, z } = values.lookAt
 		camera.lookAt(new Vector3(x, y, z))
-		console.log(x, y, z)
 		camera.updateProjectionMatrix()
 	})
 
@@ -159,12 +156,12 @@ async function dev(scene, camera, lights, model) {
 		lights.forEach((light) => {
 			const spotLightHelper = new SpotLightHelper(light)
 			scene.add(spotLightHelper)
-			// const s = () =>
-			// 	requestAnimationFrame(() => {
-			// 		spotLightHelper.update()
-			// 		s()
-			// 	})
-			// s()
+			const s = () =>
+				requestAnimationFrame(() => {
+					spotLightHelper.update()
+					s()
+				})
+			s()
 		})
 	}
 }
