@@ -19,16 +19,20 @@ export default async function loadModel() {
 		loader.load(
 			modelPath,
 			(gltf) => {
+				const boxMaterial = new MeshStandardMaterial({
+					roughness: 0.5759493670886077,
+					metalness: 0.8797468354430373,
+				})
 				const box = gltf.scene
 
-				// box.traverse((child) => {
-				// 	if (child.isMesh) {
-				// 		child.material = boxMaterial
-				// 	}
+				box.traverse((child) => {
+					if (child.isMesh) {
+						child.material = boxMaterial
+					}
 
-				// 	child.castShadow = true
-				// 	child.receiveShadow = true
-				// })
+					child.castShadow = true
+					child.receiveShadow = true
+				})
 
 				resolve(box)
 			},

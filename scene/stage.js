@@ -60,11 +60,11 @@ export default async function webglStuff() {
 	const camera = await creatPerspectiveCamera()
 
 	const renderFunc = () => renderer.render(scene, camera)
-	const controls = await createOrbitControl(camera, renderer)
+	// const controls = await createOrbitControl(camera, renderer)
 
 	renderer.setAnimationLoop(() => {
 		renderFunc()
-		controls.update()
+		// controls.update()
 		camera.updateProjectionMatrix()
 	})
 
