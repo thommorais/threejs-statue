@@ -24,6 +24,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 	await getModelOption(character)
 
 	const { scene, camera, renderer } = await stage()
+	const pixelRatio = renderer.getPixelRatio()
 
 	const model = await handleModel(character)
 	scene.add(model)
@@ -36,11 +37,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		await scroll(camera, { sectionSelectors, scrollSelector })
 	}
 
-	const pixelRatio = renderer.getPixelRatio()
-
-	if (pixelRatio === 1) {
-		await background(scene)
-	}
+	await background(scene, renderer)
 
 	await sparks(scene, renderer, 2000 / pixelRatio)
 

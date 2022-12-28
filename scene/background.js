@@ -5,8 +5,8 @@ function randomIntFromInterval(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-async function background(scene) {
-	scene.fog = new THREE.FogExp2(0x11111f, 0.0001)
+async function background(scene, renderer) {
+	const pixelRatio = renderer.getPixelRatio()
 
 	let loader = new THREE.TextureLoader()
 
@@ -19,7 +19,7 @@ async function background(scene) {
 			transparent: true,
 		})
 
-		for (let p = 0; p < 12; p++) {
+		for (let p = 0; p < 12 / pixelRatio; p++) {
 			const cloud = new THREE.Mesh(cloudGeo, cloudMaterial)
 			const z = randomIntFromInterval(-100, -50)
 			const x = randomIntFromInterval(-10, 10)

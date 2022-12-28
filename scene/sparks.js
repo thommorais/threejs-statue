@@ -6,6 +6,8 @@ import vertexShader from './shaders/sparks.vertex.glsl'
 async function sparks(scene, renderer, count) {
 	const snowflake = '/sparks.png'
 	const snowflakeTexture = new THREE.TextureLoader().load(snowflake)
+	const pixelRatio = renderer.getPixelRatio()
+
 	/**
 	 * Particles
 	 */
@@ -120,9 +122,9 @@ async function sparks(scene, renderer, count) {
 	 * Points
 	 */
 	const points = new THREE.Points(geometry, material)
-	points.scale.x = 48 / renderer.getPixelRatio()
-	points.scale.y = 24 / renderer.getPixelRatio()
-	points.scale.z = 18 / renderer.getPixelRatio()
+	points.scale.x = 48 / pixelRatio
+	points.scale.y = 24 / pixelRatio
+	points.scale.z = 18 / pixelRatio
 	points.position.z = -10
 	scene.add(points)
 
@@ -152,7 +154,7 @@ async function sparks(scene, renderer, count) {
 		material.uniforms.uTime.value = elapsedTime + 200
 
 		// Call tick again on the next frame
-		window.requestAnimationFrame(tick)
+		requestAnimationFrame(tick)
 	}
 
 	tick()
