@@ -34,9 +34,12 @@ async function background(scene, renderer) {
 		}
 		animate()
 	})
-	const flash = new THREE.PointLight(0xffffff, 30, 250, 2)
-	flash.position.set(0, 0, -50)
-	scene.add(flash)
+
+	if (pixelRatio === 1) {
+		const flash = new THREE.PointLight(0xffffff, 30, 250, 2)
+		flash.position.set(0, 0, -50)
+		scene.add(flash)
+	}
 
 	function animate() {
 		cloudParticles.forEach((p) => {
@@ -44,7 +47,7 @@ async function background(scene, renderer) {
 			p.position.y += 0.055
 		})
 
-		if (Math.random() > 0.85) {
+		if (Math.random() > 0.85 && pixelRatio === 1) {
 			if (flash.power < 100) {
 				const x = randomIntFromInterval(-20, 20)
 				const y = randomIntFromInterval(-30, 40)
