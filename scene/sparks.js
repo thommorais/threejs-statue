@@ -103,7 +103,7 @@ async function sparks(scene, renderer, count) {
 		fragmentShader,
 		uniforms: {
 			uTime: { value: 10.0 },
-			uSize: { value: 15 * renderer.getPixelRatio() },
+			uSize: { value: 15 },
 			uSpeed: { value: new THREE.Vector3(0.0000001, 0.02, Math.random()) },
 			uGravity: { value: parameters.gravity },
 			uWorldSize: { value: new THREE.Vector3(160, 100, 8) },
@@ -120,9 +120,9 @@ async function sparks(scene, renderer, count) {
 	 * Points
 	 */
 	const points = new THREE.Points(geometry, material)
-	points.scale.x = 48
-	points.scale.y = 24
-	points.scale.z = 18
+	points.scale.x = 48 / renderer.getPixelRatio()
+	points.scale.y = 24 / renderer.getPixelRatio()
+	points.scale.z = 18 / renderer.getPixelRatio()
 	points.position.z = -10
 	scene.add(points)
 
