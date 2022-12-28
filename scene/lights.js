@@ -41,9 +41,7 @@ export default async function createLights(scene, model) {
 
 	const lights = [leftSpotLight, topSpotLight, rightSpotLight, extraSpotLight]
 
-	const allLights = [...lights]
-
-	allLights.forEach((spotLight) => {
+	lights.forEach((spotLight) => {
 		spotLight.castShadow = true
 		spotLight.castShadow = true
 		spotLight.shadow.mapSize.width = 1024
@@ -56,5 +54,5 @@ export default async function createLights(scene, model) {
 		scene.add(spotLight)
 	})
 
-	return [...lights]
+	return lights
 }
