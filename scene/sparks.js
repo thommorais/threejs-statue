@@ -144,7 +144,7 @@ async function sparks(scene, renderer, count) {
 		// Current Wind Uniform
 		material.uniforms.uWind.value = wind.current
 
-		if (Math.random() > 0.995) {
+		if (Math.random() > 0.8) {
 			wind.target = (wind.min + Math.random() * (wind.max - wind.min)) * (Math.random() > 0.5 ? -1 : 1) * 100
 		}
 
