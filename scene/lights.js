@@ -31,13 +31,13 @@ export default async function createLights(scene, model) {
 	const lights = [leftSpotLight, topSpotLight, rightSpotLight, extraSpotLight]
 
 	lights.forEach((spotLight) => {
-		spotLight.castShadow = true
-		spotLight.castShadow = true
-		spotLight.shadow.mapSize.width = 1024
-		spotLight.shadow.mapSize.height = 1024
-		spotLight.shadow.camera.near = 10
-		spotLight.shadow.camera.far = 200
-		spotLight.shadow.focus = 1
+		// spotLight.castShadow = true
+		// spotLight.castShadow = true
+		// spotLight.shadow.mapSize.width = 1024
+		// spotLight.shadow.mapSize.height = 1024
+		// spotLight.shadow.camera.near = 10
+		// spotLight.shadow.camera.far = 200
+		// spotLight.shadow.focus = 1
 		spotLight.target = model
 		// spotLight.power = 3000
 		spotLight.angle = 1.570796
