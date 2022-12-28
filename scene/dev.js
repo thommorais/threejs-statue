@@ -1,7 +1,7 @@
 async function theatre(lights, model, camera, points) {
 	const { getProject, types } = await import('@theatre/core')
 	const { default: studio } = await import('@theatre/studio')
-	const { Vector3, Color } = await import('three')
+	const { Vector3 } = await import('three')
 
 	const { default: store } = await import('./store')
 
@@ -10,7 +10,7 @@ async function theatre(lights, model, camera, points) {
 	// Create a sheet
 	const sheet = getProject('lights').sheet('lights')
 
-	const [leftLight, topLight, rightLight, one, two, three, four, five, six, seven, eight, nine, ten] = lights
+	const [leftLight, topLight, rightLight, one] = lights
 
 	const lightSheets = [
 		{
@@ -28,42 +28,6 @@ async function theatre(lights, model, camera, points) {
 		{
 			name: 'one',
 			light: one,
-		},
-		{
-			name: 'two',
-			light: two,
-		},
-		{
-			name: 'three',
-			light: three,
-		},
-		{
-			name: 'four',
-			light: four,
-		},
-		{
-			name: 'five',
-			light: five,
-		},
-		{
-			name: 'six',
-			light: six,
-		},
-		{
-			name: 'seven',
-			light: seven,
-		},
-		{
-			name: 'eight',
-			light: eight,
-		},
-		{
-			name: 'nine',
-			light: nine,
-		},
-		{
-			name: 'ten',
-			light: ten,
 		},
 	]
 

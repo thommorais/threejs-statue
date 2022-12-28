@@ -7,6 +7,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		{ default: getModelOption },
 		{ default: store },
 		{ default: sparks },
+		{ default: background },
 	] = await Promise.all([
 		import('./stage'),
 		import('./model/model'),
@@ -15,6 +16,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		import('./model/modelOptions'),
 		import('./store'),
 		import('./sparks'),
+		import('./background'),
 	])
 
 	store.subscribe(onModelLoading, 'modelLoadingProgress')
@@ -25,7 +27,6 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 
 	const model = await handleModel(character)
 	scene.add(model)
-
 	const lights = await createLights(scene, model)
 
 	if (false) {
@@ -36,6 +37,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 	}
 
 	await sparks(scene, renderer)
+	await background(scene)
 
 	return {
 		lockScroll: () => store.lockScroll(true),
