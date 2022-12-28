@@ -39,6 +39,8 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 	await sparks(scene, renderer, 2500)
 	await background(scene)
 
+	alert(renderer.getPixelRatio())
+
 	return {
 		lockScroll: () => store.lockScroll(true),
 		unlockScrol: () => store.lockScroll(false),

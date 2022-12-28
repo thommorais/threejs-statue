@@ -122,7 +122,7 @@ async function sparks(scene, renderer, count) {
 	const points = new THREE.Points(geometry, material)
 	points.scale.x = 48
 	points.scale.y = 24
-	points.scale.z = 24
+	points.scale.z = 18
 	points.position.z = -10
 	scene.add(points)
 

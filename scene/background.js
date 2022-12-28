@@ -6,8 +6,6 @@ function randomIntFromInterval(min, max) {
 }
 
 async function background(scene) {
-	const ambient = new THREE.AmbientLight(0x555555, 0.001)
-	scene.add(ambient)
 	scene.fog = new THREE.FogExp2(0x11111f, 0.0001)
 
 	let loader = new THREE.TextureLoader()
@@ -43,7 +41,7 @@ async function background(scene) {
 	function animate() {
 		cloudParticles.forEach((p) => {
 			p.rotation.z -= 0.0055
-			p.position.y += 0.0055
+			p.position.y += 0.055
 		})
 
 		if (Math.random() > 0.85) {
