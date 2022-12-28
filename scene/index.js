@@ -36,7 +36,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		await scroll(camera, { sectionSelectors, scrollSelector })
 	}
 
-	await sparks(scene, renderer)
+	await sparks(scene, renderer, 2500)
 	await background(scene)
 
 	return {

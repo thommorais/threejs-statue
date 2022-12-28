@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import fragmentShader from './shaders/sparks.fragment.glsl'
 import vertexShader from './shaders/sparks.vertex.glsl'
 
-async function sparks(scene, renderer) {
+async function sparks(scene, renderer, count) {
 	const snowflake = '/sparks.png'
 	const snowflakeTexture = new THREE.TextureLoader().load(snowflake)
 	/**
@@ -11,7 +11,7 @@ async function sparks(scene, renderer) {
 	 */
 
 	const parameters = {}
-	parameters.count = 5000
+	parameters.count = count
 	parameters.randomness = 0.5
 	parameters.randomnessPower = 5
 	parameters.sizeMin = 150.0
