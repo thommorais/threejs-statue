@@ -43,6 +43,7 @@ async function background(scene) {
 	function animate() {
 		cloudParticles.forEach((p) => {
 			p.rotation.z -= 0.0055
+			p.position.y += 0.0055
 		})
 
 		if (Math.random() > 0.85) {

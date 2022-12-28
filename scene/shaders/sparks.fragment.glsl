@@ -13,12 +13,13 @@ void main() {
   vec4 sparks = texture2D(uTexture, rotated);
 
   float transitionPercent = vPosition.y / 100.0;
+  float red = 1.;
 
   if(vPosition.y > 24.) {
     float alpha = smoothstep(vOpacity, 0.0, transitionPercent);
-    gl_FragColor = vec4(sparks.rgb, sparks.a * alpha);
+    gl_FragColor = vec4(red, sparks.gb, sparks.a * alpha);
   } else {
-    gl_FragColor = vec4(sparks.rgb, sparks.a * vOpacity);
+    gl_FragColor = vec4(red, sparks.gb, sparks.a * vOpacity);
   }
 
   // gl_FragColor = vec4(sparks.rgb, sparks.a * transitionPercent);

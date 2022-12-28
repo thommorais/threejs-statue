@@ -20,8 +20,8 @@ export default async function loadModel() {
 			modelPath,
 			(gltf) => {
 				const boxMaterial = new MeshStandardMaterial({
-					roughness: 0.4430379746835432,
-					metalness: 0.1708860759493673,
+					roughness: 0.455,
+					metalness: 0.475,
 				})
 				const box = gltf.scene
 
