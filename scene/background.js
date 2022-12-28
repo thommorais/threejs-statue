@@ -35,8 +35,9 @@ async function background(scene, renderer) {
 		animate()
 	})
 
+	let flash
 	if (pixelRatio === 1) {
-		const flash = new THREE.PointLight(0xffffff, 30, 250, 2)
+		flash = new THREE.PointLight(0xffffff, 30, 250, 2)
 		flash.position.set(0, 0, -50)
 		scene.add(flash)
 	}

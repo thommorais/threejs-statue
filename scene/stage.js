@@ -6,15 +6,13 @@ export async function createRenderer() {
 	const canvas = document.querySelector('.webgl')
 
 	const renderer = new WebGLRenderer({
-		powerPreference: 'high-performance',
+		powerPreference: 'low-power',
 		antialias: true,
-		stencil: true,
+		stencil: false,
 		canvas,
 		depth: true,
 	})
 
-	renderer.shadowMap.enabled = true
-	renderer.shadowMap.type = PCFSoftShadowMap
 	renderer.physicallyCorrectLights = true
 	renderer.outputEncoding = sRGBEncoding
 	renderer.toneMapping = ACESFilmicToneMapping
