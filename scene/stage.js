@@ -47,7 +47,7 @@ export async function creatPerspectiveCamera() {
 	const { getDefaultSizes } = await import('./utils')
 
 	const { width, height } = getDefaultSizes()
-	const camera = new PerspectiveCamera(45, width / height, 0.01, 1000)
+	const camera = new PerspectiveCamera(45, width / height, 1, 500)
 	camera.focus = 0
 	return camera
 }
