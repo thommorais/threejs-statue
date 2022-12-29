@@ -27,7 +27,6 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 	const pixelRatio = renderer.getPixelRatio()
 
 	const model = await handleModel(character)
-	scene.add(model)
 	const lights = await createLights(scene, model)
 
 	if (false) {
@@ -38,8 +37,13 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 	}
 
 	await background(scene, renderer)
+	await sparks(scene, renderer, 2200 / pixelRatio)
+	scene.add(model)
 
-	await sparks(scene, renderer, 2000 / pixelRatio)
+	console.log(renderer.info)
+
+	const { default: stats } = await import('./stats')
+	await stats()
 
 	return {
 		lockScroll: () => store.lockScroll(true),

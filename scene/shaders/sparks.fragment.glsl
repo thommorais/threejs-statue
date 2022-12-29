@@ -3,8 +3,7 @@ varying float vOpacity;
 uniform sampler2D uTexture;
 
 varying float vRotation;
-varying vec4 vPosition;
-varying float vTime;
+varying vec2 vUv;
 
 void main() {
 
@@ -12,16 +11,10 @@ void main() {
 
   vec4 sparks = texture2D(uTexture, rotated);
 
-  float transitionPercent = vPosition.y / 100.0;
   float red = 1.;
 
-  if(vPosition.y > 24.) {
-    float alpha = smoothstep(vOpacity, 0.0, transitionPercent);
-    gl_FragColor = vec4(red, sparks.gb, sparks.a * alpha);
-  } else {
-    gl_FragColor = vec4(red, sparks.gb, sparks.a * vOpacity);
-  }
+  float distBloom = length(rotated * smoothstep(0.25, .75, vUv));
 
-  // gl_FragColor = vec4(sparks.rgb, sparks.a * transitionPercent);
+  gl_FragColor = vec4(red, sparks.gb, sparks.a * vOpacity + distBloom);
 
 }

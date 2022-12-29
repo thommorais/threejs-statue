@@ -1,16 +1,22 @@
-import * as THREE from 'three'
-
-import fragmentShader from './shaders/sparks.fragment.glsl'
-import vertexShader from './shaders/sparks.vertex.glsl'
-
 async function sparks(scene, renderer, count) {
-	const snowflake = '/sparks.png'
-	const snowflakeTexture = new THREE.TextureLoader().load(snowflake)
-	const pixelRatio = renderer.getPixelRatio()
+	const {
+		TextureLoader,
+		BufferGeometry,
+		BufferAttribute,
+		Vector3,
+		Vector2,
+		Points,
+		Clock,
+		AdditiveBlending,
+		ShaderMaterial,
+	} = await import('three')
 
-	/**
-	 * Particles
-	 */
+	const { default: fragmentShader } = await import('./shaders/sparks.fragment.glsl')
+	const { default: vertexShader } = await import('./shaders/sparks.vertex.glsl')
+
+	const snowflake = '/sparks.png'
+	const snowflakeTexture = new TextureLoader().load(snowflake)
+	const pixelRatio = renderer.getPixelRatio()
 
 	const parameters = {}
 	parameters.count = count
@@ -18,23 +24,23 @@ async function sparks(scene, renderer, count) {
 	parameters.randomnessPower = 5
 	parameters.sizeMin = 150.0
 	parameters.sizeMax = 400.0
-	parameters.opacityMin = 0.1
+	parameters.opacityMin = 0.5
 	parameters.opacityMax = 1.0
-	parameters.gravity = 180.0
+	parameters.gravity = 150.0
 
 	let wind = {
 		current: -1,
-		force: 0.9,
+		force: 0.75,
 		target: 1.0,
 		min: 0.1,
 		max: 1.0,
-		easing: 0.05,
+		easing: 0.005,
 	}
 
 	/**
 	 * Geometry
 	 */
-	const geometry = new THREE.BufferGeometry()
+	const geometry = new BufferGeometry()
 
 	const positions = new Float32Array(parameters.count * 3)
 	const scales = new Float32Array(parameters.count * 1)
@@ -81,12 +87,11 @@ async function sparks(scene, renderer, count) {
 		rotations[i3 + 2] = Math.random() * 10
 	}
 
-	geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-	geometry.setAttribute('aScale', new THREE.BufferAttribute(scales, 1))
-	geometry.setAttribute('aRandomness', new THREE.BufferAttribute(randomness, 3))
-	geometry.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 3))
-	geometry.setAttribute('aRotation', new THREE.BufferAttribute(rotations, 3))
-	geometry.setAttribute('aOpacity', new THREE.BufferAttribute(opacities, 1))
+	geometry.setAttribute('position', new BufferAttribute(positions, 3))
+	geometry.setAttribute('aScale', new BufferAttribute(scales, 1))
+	geometry.setAttribute('aSpeed', new BufferAttribute(speeds, 3))
+	geometry.setAttribute('aRotation', new BufferAttribute(rotations, 3))
+	geometry.setAttribute('aOpacity', new BufferAttribute(opacities, 1))
 
 	/**
 	 * Textures
@@ -97,23 +102,23 @@ async function sparks(scene, renderer, count) {
 	/**
 	 * Material
 	 */
-	const material = new THREE.ShaderMaterial({
+	const material = new ShaderMaterial({
 		depthWrite: false,
-		blending: THREE.AdditiveBlending,
-		vertexColors: true,
+		blending: AdditiveBlending,
+		precision: 'lowp',
 		vertexShader,
 		fragmentShader,
 		uniforms: {
 			uTime: { value: 10.0 },
-			uSize: { value: 15 },
-			uSpeed: { value: new THREE.Vector3(0.0000001, 0.02, Math.random()) },
+			uSize: { value: 14 / pixelRatio },
+			uSpeed: { value: new Vector3(0.0000001, 0.02, Math.random()) },
 			uGravity: { value: parameters.gravity },
-			uWorldSize: { value: new THREE.Vector3(160, 100, 8) },
+			uWorldSize: { value: new Vector3(160, 100, 8) },
 			uTexture: { value: particleTexture },
-			uRotation: { value: new THREE.Vector3(1, 1, 1) },
+			uRotation: { value: new Vector3(1, 1, 1) },
 			uWind: { value: 0 },
 			uResolution: {
-				value: new THREE.Vector2(w, h),
+				value: new Vector2(w, h),
 			},
 		},
 	})
@@ -121,17 +126,17 @@ async function sparks(scene, renderer, count) {
 	/**
 	 * Points
 	 */
-	const points = new THREE.Points(geometry, material)
-	points.scale.x = 48 / pixelRatio
+	const points = new Points(geometry, material)
+	points.scale.x = 24 / pixelRatio
 	points.scale.y = 24 / pixelRatio
-	points.scale.z = 18 / pixelRatio
+	points.scale.z = 24 / pixelRatio
 	points.position.z = -10
 	scene.add(points)
 
 	/**
 	 * Animate
 	 */
-	const clock = new THREE.Clock()
+	const clock = new Clock()
 	let previousTime = 0
 
 	const tick = () => {
@@ -146,12 +151,12 @@ async function sparks(scene, renderer, count) {
 		// Current Wind Uniform
 		material.uniforms.uWind.value = wind.current
 
-		if (Math.random() > 0.8) {
+		if (Math.random() > 0.9) {
 			wind.target = (wind.min + Math.random() * (wind.max - wind.min)) * (Math.random() > 0.5 ? -1 : 1) * 100
 		}
 
 		// Elapsed Time Uniform update
-		material.uniforms.uTime.value = elapsedTime + 200
+		material.uniforms.uTime.value = elapsedTime + 250
 
 		// Call tick again on the next frame
 		requestAnimationFrame(tick)

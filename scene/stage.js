@@ -1,25 +1,23 @@
 export async function createRenderer() {
 	const { getDefaultSizes } = await import('./utils')
 	const { width, height, pixelRatio } = getDefaultSizes()
-	const { WebGLRenderer, PCFSoftShadowMap, sRGBEncoding, ACESFilmicToneMapping } = await import('three')
+	const { WebGLRenderer, sRGBEncoding, ACESFilmicToneMapping } = await import('three')
 
 	const canvas = document.querySelector('.webgl')
 
-	const renderer = new WebGLRenderer({
-		powerPreference: 'low-power',
-		antialias: true,
-		stencil: false,
-		canvas,
-		depth: true,
-	})
+	const renderer = new WebGLRenderer({ canvas, stencil: true, depth: true, powerPreference: 'high-performance' })
 
 	renderer.physicallyCorrectLights = true
 	renderer.outputEncoding = sRGBEncoding
 	renderer.toneMapping = ACESFilmicToneMapping
 	renderer.toneMappingExposure = 1.25
-	// renderer.logarithmicDepthBuffer = true
+	renderer.logarithmicDepthBuffer = true
 	renderer.setSize(width, height)
 	renderer.setPixelRatio(pixelRatio)
+
+	if (pixelRatio === 1) {
+		renderer.antialias = true
+	}
 
 	return renderer
 }
