@@ -58,12 +58,6 @@ export default async function webglStuff() {
 	const renderFunc = () => renderer.render(scene, camera)
 	// const controls = await createOrbitControl(camera, renderer)
 
-	renderer.setAnimationLoop(() => {
-		renderFunc()
-		// controls.update()
-		camera.updateProjectionMatrix()
-	})
-
 	window.addEventListener('resize', () => {
 		const { width, height } = getDefaultSizes()
 		camera.aspect = width / height

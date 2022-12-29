@@ -23,7 +23,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 
 	await getModelOption(character)
 
-	const { scene, camera, renderer } = await stage()
+	const { scene, camera, renderer, renderFunc } = await stage()
 	const pixelRatio = renderer.getPixelRatio()
 
 	const model = await handleModel(character)
@@ -36,14 +36,23 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		await scroll(camera, { sectionSelectors, scrollSelector })
 	}
 
-	await background(scene, renderer)
-	await sparks(scene, renderer, 2200 / pixelRatio)
+	const backgroundLoop = await background(scene, renderer)
+	const sparksLoop = await sparks(scene, renderer, 2200 / pixelRatio)
 	scene.add(model)
 
-	console.log(renderer.info)
-
 	const { default: stats } = await import('./stats')
-	await stats()
+	const updateStats = await stats()
+
+	renderer.setAnimationLoop(() => {
+		camera.updateProjectionMatrix()
+		renderFunc()
+		sparksLoop()
+		backgroundLoop()
+		updateStats()
+		// controls.update()
+	})
+
+	console.log(renderer.info)
 
 	return {
 		lockScroll: () => store.lockScroll(true),

@@ -139,7 +139,9 @@ async function sparks(scene, renderer, count) {
 	const clock = new Clock()
 	let previousTime = 0
 
-	const tick = () => {
+	// renderer.setAnimationLoop(() => {})
+
+	const animation = () => {
 		const elapsedTime = clock.getElapsedTime()
 		const deltaTime = elapsedTime - previousTime
 		previousTime = elapsedTime
@@ -157,12 +159,9 @@ async function sparks(scene, renderer, count) {
 
 		// Elapsed Time Uniform update
 		material.uniforms.uTime.value = elapsedTime + 250
-
-		// Call tick again on the next frame
-		requestAnimationFrame(tick)
 	}
 
-	tick()
+	return animation
 }
 
 export default sparks

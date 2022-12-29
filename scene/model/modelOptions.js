@@ -4,7 +4,7 @@ async function getModelOptions(option) {
 	if (option === 'angel') {
 		const { default: angelCameraStates } = await import('./angel.json')
 		store.setState({
-			modelPath: 'angel/angel.glb',
+			modelPath: 'angel/scene.glb',
 			cameraState: angelCameraStates,
 		})
 		return null

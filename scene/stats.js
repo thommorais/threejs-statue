@@ -1,28 +1,18 @@
 async function stats() {
-    if (process.env.NODE_ENV !== 'development') {
-        return null
-    }
+	const { default: Stats } = await import('three/addons/libs/stats.module.js')
+	const prevStats = document.querySelector('.stats')
 
-    const { default: Stats } = await import('three/addons/libs/stats.module.js')
-    const prevStats = document.querySelector('.stats')
+	if (prevStats) {
+		document.body.removeChild(prevStats)
+	}
 
-    if (prevStats) {
-        document.body.removeChild(prevStats)
-    }
+	const stats = new Stats()
+	stats.dom.classList.add('stats')
 
-    const stats = new Stats()
-    stats.dom.classList.add('stats')
+	const container = document.body
+	container.appendChild(stats.dom)
 
-    const container = document.body
-    container.appendChild(stats.dom)
-
-    function animate() {
-        stats.update()
-        requestAnimationFrame(animate)
-    }
-
-    animate()
-
+	return () => stats.update()
 }
 
 export default stats
