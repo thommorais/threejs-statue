@@ -1,10 +1,13 @@
-import * as THREE from 'three'
-
-function randomIntFromInterval(min, max) {
-	// min and max included
-	return Math.floor(Math.random() * (max - min + 1) + min)
+function randomIntFromInterval(min, max, avoid = []) {
+	if (!Array.isArray(avoid)) {
+		avoid = [avoid]
+	}
+	let number = Math.floor(Math.random() * (max - min + 1)) + min
+	if (avoid.includes(number)) {
+		return randomIntFromInterval(min, max, avoid)
+	}
+	return number
 }
-
 async function background(scene, renderer) {
 	const pixelRatio = renderer.getPixelRatio()
 
@@ -13,10 +16,9 @@ async function background(scene, renderer) {
 	let loader = new TextureLoader()
 	const zRange = []
 
-	let cloudParticles = []
 	loader.load('smoke.png', function (texture) {
 		const cloudGeo = new PlaneGeometry(250, 250)
-
+		let cloudParticles = []
 		const cloudMaterial = new MeshLambertMaterial({
 			map: texture,
 			transparent: true,
@@ -24,7 +26,7 @@ async function background(scene, renderer) {
 
 		for (let p = 0; p < 16 / pixelRatio; p++) {
 			const cloud = new Mesh(cloudGeo, cloudMaterial)
-			const z = randomIntFromInterval(-70, -30)
+			const z = Math.abs(randomIntFromInterval(-70, -30, zRange)) * -1
 			const x = randomIntFromInterval(-10, 10)
 			const rz = randomIntFromInterval(0, 15)
 			zRange.push(z)
@@ -36,35 +38,50 @@ async function background(scene, renderer) {
 			cloudParticles.push(cloud)
 			scene.add(cloud)
 		}
+
+		console.log(zRange)
+
+		function createThunder(zRange) {
+			if (pixelRatio > 1) {
+				return () => {}
+			}
+
+			const flashMaxZ = Math.max(...zRange)
+			const flashMinZ = flashMaxZ - 1
+
+			const flash = new PointLight(0xff0000, 175, 250, 1.5)
+			flash.position.set(0, 0, flashMinZ)
+			scene.add(flash)
+
+			const frequency = Math.min(0.85 * pixelRatio, 0.9)
+
+			return () => {
+				if (Math.random() > frequency) {
+					if (flash.power < 100) {
+						flash.intensity = 400
+						const x = randomIntFromInterval(-20, 20)
+						const y = randomIntFromInterval(-40, 45)
+						const z = randomIntFromInterval(flashMinZ, flashMaxZ)
+						flash.position.set(x, y, z)
+					}
+					flash.power = 50 + Math.random() * 500
+				}
+			}
+		}
+
+		const animateThunder = createThunder(zRange)
+
+		function animate() {
+			cloudParticles.forEach((p) => {
+				p.rotation.z -= 0.005
+			})
+
+			animateThunder()
+			requestAnimationFrame(animate)
+		}
+
 		animate()
 	})
-
-	let flash
-	if (pixelRatio === 1) {
-		flash = new PointLight(0xff0000, 75, 250, 1.5)
-		flash.position.set(0, 0, -40)
-		scene.add(flash)
-	}
-
-	const flashMinZ = Math.min(...zRange) + 10
-	const flashMaxZ = Math.max(...zRange) + 10
-
-	function animate() {
-		cloudParticles.forEach((p) => {
-			p.rotation.z -= 0.005
-		})
-
-		if (Math.random() > 0.75 && pixelRatio === 1) {
-			if (flash.power < 100) {
-				const x = randomIntFromInterval(-15, 15)
-				const y = randomIntFromInterval(-40, 40)
-				const z = randomIntFromInterval(flashMinZ, flashMaxZ)
-				flash.position.set(x, y, z)
-			}
-			flash.power = 50 + Math.random() * 500
-		}
-		requestAnimationFrame(animate)
-	}
 }
 
 export default background
