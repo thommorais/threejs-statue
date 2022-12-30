@@ -4,7 +4,7 @@ async function getModelOptions(option) {
 	if (option === 'angel') {
 		const { default: angelCameraStates } = await import('./angel.json')
 		store.setState({
-			modelPath: 'angel/scene.glb',
+			modelPath: 'angel/angel.glb',
 			cameraState: angelCameraStates,
 		})
 		return null
@@ -22,7 +22,7 @@ async function getModelOptions(option) {
 	if (option === 'human-mage') {
 		const { default: humanMageCameraStates } = await import('./human-mage.json')
 		store.setState({
-			modelPath: 'human-mage/scene.glb',
+			modelPath: 'human-mage/human-mage.glb',
 			cameraState: humanMageCameraStates,
 		})
 		return null
