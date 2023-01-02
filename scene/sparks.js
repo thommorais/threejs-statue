@@ -83,7 +83,7 @@ async function sparks(scene, renderer, count) {
 
 		// Rotations
 		rotations[i3 + 0] = Math.random() * 5 * Math.PI
-		rotations[i3 + 1] = Math.random() * 10
+		rotations[i3 + 1] = Math.random() * 12
 		rotations[i3 + 2] = Math.random() * 10
 	}
 

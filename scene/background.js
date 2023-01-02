@@ -16,7 +16,7 @@ async function background(scene, renderer) {
 	const loader = new TextureLoader()
 	const zRange = []
 
-	const texture = await new Promise((resolve) => loader.load('smoke.png', (texture) => resolve(texture)))
+	const texture = await new Promise((resolve) => loader.load('smoke-o.webp', (texture) => resolve(texture)))
 
 	const cloudGeo = new PlaneGeometry(250, 250)
 	const cloudParticles = []
