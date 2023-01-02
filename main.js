@@ -6,8 +6,6 @@ import main from './scene/index'
 		character: 'angel',
 		sectionSelectors: '.chapter',
 		scrollSelector: '.container-3d',
-		onModelLoading: (percentage) => percentage,
+		onModelLoading: (percentage) => console.log(percentage),
 	})
-
-	// api.subscribe(console.log, 'scrollProgress')
 })()
