@@ -45,15 +45,7 @@ async function smoothScroll(scrollerContainer, config) {
 
 	let onScrollTimeout = null
 
-	function handleWheel(event) {
-		const { deltaY } = event
-
-		if (deltaY > config.threshold.desktop) {
-			store.setState({ direction: 'normal' })
-		} else if (deltaY < -config.threshold.desktop) {
-			store.setState({ direction: 'reverse' })
-		}
-
+	function handleWheel({ scroll }) {
 		const scrollState = store.getState()
 		const direction = scrollState.direction
 		const sections = scrollState.sections
@@ -69,7 +61,7 @@ async function smoothScroll(scrollerContainer, config) {
 			return
 		}
 
-		if (Math.abs(deltaY) > config.threshold.desktop) {
+		if (scroll) {
 			store.lockScroll(true)
 			clearTimeout(onScrollTimeout)
 			onScrollTimeout = setTimeout(() => {
@@ -91,7 +83,46 @@ async function smoothScroll(scrollerContainer, config) {
 		}
 	}
 
-	scroller.addEventListener('wheel', handleWheel, { passive: false })
+	function handleMouseWhell(event) {
+		const { deltaY } = event
+
+		if (deltaY > config.threshold.desktop) {
+			store.setState({ direction: 'normal' })
+		} else if (deltaY < -config.threshold.desktop) {
+			store.setState({ direction: 'reverse' })
+		}
+
+		const scroll = Math.abs(deltaY) > config.threshold.desktop
+
+		handleWheel({ scroll })
+	}
+
+	scroller.addEventListener('wheel', handleMouseWhell, { passive: false })
+
+	let startY = 0
+	let currentY = 0
+
+	function handleTouchStart(event) {
+		startY = event.touches[0].clientY
+	}
+
+	function handleTouchMove(event) {
+		currentY = event.touches[0].clientY
+		const deltaY = startY - currentY
+
+		if (deltaY > config.threshold.mobile) {
+			store.setState({ direction: 'normal' })
+		} else if (deltaY < -config.threshold.mobile) {
+			store.setState({ direction: 'reverse' })
+		}
+
+		const scroll = Math.abs(deltaY) > config.threshold.mobile
+
+		handleWheel({ scroll })
+	}
+
+	scroller.addEventListener('touchstart', handleTouchStart)
+	scroller.addEventListener('touchmove', handleTouchMove, { passive: false })
 
 	return { bodyScrollBar, scroller }
 }
