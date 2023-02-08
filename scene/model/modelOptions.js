@@ -4,7 +4,7 @@ async function getModelOptions(option) {
 	const defaultModel = 'human-mage/hellboy.glb'
 
 	if (option === 'angel') {
-		const modelPath = import.meta.env.PROD ? defaultModel : 'angel/princess/scene.gltf'
+		const modelPath = 'angel/princess/scene.gltf'
 
 		const { default: angelCameraStates } = await import('./angel.json')
 		store.setState({
