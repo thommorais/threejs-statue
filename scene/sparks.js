@@ -26,11 +26,11 @@ async function sparks(scene, renderer, count) {
 	parameters.sizeMax = 400.0
 	parameters.opacityMin = 0.5
 	parameters.opacityMax = 1.0
-	parameters.gravity = 150.0
+	parameters.gravity = 200.0
 
 	let wind = {
 		current: -1,
-		force: 0.75,
+		force: 0.15,
 		target: 1.0,
 		min: 0.1,
 		max: 1.0,

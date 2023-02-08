@@ -15,6 +15,6 @@ void main() {
 
   float distBloom = length(rotated * smoothstep(0.25, .75, vUv));
 
-  gl_FragColor = vec4(red, sparks.gb, sparks.a * vOpacity + distBloom);
+  gl_FragColor = vec4(red, 0.25,  sparks.b, sparks.a * vOpacity + distBloom);
 
 }

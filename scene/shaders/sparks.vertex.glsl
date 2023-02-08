@@ -18,10 +18,10 @@ varying vec2 vUv;
 
 void main() {
 
-  vec4 modelPosition = modelMatrix * vec4(position, 1.5);
+  vec4 modelPosition = modelMatrix * vec4(position, 2.);
 
   modelPosition.x = mod(modelPosition.x + uTime + uWind * (aSpeed.x + uSpeed.x), uWorldSize.x * 2.0) - uWorldSize.x;
-  modelPosition.y = mod(modelPosition.y + uTime * (aSpeed.y + uSpeed.y) * uGravity, uWorldSize.y * 2.0) - uWorldSize.y;
+  modelPosition.y = mod(modelPosition.y + uTime * 2. * (aSpeed.y + uSpeed.y) * uGravity, uWorldSize.y * 2.0) - uWorldSize.y;
 
   modelPosition.x += (sin(uTime * aSpeed.z) * aRotation.z) + 0.01;
   modelPosition.z += cos(uTime * aSpeed.z) * aRotation.z;
@@ -32,7 +32,7 @@ void main() {
 
   vOpacity = aOpacity;
 
-  if(modelPosition.y > 24.) {
+  if(modelPosition.y > 34.) {
     float transitionPercent = modelPosition.y / 100.0;
     vOpacity = smoothstep(vOpacity, 0.0, transitionPercent);
   }
