@@ -120,7 +120,7 @@ async function theatre(lights, model, camera, points) {
 	// })
 }
 
-async function createPoints(scene, pos) {
+async function createPoints(pos) {
 	const { PlaneGeometry, MeshPhongMaterial, Mesh, FlatShading } = await import('three')
 
 	const geometry = new PlaneGeometry(1, 1)
@@ -143,16 +143,16 @@ async function dev(scene, camera, lights, model) {
 	if (true) {
 		// camera.position.set(0, 20, 90)
 
-		const chest = await createPoints(scene, { x: 2.5, y: 17, z: 3.5 })
+		const chest = await createPoints({ x: 2.5, y: 17, z: 3.5 })
 
-		const face = await createPoints(scene, { x: -0.75, y: 31, z: 4.1 })
-		const aside = await createPoints(scene, { x: 10, y: 28, z: 5 })
+		const face = await createPoints({ x: -0.75, y: 31, z: 4.1 })
+		const aside = await createPoints({ x: 10, y: 28, z: 5 })
 		aside.material.color.setHex(0xff0000)
 
-		const half_face = await createPoints(scene, { x: 6.25, y: 32, z: -3 })
-		const hand = await createPoints(scene, { x: 15, y: 16, z: 8 })
-		const belt = await createPoints(scene, { x: -0.75, y: 11, z: 5 })
-		const footer = await createPoints(scene, { x: -17.25, y: -27.5, z: 4.75 })
+		const half_face = await createPoints({ x: 6.25, y: 32, z: -3 })
+		const hand = await createPoints({ x: 15, y: 16, z: 8 })
+		const belt = await createPoints({ x: -0.75, y: 11, z: 5 })
+		const footer = await createPoints({ x: -17.25, y: -27.5, z: 4.75 })
 
 		await theatre(lights, model, camera, [
 			{ face },

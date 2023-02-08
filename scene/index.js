@@ -23,7 +23,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 
 	await getModelOption(character)
 
-	const { scene, camera, renderer, renderFunc } = await stage()
+	const { scene, camera, renderer, renderFunc, controls } = await stage()
 	const pixelRatio = renderer.getPixelRatio()
 
 	const model = await handleModel(character)
@@ -49,7 +49,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		sparksLoop()
 		backgroundLoop()
 		updateStats()
-		// controls.update()
+		controls.update()
 	})
 
 	console.log(renderer.info)
