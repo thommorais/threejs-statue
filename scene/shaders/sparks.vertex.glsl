@@ -20,11 +20,11 @@ void main() {
 
   vec4 modelPosition = modelMatrix * vec4(position, 2.);
 
-  modelPosition.x = mod(modelPosition.x + uTime + uWind * (aSpeed.x + uSpeed.x), uWorldSize.x * 2.0) - uWorldSize.x;
-  modelPosition.y = mod(modelPosition.y + uTime * 2. * (aSpeed.y + uSpeed.y) * uGravity, uWorldSize.y * 2.0) - uWorldSize.y;
+  modelPosition.x =  mod(modelPosition.x + uTime + uWind * (aSpeed.x + uSpeed.x), uWorldSize.x * 2.0) - uWorldSize.x;
+  modelPosition.y =mod(modelPosition.y + uTime * 2. * (aSpeed.y + uSpeed.y) * uGravity, uWorldSize.y * 2.0) - uWorldSize.y;
 
-  modelPosition.x += (sin(uTime * aSpeed.z) * aRotation.z) + 0.01;
-  modelPosition.z += cos(uTime * aSpeed.z) * aRotation.z;
+  // modelPosition.x += (sin(uTime * aSpeed.z) * aRotation.z) + 0.01;
+  // modelPosition.z += cos(uTime * aSpeed.z) * aRotation.z;
 
   vec4 viewPosition = viewMatrix * modelPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;
@@ -37,8 +37,8 @@ void main() {
     vOpacity = smoothstep(vOpacity, .0, transitionPercent);
   }
 
-  if(modelPosition.y < 25.) {
-  gl_PointSize = uSize * aScale - 2.;
+  if(modelPosition.y > 25.) {
+    gl_PointSize = uSize * aScale - 2.;
   }
 
 

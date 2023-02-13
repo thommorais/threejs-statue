@@ -1,9 +1,9 @@
 precision mediump float;
 varying float vOpacity;
+varying vec3 vResolution;
 
 varying float vRotation;
 varying vec2 vUv;
-
 
 void main() {
 
@@ -11,15 +11,7 @@ void main() {
 
   float distBloom = length(rotated * smoothstep(0.25, .75, vUv));
 
-   float r = 0.0, delta = 0.0, alpha = 1.0;
-    vec2 cxy = 2.0 * gl_PointCoord - 1.0;
-    r = dot(cxy, cxy);
-    #ifdef GL_OES_standard_derivatives
-        delta = fwidth(r);
-        alpha = 1.0 - smoothstep(1.0 - delta, 1.0 + delta, r);
-    #endif
-
-  vec4 color = vec4(1., 0., 0., 0.5 * alpha);
+  vec4 color = vec4(1., 0., 0., 0.15 + distBloom);
 
   gl_FragColor = color;
 
