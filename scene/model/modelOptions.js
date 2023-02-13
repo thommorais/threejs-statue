@@ -14,8 +14,8 @@ async function getModelOptions(option) {
 		return null
 	}
 
-	if (option === 'elf') {
-		const modelPath = import.meta.env.PROD ? defaultModel : 'dark-elf/scene.glb'
+	if (option === 'barbarian') {
+		const modelPath = import.meta.env.PROD ? defaultModel : 'barbarian/scene.glb'
 
 		const { default: angelCameraStates } = await import('./angel.json')
 		store.setState({
@@ -28,7 +28,7 @@ async function getModelOptions(option) {
 	if (option === 'human-mage') {
 		const modelPath = import.meta.env.PROD ? defaultModel : 'human-mage/human-mage.glb'
 
-		const { default: humanMageCameraStates } = await import('./human-mage.json')
+		const { default: humanMageCameraStates } = await import('./angel.json')
 		store.setState({
 			modelPath,
 			cameraState: humanMageCameraStates,

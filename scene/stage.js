@@ -56,7 +56,7 @@ export default async function webglStuff() {
 	const camera = await creatPerspectiveCamera()
 
 	const renderFunc = () => renderer.render(scene, camera)
-	const controls = await createOrbitControl(camera, renderer)
+	// const controls = await createOrbitControl(camera, renderer)
 
 	window.addEventListener('resize', () => {
 		const { width, height } = getDefaultSizes()
@@ -65,5 +65,5 @@ export default async function webglStuff() {
 		renderer.setSize(width, height)
 	})
 
-	return { renderer, renderFunc, scene, camera, controls }
+	return { renderer, renderFunc, scene, camera }
 }

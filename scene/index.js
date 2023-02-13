@@ -23,13 +23,13 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 
 	await getModelOption(character)
 
-	const { scene, camera, renderer, renderFunc, controls } = await stage()
+	const { scene, camera, renderer, renderFunc } = await stage()
 	const pixelRatio = renderer.getPixelRatio()
 
 	const model = await handleModel(character)
 	const lights = await createLights(scene, model)
 
-	if (false) {
+	if (true) {
 		const { default: dev } = await import('./dev')
 		await dev(scene, camera, lights, model)
 	} else {
@@ -49,7 +49,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		sparksLoop()
 		backgroundLoop()
 		updateStats()
-		controls.update()
+		// controls.update()
 	})
 
 	console.log(renderer.info)

@@ -95,29 +95,29 @@ async function theatre(lights, model, camera, points) {
 		camera.updateProjectionMatrix()
 	})
 
-	// points.forEach((valu) => {
-	// 	const [name, obj] = Object.entries(valu)[0]
-	// 	const leftObj = sheet.object(`Points ${name}`, {
-	// 		position: types.compound({
-	// 			x: types.number(obj.position.x, { range: [-150, 150] }),
-	// 			y: types.number(obj.position.y, { range: [-150, 150] }),
-	// 			z: types.number(obj.position.z, { range: [-150, 100] }),
-	// 		}),
+	points.forEach((valu) => {
+		const [name, obj] = Object.entries(valu)[0]
+		const leftObj = sheet.object(`Points ${name}`, {
+			position: types.compound({
+				x: types.number(obj.position.x, { range: [-150, 150] }),
+				y: types.number(obj.position.y, { range: [-150, 150] }),
+				z: types.number(obj.position.z, { range: [-150, 100] }),
+			}),
 
-	// 		rotation: types.compound({
-	// 			x: types.number(obj.rotation.x, { range: [-2, 2] }),
-	// 			y: types.number(obj.rotation.y, { range: [-2, 2] }),
-	// 			z: types.number(obj.rotation.z, { range: [-2, 2] }),
-	// 		}),
-	// 	})
+			rotation: types.compound({
+				x: types.number(obj.rotation.x, { range: [-2, 2] }),
+				y: types.number(obj.rotation.y, { range: [-2, 2] }),
+				z: types.number(obj.rotation.z, { range: [-2, 2] }),
+			}),
+		})
 
-	// 	leftObj.onValuesChange((values) => {
-	// 		const { x, y, z } = values.position
-	// 		obj.position.set(x, y, z)
-	// 		const rotation = values.rotation
-	// 		obj.rotation.set(rotation.x * Math.PI, rotation.y * Math.PI, rotation.z * Math.PI)
-	// 	})
-	// })
+		leftObj.onValuesChange((values) => {
+			const { x, y, z } = values.position
+			obj.position.set(x, y, z)
+			const rotation = values.rotation
+			obj.rotation.set(rotation.x * Math.PI, rotation.y * Math.PI, rotation.z * Math.PI)
+		})
+	})
 }
 
 async function createPoints(pos) {
@@ -141,7 +141,7 @@ async function createPoints(pos) {
 
 async function dev(scene, camera, lights, model) {
 	if (true) {
-		// camera.position.set(0, 20, 90)
+		camera.position.set(0, 20, 90)
 
 		const chest = await createPoints({ x: 2.5, y: 17, z: 3.5 })
 
