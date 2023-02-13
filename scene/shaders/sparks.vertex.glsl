@@ -32,14 +32,20 @@ void main() {
 
   vOpacity = aOpacity;
 
-  if(modelPosition.y > 34.) {
-    float transitionPercent = modelPosition.y / 100.0;
-    vOpacity = smoothstep(vOpacity, 0.0, transitionPercent);
+  if(modelPosition.y > 25.) {
+    float transitionPercent = modelPosition.y / 60.0;
+    vOpacity = smoothstep(vOpacity, .0, transitionPercent);
   }
 
-  vUv = uv;
-  vRotation = 0.2;
+  if(modelPosition.y < 25.) {
+  gl_PointSize = uSize * aScale - 2.;
+  }
 
-  gl_PointSize = uSize * aScale;
+
+
+  vUv = uv;
+  vRotation = 0.;
+
+  gl_PointSize = (uSize - 2.) * aScale;
   gl_PointSize *= (1.0 / -viewPosition.z);
 }

@@ -60,26 +60,26 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
-"@theatre/core@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.npmjs.org/@theatre/core/-/core-0.5.0.tgz"
-  integrity sha512-IW3Ym3mPL+u6+Ectn36Ku7oXEsGRXESZ6lX6EhG+LFSs4cibMRnDgmuUIs7PMHBa1a5RBK7Y91SdjHhTy4D1rg==
+"@theatre/core@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@theatre/core/-/core-0.6.0.tgz#bc6e640b4f5aba7098b2cc7cac7091cfdd4cc096"
+  integrity sha512-HyOoEQapeVbgKBBVfv1rjklN8oAY1/6RZuzntdL9Nfqb5UVzyVR0Im9q4WBPHx6d1dB1BKpAwIw6PzqlKoyehA==
   dependencies:
-    "@theatre/dataverse" "0.5.0"
+    "@theatre/dataverse" "0.6.0"
 
-"@theatre/dataverse@0.5.0":
-  version "0.5.0"
-  resolved "https://registry.npmjs.org/@theatre/dataverse/-/dataverse-0.5.0.tgz"
-  integrity sha512-wSqxrfIf9gXmZ3zbmWH1ZLLjDU8rRJ15aAK1hszZUcW5riNd1VFeGROh5+BGF3RZXtWwYIxsyQ7DwS+GbRgnaA==
+"@theatre/dataverse@0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@theatre/dataverse/-/dataverse-0.6.0.tgz#f98409b1814ccbe07c3d0d640438b1cc004735b0"
+  integrity sha512-1W7b8bQTZeRmmrY64HTQzEtjLJWBmdOkfK/liR+LSSjgAylY3CjZ4/vaDUMmRQr4zCeQjyNVmrvwaIZ/33s+tQ==
   dependencies:
     lodash-es "^4.17.21"
 
-"@theatre/studio@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.npmjs.org/@theatre/studio/-/studio-0.5.0.tgz"
-  integrity sha512-4Uvm8L/C9rJptz/7DvRp0fP10GkMNV5XVlgYgYELpDgxK2l0m9L68ZPg1wYCDLOqDCBKIs/LKzm0TMW/DAj8Iw==
+"@theatre/studio@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@theatre/studio/-/studio-0.6.0.tgz#87bb6d04c0b90fb10132b43445df1ff7c9e416ef"
+  integrity sha512-DH53wWSkIDevbYJUybLH5nIx+rFgiWlykYOmDKC9WK9QUQFYRpnaBu4UNIo+RmGZ+I2ZMSHx1RfrfnBJCr1j6A==
   dependencies:
-    "@theatre/dataverse" "0.5.0"
+    "@theatre/dataverse" "0.6.0"
 
 acorn@^8.5.0:
   version "8.8.1"
@@ -90,11 +90,6 @@ buffer-from@^1.0.0:
   version "1.1.2"
   resolved "https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.2.tgz"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
-
-colorjs.io@^0.4.2:
-  version "0.4.2"
-  resolved "https://registry.npmjs.org/colorjs.io/-/colorjs.io-0.4.2.tgz"
-  integrity sha512-vtpiH+BTzZtzs4Yno0GyoC05Z20fTeLwNJ7lQzjxi8GJJb1SZO2o5yUBAUXzgvrO2JNuyIqur4gb1Z6HBjpd9A==
 
 commander@^2.20.0:
   version "2.20.3"
@@ -366,10 +361,10 @@ terser@^5.15.1:
     commander "^2.20.0"
     source-map-support "~0.5.20"
 
-three@^0.148.0:
-  version "0.148.0"
-  resolved "https://registry.npmjs.org/three/-/three-0.148.0.tgz"
-  integrity sha512-8uzVV+qhTPi0bOFs/3te3RW6hb3urL8jYEl6irjCWo/l6sr8MPNMcClFev/MMYeIxr0gmDcoXTy/8LXh/LXkfw==
+three@^0.149.0:
+  version "0.149.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.149.0.tgz#a9cf78b17d02f063ffe6dfca1e300eff2eab2927"
+  integrity sha512-tohpUxPDht0qExRLDTM8sjRLc5d9STURNrdnK3w9A+V4pxaTBfKWWT/IqtiLfg23Vfc3Z+ImNfvRw1/0CtxrkQ==
 
 tslib@^1.10.0:
   version "1.14.1"
@@ -401,8 +396,8 @@ vite@^3.1.0:
     fsevents "~2.3.2"
 
 zustand@^4.1.4:
-  version "4.1.4"
-  resolved "https://registry.npmjs.org/zustand/-/zustand-4.1.4.tgz"
-  integrity sha512-k2jVOlWo8p4R83mQ+/uyB8ILPO2PCJOf+QVjcL+1PbMCk1w5OoPYpAIxy9zd93FSfmJqoH6lGdwzzjwqJIRU5A==
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.3.3.tgz#c9113499074dde2d6d99c1b5f591e9329572c224"
+  integrity sha512-x2jXq8S0kfLGNwGh87nhRfEc2eZy37tSatpSoSIN+O6HIaBhgQHSONV/F9VNrNcBcKQu/E80K1DeHDYQC/zCrQ==
   dependencies:
     use-sync-external-store "1.2.0"

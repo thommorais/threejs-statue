@@ -1,21 +1,18 @@
 async function sparks(scene, renderer, count) {
 	const {
-		TextureLoader,
 		BufferGeometry,
 		BufferAttribute,
 		Vector3,
 		Vector2,
 		Points,
 		Clock,
-		AdditiveBlending,
 		ShaderMaterial,
 	} = await import('three')
 
 	const { default: fragmentShader } = await import('./shaders/sparks.fragment.glsl')
 	const { default: vertexShader } = await import('./shaders/sparks.vertex.glsl')
 
-	const snowflake = '/sparks.png'
-	const snowflakeTexture = new TextureLoader().load(snowflake)
+
 	const pixelRatio = renderer.getPixelRatio()
 
 	const parameters = {}
@@ -33,8 +30,8 @@ async function sparks(scene, renderer, count) {
 		force: 0.15,
 		target: 1.0,
 		min: 0.1,
-		max: 1.0,
-		easing: 0.005,
+		max: 5.0,
+		easing: 0.0075,
 	}
 
 	/**
@@ -53,9 +50,9 @@ async function sparks(scene, renderer, count) {
 		const i3 = i * 3
 
 		// Position
-		positions[i3] = (Math.random() - 0.5) * 12
-		positions[i3 + 1] = (Math.random() - 0.5) * 12
-		positions[i3 + 2] = (Math.random() - 0.5) * 12
+		positions[i3] = (Math.random() - 0.5) * 10
+		positions[i3 + 1] = (Math.random() - 0.5) * 10
+		positions[i3 + 2] = (Math.random() - 0.5) * 10
 
 		// Randomness
 		const randomX =
@@ -83,8 +80,8 @@ async function sparks(scene, renderer, count) {
 
 		// Rotations
 		rotations[i3 + 0] = Math.random() * 5 * Math.PI
-		rotations[i3 + 1] = Math.random() * 12
-		rotations[i3 + 2] = Math.random() * 10
+		rotations[i3 + 1] = Math.random() * 24
+		rotations[i3 + 2] = Math.random() * 36
 	}
 
 	geometry.setAttribute('position', new BufferAttribute(positions, 3))
@@ -96,26 +93,23 @@ async function sparks(scene, renderer, count) {
 	/**
 	 * Textures
 	 */
-	const particleTexture = snowflakeTexture
-	const w = window.innerWidth
+	const w = window.innerWidth / 2
 	const h = window.innerHeight
 	/**
 	 * Material
 	 */
 	const material = new ShaderMaterial({
-		depthWrite: false,
-		blending: AdditiveBlending,
-		precision: 'lowp',
+		depthTest: true,
+		depthWrite: true,
+		precision: 'highp',
 		vertexShader,
 		fragmentShader,
 		uniforms: {
 			uTime: { value: 10.0 },
-			uSize: { value: 14 / pixelRatio },
+			uSize: { value: 4 / pixelRatio },
 			uSpeed: { value: new Vector3(0.0000001, 0.02, Math.random()) },
 			uGravity: { value: parameters.gravity },
-			uWorldSize: { value: new Vector3(160, 100, 8) },
-			uTexture: { value: particleTexture },
-			uRotation: { value: new Vector3(1, 1, 1) },
+			uWorldSize: { value: new Vector3(80, 75, 4) },
 			uWind: { value: 0 },
 			uResolution: {
 				value: new Vector2(w, h),
@@ -127,10 +121,10 @@ async function sparks(scene, renderer, count) {
 	 * Points
 	 */
 	const points = new Points(geometry, material)
-	points.scale.x = 24 / pixelRatio
-	points.scale.y = 24 / pixelRatio
-	points.scale.z = 24 / pixelRatio
-	points.position.z = -10
+	points.scale.x = 12 / pixelRatio
+	points.scale.y = 48 / pixelRatio
+	points.scale.z = 12 / pixelRatio
+	points.position.z = -2.5
 	scene.add(points)
 
 	/**
@@ -158,7 +152,7 @@ async function sparks(scene, renderer, count) {
 		}
 
 		// Elapsed Time Uniform update
-		material.uniforms.uTime.value = elapsedTime + 250
+		material.uniforms.uTime.value = elapsedTime
 	}
 
 	return animation

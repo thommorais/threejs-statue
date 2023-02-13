@@ -41,7 +41,6 @@ async function theatre(lights, model, camera, points) {
 	}
 
 	lightSheets.forEach(({ name, light }) => {
-		console.log(light.color)
 		const leftObj = sheet.object(name, {
 			position: types.compound({
 				x: types.number(light.position.x, { range: [-500, 500] }),
