@@ -4,11 +4,13 @@ async function theatre(lights, model, camera, points) {
 	const { Vector3 } = await import('three')
 
 	const { default: store } = await import('./store')
+	const { cameraState } = store.getState()
+
 
 	studio.initialize()
 
 	// Create a sheet
-	const sheet = getProject('lights').sheet('lights')
+	const sheet = getProject('lights', { state: cameraState }).sheet('lights')
 
 	const [leftLight, topLight, rightLight, one] = lights
 
@@ -140,7 +142,7 @@ async function createPoints(pos) {
 
 async function dev(scene, camera, lights, model) {
 	if (true) {
-		camera.position.set(0, 20, 90)
+		// camera.position.set(0, 20, 90)
 
 		const chest = await createPoints({ x: 2.5, y: 17, z: 3.5 })
 
