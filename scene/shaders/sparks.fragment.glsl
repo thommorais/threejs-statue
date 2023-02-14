@@ -1,18 +1,53 @@
 precision mediump float;
-varying float vOpacity;
+varying float vTime;
 varying vec3 vResolution;
+varying vec3 vRotation;
 
-varying float vRotation;
 varying vec2 vUv;
 
-void main() {
 
-  vec2 rotated = vec2(cos(vRotation / 2.) * (gl_PointCoord.x - 0.5) + sin(vRotation) * (gl_PointCoord.y - 0.5) + 0.5, cos(vRotation) * (gl_PointCoord.y - 0.5) - sin(vRotation) * (gl_PointCoord.x - 0.5) + 0.5);
+void main(){
 
-  float distBloom = length(rotated * smoothstep(0.25, .75, vUv));
+  // create Embers shape
+  float dist = distance(gl_PointCoord, vec2(0.5));
 
-  vec4 color = vec4(1., 0., 0., 0.15 + distBloom);
+  if (dist > 0.33) {
+    discard;
+  };
 
-  gl_FragColor = color;
+  // remove pixels from laterals
+  if (gl_PointCoord.x < 0.33 || gl_PointCoord.x > 0.66) {
+    discard;
+  };
+
+  // make it rotate based on vRotation
+  float angle = vRotation.z;
+  float s = sin(angle);
+  float c = cos(angle);
+  vec2 rotated = vec2(
+    gl_PointCoord.x * c - gl_PointCoord.y * s,
+    gl_PointCoord.x * s + gl_PointCoord.y * c
+  );
+
+  // create rotation
+  float distRotation = length(vUv - rotated);
+
+  // create rotation fade
+  float fadeRotation = smoothstep(0.0, 0.15, vTime);
+
+  // create rotation color
+  vec4 colorRotation = vec4(1. , 0.0, 0.0, fadeRotation);
+
+  // create rotation color change
+  colorRotation.r = colorRotation.r + (0.75 - colorRotation.r) * 0.5;
+
+  // make the top of the embers more orange and the bottom more red
+
+  colorRotation.g =  0.65 * (1.0 - gl_PointCoord.y);
+
+
+  gl_FragColor = colorRotation * distRotation;
 
 }
+
+

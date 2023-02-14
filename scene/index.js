@@ -37,7 +37,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 	}
 
 	const backgroundLoop = await background(scene, renderer)
-	const sparksLoop = await sparks(scene, renderer, 50 / pixelRatio)
+	const sparksLoop = await sparks(scene, renderer, 75 / pixelRatio)
 	scene.add(model)
 
 	const { default: stats } = await import('./stats')

@@ -101,12 +101,12 @@ async function sparks(scene, renderer, count) {
 	const material = new ShaderMaterial({
 		depthTest: true,
 		depthWrite: true,
-		precision: 'lowp',
+		precision: 'highp',
 		vertexShader,
 		fragmentShader,
 		uniforms: {
 			uTime: { value: 10.0 },
-			uSize: { value: 5.5 },
+			uSize: { value: 6.5 },
 			uSpeed: { value: new Vector3(0.0000001, 0.02, Math.random()) },
 			uGravity: { value: parameters.gravity },
 			uWorldSize: { value: new Vector3(80, 75, 4) },
