@@ -35,8 +35,8 @@ void main() {
   modelPosition.y = mod(modelPosition.y* 2. * (aSpeed.y + uSpeed.y) * uGravity, uWorldSize.y * 2.0) - uWorldSize.y;
 
   // makes the particles float to the center top of the screen
-  modelPosition.y += sin(uTime * aSpeed.z) * aRotation.z;
-  modelPosition.z += cos(uTime * aSpeed.z) * aRotation.z;
+  // modelPosition.y += sin(uTime * aSpeed.z) * aRotation.z;
+  // modelPosition.z += cos(uTime * aSpeed.z) * aRotation.z;
 
 
   vec4 viewPosition = viewMatrix * modelPosition;
