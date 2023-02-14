@@ -18,20 +18,25 @@ varying float vOpacity;
 varying vec2 vUv;
 varying vec3 vResolution ;
 varying float vTime;
+varying float vZindex;
 
 void main() {
 
   vec4 modelPosition = modelMatrix * vec4(position, 2.);
 
-  // modelPosition.x =  mod(modelPosition.x + uTime + uWind * (aSpeed.x + uSpeed.x), uWorldSize.x * 2.0) - uWorldSize.x;
-  // modelPosition.y =mod(modelPosition.y + uTime * 2. * (aSpeed.y + uSpeed.y) * uGravity, uWorldSize.y * 2.0) - uWorldSize.y;
+  modelPosition.x =  mod(modelPosition.x + uTime + uWind * (aSpeed.x + uSpeed.x), uWorldSize.x * 2.0) - uWorldSize.x;
+  modelPosition.y =mod(modelPosition.y + uTime * 2. * (aSpeed.y + uSpeed.y) * uGravity, uWorldSize.y * 2.0) - uWorldSize.y;
 
-  // modelPosition.x += (sin(uTime * aSpeed.z) * aRotation.z) + 0.01;
-  // modelPosition.z += cos(uTime * aSpeed.z) * aRotation.z;
+  modelPosition.x += (sin(uTime * aSpeed.z) * aRotation.z) + 0.01;
+  modelPosition.z += cos(uTime * aSpeed.z) * aRotation.z;
 
   // TESTING
-  modelPosition.x =  mod(modelPosition.x * (aSpeed.x + uSpeed.x), uWorldSize.x * 2.0) - uWorldSize.x;
-  modelPosition.y = mod(modelPosition.y* 2. * (aSpeed.y + uSpeed.y) * uGravity, uWorldSize.y * 2.0) - uWorldSize.y;
+  // modelPosition.x =  mod(modelPosition.x * (aSpeed.x + uSpeed.x), uWorldSize.x * 2.0) - uWorldSize.x;
+  // modelPosition.y = mod(modelPosition.y* 2. * (aSpeed.y + uSpeed.y) * uGravity, uWorldSize.y * 2.0) - uWorldSize.y;
+
+  // makes the particles float to the center top of the screen
+  modelPosition.y += sin(uTime * aSpeed.z) * aRotation.z;
+  modelPosition.z += cos(uTime * aSpeed.z) * aRotation.z;
 
 
   vec4 viewPosition = viewMatrix * modelPosition;

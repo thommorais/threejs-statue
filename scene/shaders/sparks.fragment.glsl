@@ -2,7 +2,7 @@ precision mediump float;
 varying float vTime;
 varying vec3 vResolution;
 varying vec3 vRotation;
-
+varying float vOpacity;
 varying vec2 vUv;
 
 
@@ -33,7 +33,7 @@ void main(){
   float distRotation = length(vUv - rotated);
 
   // create rotation fade
-  float fadeRotation = smoothstep(0.0, 0.15, vTime);
+  float fadeRotation = smoothstep(0.0, 0.15, vOpacity);
 
   // create rotation color
   vec4 colorRotation = vec4(1. , 0.0, 0.0, fadeRotation);
@@ -45,8 +45,11 @@ void main(){
 
   colorRotation.g =  0.65 * (1.0 - gl_PointCoord.y);
 
+  // make the embers with more z index less opaque
 
-  gl_FragColor = colorRotation * distRotation;
+  vec4 color = colorRotation * distRotation;
+
+  gl_FragColor = color;
 
 }
 

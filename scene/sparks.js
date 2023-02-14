@@ -30,7 +30,7 @@ async function sparks(scene, renderer, count) {
 		force: 0.15,
 		target: 1.0,
 		min: 0.1,
-		max: 5.0,
+		max: 2.5,
 		easing: 0.0075,
 	}
 
@@ -50,9 +50,9 @@ async function sparks(scene, renderer, count) {
 		const i3 = i * 3
 
 		// Position
-		positions[i3] = (Math.random() - 0.5) * 10
-		positions[i3 + 1] = (Math.random() - 0.5) * 10
-		positions[i3 + 2] = (Math.random() - 0.5) * 10
+		positions[i3] = (Math.random() - 0.5) * 7.5
+		positions[i3 + 1] = (Math.random() - 0.5) * 3
+		positions[i3 + 2] = (Math.random() - 0.5) * 5
 
 		// Randomness
 		const randomX =
@@ -121,10 +121,10 @@ async function sparks(scene, renderer, count) {
 	 * Points
 	 */
 	const points = new Points(geometry, material)
-	points.scale.x = 24 / pixelRatio
-	points.scale.y = 48 / pixelRatio
+	points.scale.x = 12 / pixelRatio
+	points.scale.y = 24 / pixelRatio
 	points.scale.z = 24 / pixelRatio
-	points.position.z = 10
+	points.position.z = 5
 	scene.add(points)
 
 	/**
