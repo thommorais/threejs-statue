@@ -5,7 +5,8 @@ async function getModelOptions(option) {
 		return null
 	}
 
-	const modelPath = import.meta.env.PROD ? 'hellboy.glb' : `${option}/scene.glb`
+	// const modelPath = import.meta.env.PROD ? 'hellboy.glb' : `${option}/scene-1.glb`
+	const modelPath = `${option}/scene-1.glb`
 
 	const { default: humanMageCameraStates } = await import(`./${option}/camera.json`)
 	store.setState({

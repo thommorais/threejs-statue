@@ -6,6 +6,6 @@ import main from './scene/index'
 			character: 'human-mage',
 			sectionSelectors: '.chapter',
 			scrollSelector: '.container-3d',
-			onModelLoading: (percentage) => console.log(percentage),
+			onModelLoading: (percentage) => percentage,
 		})
 	})()

@@ -1,3 +1,4 @@
+
 async function scene({ sectionSelectors, scrollSelector, character, onModelLoading }) {
 	const [
 		{ default: stage },
@@ -21,19 +22,24 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 
 	store.subscribe(onModelLoading, 'modelLoadingProgress')
 
+
+
 	await getModelOption(character)
 
 	const { scene, camera, renderer, renderFunc } = await stage()
 
+
+
 	const model = await handleModel(character)
 	const lights = await createLights(scene, model)
 
-	if (true) {
+	if (false) {
 		const { default: dev } = await import('./dev')
 		await dev(scene, camera, lights, model)
 	} else {
 		await scroll(camera, { sectionSelectors, scrollSelector })
 	}
+
 
 	const backgroundLoop = await background(scene, renderer)
 	const sparksLoop = await sparks(scene, renderer, 125)
@@ -41,6 +47,9 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 
 	const { default: stats } = await import('./stats')
 	const updateStats = await stats()
+
+
+
 
 	renderer.setAnimationLoop(() => {
 		camera.updateProjectionMatrix()
@@ -50,6 +59,9 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 		updateStats()
 		// controls.update()
 	})
+
+
+
 
 	console.log(renderer.info)
 
