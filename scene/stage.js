@@ -1,14 +1,14 @@
 export async function createRenderer() {
 	const { getDefaultSizes } = await import('./utils')
 	const { width, height, pixelRatio } = getDefaultSizes()
-	const { WebGLRenderer, sRGBEncoding, ACESFilmicToneMapping, ColorManagement } = await import('three')
+	const { WebGLRenderer, sRGBEncoding, ACESFilmicToneMapping } = await import('three')
 
 	const canvas = document.querySelector('.webgl')
 
 	const renderer = new WebGLRenderer({ canvas, stencil: true, depth: true, powerPreference: 'high-performance' })
 
-	ColorManagement.enabled = true
-	ColorManagement.legacyMode = false
+	// ColorManagement.enabled = true
+	// ColorManagement.legacyMode = false
 
 	renderer.physicallyCorrectLights = true
 	renderer.outputEncoding = sRGBEncoding
