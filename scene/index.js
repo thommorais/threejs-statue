@@ -22,8 +22,6 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 
 	store.subscribe(onModelLoading, 'modelLoadingProgress')
 
-
-
 	await getModelOption(character)
 
 	const { scene, camera, renderer, renderFunc } = await stage()
@@ -33,7 +31,7 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 	const model = await handleModel(character)
 	const lights = await createLights(scene, model)
 
-	if (false) {
+	if (true) {
 		const { default: dev } = await import('./dev')
 		await dev(scene, camera, lights, model)
 	} else {
@@ -47,8 +45,6 @@ async function scene({ sectionSelectors, scrollSelector, character, onModelLoadi
 
 	const { default: stats } = await import('./stats')
 	const updateStats = await stats()
-
-
 
 
 	renderer.setAnimationLoop(() => {
