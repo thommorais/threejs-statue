@@ -10,7 +10,7 @@ import Background from './background'
 import DevMode from './dev'
 
 const initialState = {
-	modelLoadingProgress: 0,
+	loadingProgress: 0,
 	current: 0,
 	duration: 750,
 	viewportHeight: window.innerHeight,
@@ -90,7 +90,7 @@ class Scene {
 			}
 
 			if (typeof onModelLoading === 'function') {
-				this.subscribe(onModelLoading, 'modelLoadingProgress')
+				this.subscribe(({ loadingProgress }) => onModelLoading(loadingProgress), 'loadingProgress')
 			}
 		} catch (error) {
 			// eslint-disable-next-line no-console
@@ -113,7 +113,7 @@ class Scene {
 	}
 
 	modelLoading(callback) {
-		this.store.subscribe(callback, 'modelLoadingProgress')
+		this.store.subscribe(({ loadingProgress }) => callback(loadingProgress), 'loadingProgress')
 	}
 
 	lockScroll() {
