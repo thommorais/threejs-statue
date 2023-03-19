@@ -71,6 +71,7 @@ class LockPlugin extends ScrollbarPlugin {
 	}
 }
 
+const deltaEl = document.querySelector('.delta');
 
 
 class SmoothScroller {
@@ -93,8 +94,8 @@ class SmoothScroller {
 		});
 
 		this.bodyScrollBar = Scrollbar.init(this.scroller, {
-			damping: 1,
-			continuousScrolling: false,
+			damping: 0.5,
+			continuousScrolling: true,
 			delegateTo: document.body,
 			plugins: {
 				lock: {
@@ -139,7 +140,7 @@ class SmoothScroller {
 	}
 
 	hasReachedScrollBoundary(threshold) {
-		const { scenesRect, scrollStatus, scrollerSection, locked, currentScrollThreshold  } = this.store.getState();
+		const { scenesRect, scrollStatus, scrollerSection, locked, mouseWheel  } = this.store.getState();
 
 		const scrollTop = scrollStatus.offset.y;
 		const scrollBottom = scrollTop + scrollerSection.offsetHeight
@@ -151,8 +152,10 @@ class SmoothScroller {
 
 		const goingDown = threshold > 0;
 
-		const scrollDown = (goingDown && !locked) && scrollBottom >= ((bottom + threshold) + currentScrollThreshold);
-		const scrollUp = (!goingDown && !locked) && scrollTop <= ((top + threshold) - currentScrollThreshold);
+		deltaEl.innerHTML = `scrollBottom: ${scrollBottom} <br> bottom: ${bottom} <br> threshold: ${threshold} <br> currentIndex: ${currentIndex} <br> direction: ${goingDown ? 'down' : 'up'} <br> locked: ${locked} <br> wheel: ${mouseWheel}`;
+
+		const scrollDown = (goingDown && !locked) && scrollBottom >= ((bottom + threshold));
+		const scrollUp = (!goingDown && !locked) && scrollTop <= ((top + threshold));
 
 		return (scrollDown || scrollUp);
 	}
@@ -191,7 +194,8 @@ class SmoothScroller {
 				this.store.setState({ direction });
 
 				const nextPoint = clamp(current + (normal ? +1 : -1), [0, scenes])
-				const y = normal ? scenesRect[nextPoint].top : scenesRect[nextPoint].top + viewportHeight;
+				console.log({ nextPoint })
+				const y = normal ? scenesRect[nextPoint].top : scenesRect[nextPoint].bottom - viewportHeight;
 				this.scrollTo({ positionY: y, current: nextPoint });
 
 			}, afterEventTimeout);
@@ -206,7 +210,7 @@ class SmoothScroller {
 		const direction = deltaY > 0 ? NORMAL : REVERSE;
 
 		if (this.hasReachedScrollBoundary(deltaY)) {
-			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction });
+			this.throttledUpdateMouseWhell({ scroll: Math.abs(deltaY) > 0, direction });
 		}
 
 	}
@@ -222,6 +226,8 @@ class SmoothScroller {
 		const deltaY = this.startY - event.touches[0].clientY;
 
 		const direction = deltaY > 0 ? NORMAL : REVERSE;
+
+		console.log('deltaY', deltaY)
 
 		if (this.hasReachedScrollBoundary(deltaY)) {
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction });

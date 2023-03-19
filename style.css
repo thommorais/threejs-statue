@@ -111,6 +111,18 @@ meter {
 	z-index: 4;
 }
 
+.delta{
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	pointer-events: none;
+	background: linear-gradient(180deg, #242424 0%, #212121 50%, #202020 100%);
+	width: clamp(120px, 50vw, 240px);
+	height: clamp(120px, 10vh, 240px);
+	padding: 1vw
+}
+
 #app {
 	position: absolute;
 	top: 0;
@@ -126,11 +138,19 @@ meter {
 	height: 200vh;
 	width: 100vw;
 	display: grid;
-	place-items: flex-end;
+	place-items: center;
+
+	--bg: rgba(0, 255, 255, 0.5);
+  background-image:
+    linear-gradient(to bottom, var(--bg) 0%, var(--bg) 10%, transparent 10%);
+  /* Adjust the stripe width */
+  background-size: 100% 25vh;
 }
 
 
-
+.chapter:nth-child(odd){
+	--bg: rgba(255, 0, 255, 0.5);
+}
 .chapter h2 {
 	width: 100%;
 	text-align: center;
@@ -138,4 +158,20 @@ meter {
 	line-height: 1em;
 	transition: opacity 0.5s var(--move);
 	color: rgba(255, 255, 255, 0.85);
+}
+
+.chapter h1 {
+	width: 100%;
+	text-align: center;
+	font-size: 6vw;
+	line-height: 1em;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.chapter .top{
+	place-self: start;
+}
+
+.chapter .bottom{
+	place-self: end;
 }

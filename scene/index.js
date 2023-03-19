@@ -12,7 +12,7 @@ import DevMode from './dev'
 const initialState = {
 	modelLoadingProgress: 0,
 	current: 0,
-	duration: 600,
+	duration: 750,
 	viewportHeight: window.innerHeight,
 	syntaticScroll: { scroll: 0, duration: 200 },
 	thresholdScroll: { desktop: 120, mobile: 30 },
