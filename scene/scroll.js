@@ -217,10 +217,11 @@ class SmoothScroller {
 		this.store.setState({ currentScrollThreshold: mobile })
 
 		const deltaY = this.startY - event.touches[0].clientY
-
 		const direction = deltaY > 0 ? NORMAL : REVERSE
 
-		if (this.hasReachedScrollBoundary(clamp(deltaY, [-100, 100]))) {
+		const clampedDelta = clamp(deltaY, [-36, 36])
+
+		if (this.hasReachedScrollBoundary(clampedDelta)) {
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })
 		}
 	}
