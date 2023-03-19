@@ -9,8 +9,6 @@ attribute vec4 aData1;
 #define aRandom2 aData1.z
 #define aRandom3 aData1.w
 
-uniform mat4 _ViewProjection;
-
 uniform highp float _Time;
 uniform float _Opacity;
 uniform float _ScreenHeight;
@@ -26,7 +24,6 @@ uniform float _TemporalFrequency;
 uniform float _BlinkFrequency;
 uniform float _DOF;
 uniform float _Gradient;
-uniform vec2 _WorldSize;
 
 varying vec2 vUv;
 varying vec4 vColor;
@@ -83,9 +80,10 @@ void main() {
   float phase = t * _BlinkFrequency * (0.5 + aRandom0);
   float brightness = max(0.5 + sin(phase) + sin(phase * 1.618), 0.);
 
-  float alpha = brightness * _Opacity * min(gl_PointSize, 1.) * aRandom2;
-  alpha *= p.y * 0. + 0.5;
-  alpha /= 1. + coc;
+    float alpha = brightness * _Opacity * min(gl_PointSize, 1.0) * aRandom2;
+    // alpha *= p.y * 0.0 + 0.5;
+    alpha *= 0.5 - p.y * 0.5;
+    alpha /= 1.0 + coc;
 
   float gradient = 1. - ((gl_Position.y / gl_Position.w) * .5 + .5) * _Gradient;
   alpha *= gradient * gradient;

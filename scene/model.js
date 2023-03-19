@@ -30,7 +30,6 @@ function getModel(modelPath, store) {
                         // eslint-disable-next-line no-param-reassign
                         child.material = boxMaterial;
                     }
-
                     // eslint-disable-next-line no-param-reassign
                     child.castShadow = true;
                     // eslint-disable-next-line no-param-reassign

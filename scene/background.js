@@ -1,33 +1,30 @@
-import { TextureLoader, MeshLambertMaterial, Mesh, PlaneGeometry, PointLight } from 'three';
+import {
+	TextureLoader, MeshLambertMaterial, Mesh, PlaneGeometry, PointLight,
+} from 'three';
 
 import { randomIntFromInterval } from './utils';
 
 class Background {
-	constructor(scene, renderer) {
+	constructor(scene) {
 		this.scene = scene;
-		this.renderer = renderer;
 		this.cloudParticles = [];
 		this.zRange = [];
+		this.frequency = 0.85;
 		this.init();
 	}
 
 	init() {
-		const pixelRatio = this.renderer.getPixelRatio();
 
 		const loader = new TextureLoader();
 		const cloudGeo = new PlaneGeometry(250, 250);
-		this.createThunder(this.zRange);
 
-		new Promise((resolve) =>
-			loader.load('smoke-o.webp', (texture) => resolve(texture))
-		).then((texture) => {
-
+		const createClouds = (texture) => {
 			const cloudMaterial = new MeshLambertMaterial({
 				map: texture,
 				transparent: true,
 			});
 
-			for (let p = 0; p < 16 / pixelRatio; p++) {
+			for (let count = 0; count < 8; count += 1) {
 				const cloud = new Mesh(cloudGeo, cloudMaterial);
 				const z = Math.abs(randomIntFromInterval(-70, -30, this.zRange)) * -1;
 				const x = randomIntFromInterval(-10, 10);
@@ -42,40 +39,41 @@ class Background {
 				this.cloudParticles.push(cloud);
 				this.scene.add(cloud);
 			}
+			this.createThunder(this.zRange);
+		}
 
-		});
+		new Promise(
+			(resolve) => loader.load('smoke-o.webp', (texture) => resolve(texture))
+		).then(createClouds);
 	}
 
 	createThunder(zRange) {
-		this.flash = new PointLight(0xff0000, 175, 250, 1.5)
-		this.flashMaxZ = Math.max(...zRange)
-		this.flashMinZ = this.flashMaxZ - 1
-		this.flash.position.set(0, 0, this.flashMinZ)
-		this.scene.add(this.flash)
+		this.flash = new PointLight(0xff0000, 175, 250, 1.5);
+		this.flashMaxZ = Math.max(...zRange);
+		this.flashMinZ = this.flashMaxZ - 1;
+		this.flash.position.set(0, 0, this.flashMinZ);
+		this.scene.add(this.flash);
 	}
 
 	animateThumder() {
-		const frequency = Math.min(0.85 * this.renderer.getPixelRatio(), 0.9)
-
-		if (Math.random() > frequency) {
+		const thunder = Math.random() > this.frequency;
+		if (thunder && this.flash) {
 			if (this.flash.power < 100) {
-				this.flash.intensity = 400
-				const x = randomIntFromInterval(-20, 20)
-				const y = randomIntFromInterval(-40, 45)
-				const z = randomIntFromInterval(this.flashMinZ, this.flashMaxZ)
-				this.flash.position.set(x, y, z)
+				this.flash.intensity = 400;
+				const x = randomIntFromInterval(-20, 20);
+				const y = randomIntFromInterval(-40, 45);
+				const z = randomIntFromInterval(this.flashMinZ, this.flashMaxZ);
+				this.flash.position.set(x, y, z);
 			}
-			this.flash.power = 50 + Math.random() * 500
+			this.flash.power = 50 + Math.random() * 500;
 		}
 	}
 
 	animate() {
-		this.cloudParticles.forEach((p) => {
-			p.rotation.z -= 0.005
-		})
-
-		this.animateThumder()
+		// eslint-disable-next-line no-param-reassign
+		this.cloudParticles.forEach((cloud) => { cloud.rotation.z -= 0.009; });
+		this.animateThumder();
 	}
 }
 
-export default Background
+export default Background;

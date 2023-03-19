@@ -108,9 +108,7 @@ meter {
 .container-3d {
 	position: relative;
 	height: 100vh;
-	overflow: scroll;
 	z-index: 4;
-	/* pointer-events: none; */
 }
 
 #app {
@@ -125,19 +123,19 @@ meter {
 .chapter {
 	position: relative;
 	z-index: 4;
-	height: 150vh;
+	height: 200vh;
 	width: 100vw;
 	display: grid;
-	place-items: center;
+	place-items: flex-end;
 }
 
-/* .chapter:nth-child(odd) {
-	background: rgba(0, 80, 0, 0.25);
-} */
+
 
 .chapter h2 {
+	width: 100%;
+	text-align: center;
 	font-size: 12vw;
-	opacity: 0;
+	line-height: 1em;
 	transition: opacity 0.5s var(--move);
 	color: rgba(255, 255, 255, 0.85);
 }

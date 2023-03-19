@@ -1,11 +1,11 @@
-import { createStore } from 'zustand/vanilla';
+import { createStore } from "zustand/vanilla";
 
 function isString(string) {
-	return string !== null && typeof string === 'string';
+	return string !== null && typeof string === "string";
 }
 
 function isObject(object) {
-	return object !== null && typeof object === 'object';
+	return object !== null && typeof object === "object";
 }
 
 const memoizedResults = new Map();
@@ -62,20 +62,29 @@ function shallowEqual(objA, objB) {
 }
 
 class Store {
-	constructor() {
+	constructor(initialState) {
+		this.storeKeys = new Map(
+			Object.keys(initialState).map((key) => [key, key])
+		);
+
 		this.store = createStore(() => ({
-			character: '',
-			modelLoadingProgress: 0,
-			current: 0,
-			syntaticScroll: { scroll: 0, duration: 200 },
-			locked: false,
-			direction: 'normal',
-			timeout: null,
+			...initialState,
 		}));
 	}
 
 	setState(state) {
-		this.store.setState(state);
+
+		if (!state) return;
+
+		if (isObject(state)) {
+			for (const key of Object.keys(state)) {
+				if (this.storeKeys.has(key)) {
+					this.store.setState(state);
+				} else {
+					console.log(`key ${key} is not valid`);
+				}
+			}
+		}
 	}
 
 	getState() {
@@ -84,15 +93,40 @@ class Store {
 
 	subscribe(callback, selector) {
 		return this.store.subscribe((state, prevState) => {
-			if (isString(selector)) {
-				if (!isObject(prevState[selector]) && !isObject(state[selector])) {
-					if (prevState[selector] !== state[selector]) {
-						callback(state[selector]);
+			const isSingleSelector = isString(selector);
+			const isArraySelector = Array.isArray(selector);
+
+			if (isSingleSelector || isArraySelector) {
+				let shouldCallCallback = false;
+				const selectedState = {};
+
+				const checkAndUpdateSelectedState = (key) => {
+					const prevValue = prevState[key];
+					const currentValue = state[key];
+
+					if (
+						(!isObject(prevValue) &&
+							!isObject(currentValue) &&
+							prevValue !== currentValue) ||
+						(isObject(prevValue) &&
+							isObject(currentValue) &&
+							!isDeepEqual(prevValue, currentValue))
+					) {
+						shouldCallCallback = true;
 					}
+					selectedState[key] = currentValue;
+				};
+
+				if (isSingleSelector) {
+					checkAndUpdateSelectedState(selector);
 				} else {
-					if (!isDeepEqual(prevState[selector], state[selector])) {
-						callback(state[selector]);
+					for (const key of selector) {
+						checkAndUpdateSelectedState(key);
 					}
+				}
+
+				if (shouldCallCallback) {
+					callback(selectedState);
 				}
 			} else {
 				callback(state);
@@ -100,8 +134,11 @@ class Store {
 		}, shallowEqual);
 	}
 
-	lockScroll(isLock = false) {
+	lockScroll(isLock = false, mouseWheel) {
 		this.setState({ locked: isLock });
+		if (mouseWheel) {
+			this.setState({ mouseWheel });
+		}
 	}
 
 	scrollTo(scroll, duration = 200) {

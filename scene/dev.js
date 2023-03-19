@@ -3,13 +3,17 @@ import { Vector3, SpotLightHelper } from 'three'
 import Stats from './stats'
 
 import { getProject, types } from '@theatre/core'
-import studio from '@theatre/studio'
+
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
+import getModel from './model'
 
 
-function theatre(lights, model, camera, store) {
+async function theatre(lights, model, camera, store) {
+
+	const {default: studio } = await import('@theatre/studio')
 
 	const { cameraState } = store.getState()
-
 
 	studio.initialize()
 
@@ -102,7 +106,6 @@ function theatre(lights, model, camera, store) {
 
 }
 
-
 function dev(scene, camera, lights, model, store) {
 	if (true) {
 		// camera.position.set(0, 20, 90)
@@ -129,4 +132,30 @@ function dev(scene, camera, lights, model, store) {
 	}
 }
 
-export default dev
+export default class DevMode {
+
+	constructor(store, stage, lights, characterPath, cameraStatePath) {
+		getModel(characterPath, store).then(async (model) => {
+			fetch(cameraStatePath)
+				.then((response) => response.json())
+				.then((cameraState) => {
+					store.setState({ cameraState })
+					dev(stage.scene, stage.camera, lights, model, store)
+					stage.scene.add(model)
+				})
+
+		})
+
+		return this.createOrbitControl(stage.camera, stage.renderer)
+	}
+
+
+	createOrbitControl(camera, renderer) {
+		const orbitControls = new OrbitControls(camera, renderer.domElement);
+		orbitControls.enableDamping = true;
+		orbitControls.enablePan = true;
+		return orbitControls;
+	}
+
+}
+

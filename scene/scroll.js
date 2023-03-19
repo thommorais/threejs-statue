@@ -2,68 +2,96 @@ import { getProject, types } from '@theatre/core';
 import { Vector3 } from 'three';
 import Scrollbar, { ScrollbarPlugin } from 'smooth-scrollbar';
 import { throttle } from './utils';
-import config from './config';
+
+const REVERSE = 'reverse';
+const NORMAL = 'normal';
+
+const isNumberInRange = (number, [lowerBound, upperBound]) => {
+	const normalized = (number - lowerBound) / (upperBound - lowerBound);
+	return normalized >= 0 && normalized <= 1;
+};
+
+
+const max = (a, b) => {
+	return Math.max(a, b);
+}
+
+const min = (a, b) => {
+	return Math.min(a, b);
+}
+
+const clamp = (number, [lowerBound, upperBound]) => {
+	return min(max(number, lowerBound), upperBound);
+}
+
 
 class CameraOnScroll {
 	constructor(camera, store) {
 		this.camera = camera;
 		this.store = store;
-		this.cameraState = this.store.getState().cameraState;
-		const project = getProject('lights', { state: this.cameraState });
-		const sheet = project.sheet('lights');
-		this.cameraObj = sheet.object('Camera', {
-			position: types.compound({
-				...this.camera.position,
-			}),
-			lookAt: types.compound({
-				x: 0,
-				y: 0,
-				z: 0,
-			}),
+
+		const { cameraState } = this.store.getState();
+
+		this.project = getProject('lights', { state: cameraState });
+
+		this.sheet = this.project.sheet('lights');
+
+		this.cameraObj = this.sheet.object('Camera', {
+			position: types.compound({ ...this.camera.position }),
+			lookAt: types.compound({ x: 0, y: 0, z: 0, }),
 		});
+
 		this.cameraObj.onValuesChange((values) => {
 			this.camera.position.set(values.position.x, values.position.y, values.position.z);
 			const { x, y, z } = values.lookAt;
 			this.camera.lookAt(new Vector3(x, y, z));
 			this.camera.updateProjectionMatrix();
 		});
-		this.onBodyScroll = this.onBodyScroll.bind(this);
-		this.store.subscribe(this.onBodyScroll, 'current');
+
+		this.store.subscribe(this.onBodyScroll.bind(this), 'current');
 	}
 
 	onBodyScroll() {
-		const scrollState = this.store.getState();
-		const direction = scrollState.direction;
-		const normal = direction === 'normal';
-		const from = normal ? scrollState.current - 1 : scrollState.current;
-		const to = normal ? scrollState.current : scrollState.current + 1;
-		const project = getProject('lights', { state: scrollState.cameraState });
-		const sheet = project.sheet('lights');
-		sheet.sequence.play({ range: [from, to], direction });
+		const { direction, current } = this.store.getState();
+		const normal = direction === NORMAL;
+		const from = normal ? current - 1 : current;
+		const to = normal ? current : current + 1;
+		this.sheet.sequence.play({ range: [from, to], direction });
 	}
 }
 
 class LockPlugin extends ScrollbarPlugin {
 	static pluginName = 'lock';
 	transformDelta(delta, { deltaY }) {
-		if (this.options.isLock || Math.abs(deltaY) < config.threshold.desktop) {
+		const { currentScrollThreshold } = this.store.getState();
+		if (this.options.isLock || Math.abs(deltaY) < currentScrollThreshold) {
 			return { x: 0, y: 0 };
 		}
 		return delta;
 	}
 }
 
+
+
 class SmoothScroller {
 	constructor(scrollerContainer, store) {
 		this.scroller = document.querySelector(scrollerContainer);
+
 		if (!this.scroller) {
 			throw new Error(`we need a container to scroll ${scrollerContainer}`);
 		}
+
 		this.store = store;
+
+		const [currentSection] = this.store.getState().sections;
+
 		this.store.setState({
 			current: 0,
-			currentSection: this.store.getState().sections[0],
+			currentSection,
+			scrollerSection: this.scroller,
+			viewportHeight: this.scroller.offsetHeight
 		});
+
 		this.bodyScrollBar = Scrollbar.init(this.scroller, {
 			damping: 1,
 			continuousScrolling: false,
@@ -74,75 +102,113 @@ class SmoothScroller {
 				},
 			},
 		});
-		this.bodyScrollBar.addListener((status) =>
+
+		Scrollbar.use(LockPlugin);
+
+		this.bodyScrollBar.addListener((status) => {
 			this.store.setState({
 				scrollProgress: status.offset.y / status.limit.y,
 				scrollStatus: status,
 			})
-		);
+		});
+
 		this.store.subscribe(
 			(isLock) => this.bodyScrollBar.updatePluginOptions('lock', { isLock }),
 			'locked'
 		);
+
 		this.store.subscribe(
 			(syntaticScroll) => this.handleWheel(syntaticScroll),
 			'syntaticScroll'
 		);
+
 		this.onScrollTimeout = null;
 		this.handleMouseWheel = this.handleMouseWheel.bind(this);
 		this.handleTouchStart = this.handleTouchStart.bind(this);
 		this.handleTouchMove = this.handleTouchMove.bind(this);
 		this.handleWheel = this.handleWheel.bind(this);
+
 		this.scroller.addEventListener('wheel', this.handleMouseWheel, { passive: false });
 		this.scroller.addEventListener('touchstart', this.handleTouchStart, { passive: false });
 		this.scroller.addEventListener('touchmove', this.handleTouchMove, { passive: false });
-		Scrollbar.use(LockPlugin);
+
+		this.throttledUpdateMouseWhell = throttle(({ scroll, direction }) => {
+			this.handleWheel({ scroll, direction });
+		}, 0);
+
 	}
 
-	handleWheel({ scroll, duration = 600 }) {
-		const { direction, sections, scenes, current, locked, timeout } = this.store.getState();
-		const normal = direction === 'normal';
+	hasReachedScrollBoundary(threshold) {
+		const { scenesRect, scrollStatus, scrollerSection, locked, currentScrollThreshold  } = this.store.getState();
 
-		function scrollTo(y, next) {
-			this.bodyScrollBar.scrollTo(0, y, Math.max(duration, 100), {
-				callback: () => {
-					const timeout = setTimeout(() => this.store.lockScroll(), Math.max(duration - 100, 100));
-					this.store.setState({
-						current: next,
-						timeout,
-						currentSection: sections[next],
-					});
-				},
-			});
-		}
+		const scrollTop = scrollStatus.offset.y;
+		const scrollBottom = scrollTop + scrollerSection.offsetHeight
 
-		const scenesLength = scenes.length - 1;
+		const currentIndex = scenesRect.findIndex((scene) => isNumberInRange(scrollTop, [scene.top, scene.bottom]))
 
-		if (current === scenesLength && normal || current === 0 && !normal || locked) {
+		const { bottom } = scenesRect[currentIndex];
+		const { top } = scenesRect[min(currentIndex + 1, scenesRect.length - 1)];
+
+		const goingDown = threshold > 0;
+
+		const scrollDown = (goingDown && !locked) && scrollBottom >= ((bottom + threshold) + currentScrollThreshold);
+		const scrollUp = (!goingDown && !locked) && scrollTop <= ((top + threshold) - currentScrollThreshold);
+
+		return (scrollDown || scrollUp);
+	}
+
+	scrollTo({ positionY, current }) {
+
+		const { duration } = this.store.getState();
+
+		this.bodyScrollBar.scrollTo(0, positionY, max(duration, 100), {
+			callback: () => {
+				const timeout = setTimeout(() => this.store.lockScroll(), max(duration - 100, 100));
+				const { sections } = this.store.getState();
+				this.store.setState({ current, currentSection: sections[current], timeout });
+			},
+		});
+	}
+
+
+	handleWheel({ scroll, direction }) {
+		const { scenesRect, current, locked, timeout, afterEventTimeout, viewportHeight } = this.store.getState();
+		const normal = direction === NORMAL;
+		const scenes = scenesRect.length - 1;
+
+		const avoidScroll = current === scenes && normal || current === 0 && !normal || locked
+
+		if (avoidScroll) {
 			return;
 		}
 
 		if (scroll) {
-			this.store.lockScroll(true, 'wheel');
 			clearTimeout(this.onScrollTimeout);
+			this.store.lockScroll(true, true);
+
 			this.onScrollTimeout = setTimeout(() => {
 				clearTimeout(timeout);
-				const directionIncrement = normal ? +1 : -1;
-				const next = Math.max(Math.min(current + directionIncrement, scenesLength), 0);
-				scrollTo.call(this, scenes[next], next);
-			}, config.afterEventTimeout);
+				this.store.setState({ direction });
+
+				const nextPoint = clamp(current + (normal ? +1 : -1), [0, scenes])
+				const y = normal ? scenesRect[nextPoint].top : scenesRect[nextPoint].top + viewportHeight;
+				this.scrollTo({ positionY: y, current: nextPoint });
+
+			}, afterEventTimeout);
 		}
 	}
 
-	handleMouseWheel(event) {
-		const { deltaY } = event;
-		if (deltaY > config.threshold.desktop) {
-			this.store.setState({ direction: 'normal' });
-		} else if (deltaY < -config.threshold.desktop) {
-			this.store.setState({ direction: 'reverse' });
+	handleMouseWheel({ deltaY }) {
+
+		const { thresholdScroll: {desktop} } = this.store.getState();
+		this.store.setState({ currentScrollThreshold: desktop });
+
+		const direction = deltaY > 0 ? NORMAL : REVERSE;
+
+		if (this.hasReachedScrollBoundary(deltaY)) {
+			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction });
 		}
-		const scroll = Math.abs(deltaY) > config.threshold.desktop;
-		this.handleWheel({ scroll });
+
 	}
 
 	handleTouchStart(event) {
@@ -150,15 +216,17 @@ class SmoothScroller {
 	}
 
 	handleTouchMove(event) {
-		this.currentY = event.touches[0].clientY;
-		const deltaY = this.startY - this.currentY;
-		if (deltaY > config.threshold.mobile) {
-			this.store.setState({ direction: 'normal' });
-		} else if (deltaY < -config.threshold.mobile) {
-			this.store.setState({ direction: 'reverse' });
+		const { thresholdScroll: {mobile} } = this.store.getState();
+		this.store.setState({ currentScrollThreshold: mobile });
+
+		const deltaY = this.startY - event.touches[0].clientY;
+
+		const direction = deltaY > 0 ? NORMAL : REVERSE;
+
+		if (this.hasReachedScrollBoundary(deltaY)) {
+			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction });
 		}
-		const scroll = Math.abs(deltaY) > config.threshold.mobile;
-		this.handleWheel({ scroll });
+
 	}
 }
 
@@ -167,13 +235,10 @@ class ScrollHandler {
 		this.store = store;
 		this.options = options;
 		this.camera = camera;
-
 		this.init()
-
 	}
 
 	init() {
-
 		this.sections = [...(document.querySelectorAll(this.options.sectionSelectors) || [])];
 		this.store.setState({ sections: this.sections });
 
@@ -193,12 +258,13 @@ class ScrollHandler {
 	}
 
 	onResize() {
-		const scenes = this.sections.map((section, index) => {
-			const { top, height } = section.getBoundingClientRect();
-			return index === 0 ? 0 : top + height / 2 - window.innerHeight / 2;
+
+		const scenesRect = this.sections.map(section => {
+			const { top, bottom } = section.getBoundingClientRect();
+			return { top, bottom }
 		});
 
-		this.store.setState({ scenes });
+		this.store.setState({ scenesRect });
 	}
 }
 

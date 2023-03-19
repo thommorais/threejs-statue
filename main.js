@@ -2,7 +2,7 @@ import './style.css'
 
 import Scene from './scene'
 
-const myScene = new Scene();
+const myScene = new Scene(false);
 
 myScene.init({
 	characterPath: '/angel/scene-1.glb',

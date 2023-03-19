@@ -8,7 +8,6 @@ import {
 	PerspectiveCamera,
 } from 'three';
 
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 class Stage {
 	constructor() {
@@ -16,6 +15,8 @@ class Stage {
 		this.scene = this.createScene();
 		this.camera = this.createPerspectiveCamera();
 		this.controls = null // this.createOrbitControl(this.camera, this.renderer);
+
+		// this.camera.position.z = 5
 
 		window.addEventListener('resize', () => {
 			const { width, height } = getDefaultSizes();
@@ -51,12 +52,7 @@ class Stage {
 		return renderer;
 	}
 
-	createOrbitControl(camera, renderer) {
-		const orbitControls = new OrbitControls(camera, renderer.domElement);
-		orbitControls.enableDamping = true;
-		orbitControls.enablePan = true;
-		return orbitControls;
-	}
+
 
 	createScene() {
 		const scene = new Scene();
