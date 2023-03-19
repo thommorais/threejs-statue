@@ -113,13 +113,13 @@ meter {
 
 .delta{
 	position: fixed;
-	top: 0;
+	bottom: 0;
 	left: 0;
 	z-index: 10;
 	pointer-events: none;
 	background: linear-gradient(180deg, #242424 0%, #212121 50%, #202020 100%);
 	width: clamp(120px, 50vw, 240px);
-	height: clamp(120px, 10vh, 240px);
+	height: clamp(120px, 50vh, 240px);
 	padding: 1vw
 }
 
@@ -151,6 +151,7 @@ meter {
 .chapter:nth-child(odd){
 	--bg: rgba(255, 0, 255, 0.15);
 }
+
 .chapter h2 {
 	width: 100%;
 	text-align: center;
