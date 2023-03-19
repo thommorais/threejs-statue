@@ -109,6 +109,9 @@ meter {
 	position: relative;
 	height: 100vh;
 	z-index: 4;
+	   --safe-area-inset-top: env(safe-area-inset-top);
+    height: calc(100vh + var(--safe-area-inset-top));
+	overflow: hidden;
 }
 
 .delta{
