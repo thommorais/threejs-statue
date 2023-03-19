@@ -1,18 +1,21 @@
-async function stats() {
-	const { default: Stats } = await import('three/addons/libs/stats.module.js')
-	const prevStats = document.querySelector('.stats')
+import Stats from 'three/addons/libs/stats.module.js';
 
-	if (prevStats) {
-		document.body.removeChild(prevStats)
+class StatsMonitor {
+	constructor() {
+		const prevStats = document.querySelector('.stats');
+		if (prevStats) {
+			document.body.removeChild(prevStats);
+		}
+		this.stats = new Stats();
+		this.stats.dom.classList.add('stats');
+		const container = document.body;
+		container.appendChild(this.stats.dom);
 	}
 
-	const stats = new Stats()
-	stats.dom.classList.add('stats')
-
-	const container = document.body
-	container.appendChild(stats.dom)
-
-	return () => stats.update()
+	update() {
+		this.stats.update();
+	}
 }
 
-export default stats
+
+export default StatsMonitor;

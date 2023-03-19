@@ -108,7 +108,7 @@ meter {
 .container-3d {
 	position: relative;
 	height: 100vh;
-	overflow: auto;
+	overflow: scroll;
 	z-index: 4;
 	/* pointer-events: none; */
 }
@@ -125,11 +125,15 @@ meter {
 .chapter {
 	position: relative;
 	z-index: 4;
-	height: 100vh;
+	height: 150vh;
 	width: 100vw;
 	display: grid;
 	place-items: center;
 }
+
+/* .chapter:nth-child(odd) {
+	background: rgba(0, 80, 0, 0.25);
+} */
 
 .chapter h2 {
 	font-size: 12vw;

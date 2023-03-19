@@ -1,85 +1,81 @@
-function randomIntFromInterval(min, max, avoid = []) {
-	if (!Array.isArray(avoid)) {
-		avoid = [avoid]
-	}
-	let number = Math.floor(Math.random() * (max - min + 1)) + min
-	if (avoid.includes(number)) {
-		return randomIntFromInterval(min, max, avoid)
-	}
-	return number
-}
-async function background(scene, renderer) {
-	const pixelRatio = renderer.getPixelRatio()
+import { TextureLoader, MeshLambertMaterial, Mesh, PlaneGeometry, PointLight } from 'three';
 
-	const { TextureLoader, MeshLambertMaterial, Mesh, PlaneGeometry, PointLight } = await import('three')
+import { randomIntFromInterval } from './utils';
 
-	const loader = new TextureLoader()
-	const zRange = []
-
-	const texture = await new Promise((resolve) => loader.load('smoke-o.webp', (texture) => resolve(texture)))
-
-	const cloudGeo = new PlaneGeometry(250, 250)
-	const cloudParticles = []
-
-	const cloudMaterial = new MeshLambertMaterial({
-		map: texture,
-		transparent: true,
-	})
-
-	for (let p = 0; p < 16 / pixelRatio; p++) {
-		const cloud = new Mesh(cloudGeo, cloudMaterial)
-		const z = Math.abs(randomIntFromInterval(-70, -30, zRange)) * -1
-		const x = randomIntFromInterval(-10, 10)
-		const rz = randomIntFromInterval(0, 15)
-		zRange.push(z)
-		cloud.position.set(x, -10, z)
-		cloud.rotation.x = 0
-		cloud.rotation.y = -0.15
-		cloud.rotation.z = rz
-		cloud.material.opacity = 0.33
-		cloudParticles.push(cloud)
-		scene.add(cloud)
+class Background {
+	constructor(scene, renderer) {
+		this.scene = scene;
+		this.renderer = renderer;
+		this.cloudParticles = [];
+		this.zRange = [];
+		this.init();
 	}
 
-	function createThunder(zRange) {
-		if (pixelRatio > 1) {
-			return () => {}
-		}
+	init() {
+		const pixelRatio = this.renderer.getPixelRatio();
 
-		const flashMaxZ = Math.max(...zRange)
-		const flashMinZ = flashMaxZ - 1
+		const loader = new TextureLoader();
+		const cloudGeo = new PlaneGeometry(250, 250);
+		this.createThunder(this.zRange);
 
-		const flash = new PointLight(0xff0000, 175, 250, 1.5)
-		flash.position.set(0, 0, flashMinZ)
-		scene.add(flash)
+		new Promise((resolve) =>
+			loader.load('smoke-o.webp', (texture) => resolve(texture))
+		).then((texture) => {
 
-		const frequency = Math.min(0.85 * pixelRatio, 0.9)
+			const cloudMaterial = new MeshLambertMaterial({
+				map: texture,
+				transparent: true,
+			});
 
-		return () => {
-			if (Math.random() > frequency) {
-				if (flash.power < 100) {
-					flash.intensity = 400
-					const x = randomIntFromInterval(-20, 20)
-					const y = randomIntFromInterval(-40, 45)
-					const z = randomIntFromInterval(flashMinZ, flashMaxZ)
-					flash.position.set(x, y, z)
-				}
-				flash.power = 50 + Math.random() * 500
+			for (let p = 0; p < 16 / pixelRatio; p++) {
+				const cloud = new Mesh(cloudGeo, cloudMaterial);
+				const z = Math.abs(randomIntFromInterval(-70, -30, this.zRange)) * -1;
+				const x = randomIntFromInterval(-10, 10);
+				const rz = randomIntFromInterval(0, 15);
+				this.zRange.push(z);
+				cloud.position.set(x, -10, z);
+				cloud.rotation.x = 0;
+				cloud.rotation.y = -0.15;
+				cloud.rotation.z = rz;
+				cloud.material.opacity = 0.33;
+				cloud.name = 'cloud';
+				this.cloudParticles.push(cloud);
+				this.scene.add(cloud);
 			}
+
+		});
+	}
+
+	createThunder(zRange) {
+		this.flash = new PointLight(0xff0000, 175, 250, 1.5)
+		this.flashMaxZ = Math.max(...zRange)
+		this.flashMinZ = this.flashMaxZ - 1
+		this.flash.position.set(0, 0, this.flashMinZ)
+		this.scene.add(this.flash)
+	}
+
+	animateThumder() {
+		const frequency = Math.min(0.85 * this.renderer.getPixelRatio(), 0.9)
+
+		if (Math.random() > frequency) {
+			if (this.flash.power < 100) {
+				this.flash.intensity = 400
+				const x = randomIntFromInterval(-20, 20)
+				const y = randomIntFromInterval(-40, 45)
+				const z = randomIntFromInterval(this.flashMinZ, this.flashMaxZ)
+				this.flash.position.set(x, y, z)
+			}
+			this.flash.power = 50 + Math.random() * 500
 		}
 	}
 
-	const animateThunder = createThunder(zRange)
-
-	function animate() {
-		cloudParticles.forEach((p) => {
+	animate() {
+		this.cloudParticles.forEach((p) => {
 			p.rotation.z -= 0.005
 		})
 
-		animateThunder()
+		this.animateThumder()
 	}
-
-	return animate
 }
 
-export default background
+export default Background

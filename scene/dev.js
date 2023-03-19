@@ -1,9 +1,13 @@
-async function theatre(lights, model, camera, points) {
-	const { getProject, types } = await import('@theatre/core')
-	const { default: studio } = await import('@theatre/studio')
-	const { Vector3 } = await import('three')
+import { Vector3, SpotLightHelper } from 'three'
 
-	const { default: store } = await import('./store')
+import Stats from './stats'
+
+import { getProject, types } from '@theatre/core'
+import studio from '@theatre/studio'
+
+
+function theatre(lights, model, camera, store) {
+
 	const { cameraState } = store.getState()
 
 
@@ -96,79 +100,21 @@ async function theatre(lights, model, camera, points) {
 		camera.updateProjectionMatrix()
 	})
 
-	points.forEach((valu) => {
-		const [name, obj] = Object.entries(valu)[0]
-		const leftObj = sheet.object(`Points ${name}`, {
-			position: types.compound({
-				x: types.number(obj.position.x, { range: [-150, 150] }),
-				y: types.number(obj.position.y, { range: [-150, 150] }),
-				z: types.number(obj.position.z, { range: [-150, 100] }),
-			}),
-
-			rotation: types.compound({
-				x: types.number(obj.rotation.x, { range: [-2, 2] }),
-				y: types.number(obj.rotation.y, { range: [-2, 2] }),
-				z: types.number(obj.rotation.z, { range: [-2, 2] }),
-			}),
-		})
-
-		leftObj.onValuesChange((values) => {
-			const { x, y, z } = values.position
-			obj.position.set(x, y, z)
-			const rotation = values.rotation
-			obj.rotation.set(rotation.x * Math.PI, rotation.y * Math.PI, rotation.z * Math.PI)
-		})
-	})
 }
 
-async function createPoints(pos) {
-	const { PlaneGeometry, MeshPhongMaterial, Mesh, FlatShading } = await import('three')
 
-	const geometry = new PlaneGeometry(1, 1)
-
-	const material = new MeshPhongMaterial({
-		color: 0xffffff,
-		shading: FlatShading,
-	})
-
-	const mesh = new Mesh(geometry, material)
-	mesh.position.x = pos.x
-	mesh.position.y = pos.y
-	mesh.position.z = pos.z
-	// scene.add(mesh)
-
-	return mesh
-}
-
-async function dev(scene, camera, lights, model) {
+function dev(scene, camera, lights, model, store) {
 	if (true) {
 		// camera.position.set(0, 20, 90)
 
-		const chest = await createPoints({ x: 2.5, y: 17, z: 3.5 })
+		theatre(lights, model, camera, store)
 
-		const face = await createPoints({ x: -0.75, y: 31, z: 4.1 })
-		const aside = await createPoints({ x: 10, y: 28, z: 5 })
-		aside.material.color.setHex(0xff0000)
+		const stats = new Stats()
 
-		const half_face = await createPoints({ x: 6.25, y: 32, z: -3 })
-		const hand = await createPoints({ x: 15, y: 16, z: 8 })
-		const belt = await createPoints({ x: -0.75, y: 11, z: 5 })
-		const footer = await createPoints({ x: -17.25, y: -27.5, z: 4.75 })
-
-		await theatre(lights, model, camera, [
-			{ face },
-			{ aside },
-			{ half_face },
-			{ hand },
-			{ belt },
-			{ footer },
-			{ chest },
-		])
-
-		const { default: stats } = await import('./stats')
-		await stats()
-
-		const { SpotLightHelper } = await import('three')
+		const internalLoop = () => {
+			stats.update()
+			requestAnimationFrame(internalLoop)
+		}
 
 		lights.forEach((light) => {
 			const spotLightHelper = new SpotLightHelper(light)

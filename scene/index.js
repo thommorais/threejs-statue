@@ -1,71 +1,108 @@
+/* eslint-disable no-mixed-spaces-and-tabs */
+import Stage from './stage';
+import Scroll from './scroll';
+import CreateLights from './lights';
+import getModel from './model';
+import Store from './store';
+import Sparks from './sparks';
+import Background from './background';
 
-async function scene({ sectionSelectors, scrollSelector, character, onModelLoading }) {
-	const [
-		{ default: stage },
-		{ default: handleModel },
-		{ default: scroll },
-		{ default: createLights },
-		{ default: getModelOption },
-		{ default: store },
-		{ default: sparks },
-		{ default: background },
-	] = await Promise.all([
-		import('./stage'),
-		import('./model/model'),
-		import('./scroll'),
-		import('./lights'),
-		import('./model/modelOptions'),
-		import('./store'),
-		import('./sparks'),
-		import('./background'),
-	])
-
-	store.subscribe(onModelLoading, 'modelLoadingProgress')
-
-	await getModelOption(character)
-
-	const { scene, camera, renderer, renderFunc } = await stage()
-
-
-
-	const model = await handleModel(character)
-	const lights = await createLights(scene, model)
-
-	if (true) {
-		const { default: dev } = await import('./dev')
-		await dev(scene, camera, lights, model)
-	} else {
-		await scroll(camera, { sectionSelectors, scrollSelector })
+class Scene {
+	constructor() {
+		this.store = new Store();
+		this.stage = new Stage();
+		this.background = new Background(this.stage.scene, this.stage.renderer);
+		this.lights = new CreateLights();
+		this.sparks = new Sparks(this.stage.renderer, this.stage.camera, 250);
+		this.stage.scene.add(this.sparks.getSparks());
+		this.animation();
 	}
 
+	init({
+		sectionSelectors,
+		scrollSelector,
+		characterPath,
+		cameraStatePath,
+		onModelLoading,
+	}) {
+		try {
+			if (!sectionSelectors) {
+				throw new Error('sectionSelectors is required');
+			}
 
-	const backgroundLoop = await background(scene, renderer)
-	const sparksLoop = await sparks(scene, renderer, 125)
-	scene.add(model)
+			if (!scrollSelector) {
+				throw new Error('scrollSelector is required');
+			}
 
-	const { default: stats } = await import('./stats')
-	const updateStats = await stats()
+			if (!characterPath) {
+				throw new Error('characterPath is required');
+			}
+
+			if (!cameraStatePath) {
+				throw new Error('cameraStatePath is required');
+			}
+
+			new Scroll(
+				this.store,
+				this.stage.camera,
+				{ sectionSelectors, scrollSelector, cameraStatePath },
+			);
 
 
-	renderer.setAnimationLoop(() => {
-		camera.updateProjectionMatrix()
-		renderFunc()
-		sparksLoop()
-		backgroundLoop()
-		updateStats()
-		// controls.update()
-	})
+			getModel(characterPath, this.store)
+				.then((model) => {
+					this.stage.scene.add(model);
+				})
+				.catch((error) => {
+					// eslint-disable-next-line no-console
+					console.error('Error getting the model:', error);
+				});
 
 
+			for (const light of this.lights) {
+				this.stage.scene.add(light);
+			}
 
+			if (typeof onModelLoading === 'function') {
+				this.subscribe(onModelLoading, 'modelLoadingProgress');
+			}
+		} catch (error) {
+			// eslint-disable-next-line no-console
+			console.error('Error initializing the scene:', error);
+		}
+	}
 
-	console.log(renderer.info)
+	animation() {
+		this.stage.renderer.setAnimationLoop(() => {
+			this.stage.camera.updateProjectionMatrix();
+			this.background.animate();
+			this.sparks.animate();
+			if (this.stage.controls) {
+				this.stage.controls.update();
+			}
+			this.stage.renderer.render(this.stage.scene, this.stage.camera);
+		});
+	}
 
-	return {
-		lockScroll: () => store.lockScroll(true),
-		unlockScrol: () => store.lockScroll(false),
-		subscribe: store.subscribe,
+	modelLoading(callback) {
+		this.store.subscribe(callback, 'modelLoadingProgress');
+	}
+
+	lockScroll() {
+		this.store.lockScroll(true);
+	}
+
+	unlockScroll() {
+		this.store.lockScroll(false);
+	}
+
+	scrollTo(y) {
+		this.store.scrollTo(y);
+	}
+
+	subscribe(callback, key) {
+		this.store.subscribe(callback, key);
 	}
 }
 
-export default scene
+export default Scene;

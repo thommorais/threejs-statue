@@ -13,8 +13,8 @@
     "vite": "^3.1.0"
   },
   "dependencies": {
-    "@theatre/core": "^0.6.0",
-    "@theatre/studio": "^0.6.0",
+    "@theatre/core": "^0.5.0",
+    "@theatre/studio": "^0.5.0",
     "smooth-scrollbar": "^8.8.1",
     "three": "^0.149.0",
     "vite-plugin-glsl": "^0.5.1",
