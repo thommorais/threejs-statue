@@ -91,7 +91,7 @@ class SmoothScroller {
 		})
 
 		this.bodyScrollBar = Scrollbar.init(this.scroller, {
-			damping: 0.1,
+			damping: 1,
 			continuousScrolling: false,
 			renderByPixels: true,
 			thumbMinSize: 40,
@@ -144,9 +144,15 @@ class SmoothScroller {
 
 		const goingDown = threshold > 0
 
-		deltaEl.innerHTML = `scrollBottom: ${scrollBottom} <br> bottom: ${bottom} <br> threshold: ${threshold} <br> currentIndex: ${currentIndex} <br> direction: ${
-			goingDown ? 'down' : 'up'
-		} <br> locked: ${locked} <br> wheel: ${mouseWheel}`
+		deltaEl.innerHTML = `
+		     scrollBottom: ${scrollBottom} <br>
+			 bottom: ${bottom} <br>
+			 threshold: ${threshold} <br>
+			 currentIndex: ${currentIndex} <br>
+			 direction: ${goingDown ? 'down' : 'up'} <br>
+			 locked: ${locked} <br>
+			 wheel: ${mouseWheel}
+		`
 
 		const scrollDown = goingDown && !locked && scrollBottom >= bottom + threshold
 		const scrollUp = !goingDown && !locked && scrollTop <= top + threshold
@@ -184,9 +190,7 @@ class SmoothScroller {
 			this.onScrollTimeout = setTimeout(() => {
 				clearTimeout(timeout)
 				this.store.setState({ direction })
-
 				const nextPoint = clamp(current + (normal ? +1 : -1), [0, scenes])
-				console.log({ nextPoint })
 				const y = normal ? scenesRect[nextPoint].top : scenesRect[nextPoint].bottom - viewportHeight
 				this.scrollTo({ positionY: y, current: nextPoint })
 			}, afterEventTimeout)

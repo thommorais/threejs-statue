@@ -45,7 +45,8 @@ function getModel(modelPath, store) {
             // called while loading is progressing
             (xhr) => {
                 const loadingProgress = Math.round((xhr.loaded / xhr.total) * 100);
-                store.setState({ loadingProgress });
+                deltaEl.innerHTML = `loaded: ${xhr.loaded} <br> total: ${xhr.total}`
+                // store.setState({ loadingProgress });
             },
             (error) => {
                 deltaEl.innerHTML = `error: ${error}`
