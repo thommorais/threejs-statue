@@ -94,7 +94,7 @@ class SmoothScroller {
 			damping:0.75,
 			continuousScrolling: false,
 			renderByPixels: true,
-			thumbMinSize: 40,
+			thumbMinSize: 32,
 			delegateTo: document.body,
 			plugins: {
 				lock: {
