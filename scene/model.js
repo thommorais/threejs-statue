@@ -2,6 +2,10 @@ import { MeshStandardMaterial } from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
+
+const deltaEl = document.querySelector('.delta')
+
+
 function getModel(modelPath, store) {
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
@@ -43,7 +47,10 @@ function getModel(modelPath, store) {
                 const loadingProgress = Math.round((xhr.loaded / xhr.total) * 100);
                 store.setState({ loadingProgress });
             },
-            (error) => reject(error),
+            (error) => {
+                deltaEl.innerHTML = `error: ${error}`
+                reject(error)
+            },
         );
     });
 }
