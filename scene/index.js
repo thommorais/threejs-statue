@@ -84,8 +84,7 @@ class Scene {
 				this.orbitControls = new DevMode(this.store, this.stage, this.lights, characterPath, cameraStatePath)
 			} else {
 
-				deltaEl.innerHTML = 'try to load model'
-
+				deltaEl.innerHTML = `try to load model`
 
 				getModel(characterPath, this.store)
 					.then((model) => {
@@ -107,6 +106,7 @@ class Scene {
 						deltaEl.innerHTML = `Error getting the model`
 					})
 
+				deltaEl.innerHTML = `try to load camera state`
 
 			}
 
@@ -114,6 +114,8 @@ class Scene {
 				this.subscribe(({ loadingProgress }) => onModelLoading(loadingProgress), 'loadingProgress')
 			}
 		} catch (error) {
+			deltaEl.innerHTML = `Error initializing the scene`
+
 			// eslint-disable-next-line no-console
 			console.error('Error initializing the scene:', error)
 		}
