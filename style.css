@@ -115,13 +115,14 @@ meter {
 
 .delta{
 	position: fixed;
-	bottom: 1vw;
-	left: 1vw;
+	bottom: 2vw;
+	left: 2vw;
 	z-index: 10;
 	pointer-events: none;
 	background: linear-gradient(180deg, #242424 0%, #212121 50%, #202020 100%);
-	width: clamp(120px, 50vw, 240px);
-	height: clamp(120px, 50vh, 240px);
+	--size:  clamp(120px, 50vw, 240px);
+	width: var(--size);
+	height: var(--size);
 	padding: 1vw;
 	border-radius: 4px;
 	font-size: 0.8rem
