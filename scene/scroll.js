@@ -91,9 +91,9 @@ class SmoothScroller {
 		})
 
 		this.bodyScrollBar = Scrollbar.init(this.scroller, {
-			damping: 0.001,
+			damping: 0.01,
 			continuousScrolling: false,
-			renderByPixels: false,
+			renderByPixels: true,
 			delegateTo: document.body,
 			plugins: {
 				lock: {

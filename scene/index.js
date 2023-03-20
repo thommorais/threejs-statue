@@ -40,6 +40,10 @@ const initialState = {
 	}
 }
 
+
+const deltaEl = document.querySelector('.delta')
+
+
 class Scene {
 	constructor(dev = false) {
 		this.dev = dev;
@@ -73,16 +77,20 @@ class Scene {
 				document.querySelector(scrollSelector).style.pointerEvents = 'none'
 				this.orbitControls = new DevMode(this.store, this.stage, this.lights, characterPath, cameraStatePath)
 			} else {
-				new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath })
 
 				getModel(characterPath, this.store)
 					.then((model) => {
 						this.stage.scene.add(model)
+						deltaEl.innerHTML = 'Model loaded'
 					})
 					.catch((error) => {
 						// eslint-disable-next-line no-console
 						console.error('Error getting the model:', error)
+						deltaEl.innerHTML = `Error getting the model: ${error}`
 					})
+
+				new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath })
+
 			}
 
 			for (const light of this.lights) {
