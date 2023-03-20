@@ -206,7 +206,7 @@ class SmoothScroller {
 		const direction = deltaY > 0 ? NORMAL : REVERSE
 		const clampedDelta = clamp(deltaY, [-mobile, mobile])
 
-		if (this.hasReachedScrollBoundary(clampedDelta)) {
+		if (this.hasReachedScrollBoundary(deltaY)) {
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })
 		}
 	}
