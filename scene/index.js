@@ -85,7 +85,7 @@ class Scene {
 			} else {
 
 				try {
-					deltaEl.innerHTML = `try to load model ${characterPath}`
+					deltaEl.innerHTML = `try to load model`
 
 					getModel(characterPath, this.store)
 						.then((model) => {
