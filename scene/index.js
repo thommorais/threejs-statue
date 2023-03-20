@@ -89,6 +89,7 @@ class Scene {
 
 					getModel(characterPath, this.store)
 						.then((model) => {
+							deltaEl.innerHTML = 'Model loaded'
 							this.lights = new CreateLights();
 
 							for (const light of this.lights) {
@@ -98,7 +99,6 @@ class Scene {
 
 							this.stage.scene.add(model)
 
-							deltaEl.innerHTML = 'Model loaded'
 
 						})
 						.catch((error) => {
