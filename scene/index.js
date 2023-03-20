@@ -104,7 +104,7 @@ class Scene {
 					.catch((error) => {
 						// eslint-disable-next-line no-console
 						console.error('Error getting the model:', error)
-						deltaEl.innerHTML = `Error getting the model: ${error}`
+						deltaEl.innerHTML = `Error getting the model`
 					})
 
 

@@ -14,51 +14,45 @@ function getModel(modelPath, store) {
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
 
+    return new Promise((resolve, reject) => {
 
-    try {
+        if (!modelPath) {
+            reject(new Error('modelPath is required'));
+        }
 
-        return new Promise((resolve, reject) => {
+        loader.load(
+            modelPath,
+            (gltf) => {
+                const boxMaterial = new MeshStandardMaterial({
+                    roughness: 0.455,
+                    metalness: 0.475,
+                });
 
-            if (!modelPath) {
-                reject(new Error('modelPath is required'));
-            }
+                const box = gltf.scene;
 
-            loader.load(
-                modelPath,
-                (gltf) => {
-                    const boxMaterial = new MeshStandardMaterial({
-                        roughness: 0.455,
-                        metalness: 0.475,
-                    });
-
-                    const box = gltf.scene;
-
-                    box.traverse((child) => {
-                        if (child.isMesh) {
-                            // eslint-disable-next-line no-param-reassign
-                            child.material = boxMaterial;
-                        }
+                box.traverse((child) => {
+                    if (child.isMesh) {
                         // eslint-disable-next-line no-param-reassign
-                        child.castShadow = true;
-                        // eslint-disable-next-line no-param-reassign
-                        child.receiveShadow = true;
-                    });
+                        child.material = boxMaterial;
+                    }
+                    // eslint-disable-next-line no-param-reassign
+                    child.castShadow = true;
+                    // eslint-disable-next-line no-param-reassign
+                    child.receiveShadow = true;
+                });
 
-                    resolve(box);
-                },
-                // called while loading is progressing
-                (xhr) => {
-                    const loadingProgress = Math.round((xhr.loaded / xhr.total) * 100);
-                    store.setState({ loadingProgress });
-                },
-                (error) => {
-                    reject(error)
-                },
-            );
-        });
-    } catch (error) {
-       console.log(error)
-    }
+                resolve(box);
+            },
+            // called while loading is progressing
+            (xhr) => {
+                const loadingProgress = Math.round((xhr.loaded / xhr.total) * 100);
+                store.setState({ loadingProgress });
+            },
+            (error) => {
+                reject(error)
+            },
+        );
+    });
 }
 
 export default getModel;
