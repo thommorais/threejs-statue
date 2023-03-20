@@ -49,11 +49,14 @@ class Scene {
 		this.dev = dev;
 		this.store = new Store({ ...initialState });
 		this.stage = new Stage();
-		this.lights = new CreateLights();
+
+		this.background = new Background(this.stage.scene, this.stage.renderer);
 		this.sparks = new Sparks(this.stage.renderer, this.stage.camera, 1450);
 		this.stage.scene.add(this.sparks.getSparks());
-		this.background = new Background(this.stage.scene, this.stage.renderer);
-		this.animation();
+
+		setTimeout(() => {
+			this.animation();
+		}, 250)
 	}
 
 	init({ sectionSelectors, scrollSelector, characterPath, cameraStatePath, onModelLoading }) {
@@ -73,6 +76,10 @@ class Scene {
 			if (!cameraStatePath) {
 				throw new Error('cameraStatePath is required')
 			}
+
+			new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath })
+
+
 			if (this.dev) {
 				document.querySelector(scrollSelector).style.pointerEvents = 'none'
 				this.orbitControls = new DevMode(this.store, this.stage, this.lights, characterPath, cameraStatePath)
@@ -80,8 +87,22 @@ class Scene {
 
 				getModel(characterPath, this.store)
 					.then((model) => {
-						this.stage.scene.add(model)
+						setTimeout(() => {
+
+							this.lights = new CreateLights();
+
+							for (const light of this.lights) {
+								light.target = model
+								this.stage.scene.add(light)
+							}
+
+							this.stage.scene.add(model)
+
+						}, 1000)
+
+
 						deltaEl.innerHTML = 'Model loaded'
+
 					})
 					.catch((error) => {
 						// eslint-disable-next-line no-console
@@ -89,12 +110,7 @@ class Scene {
 						deltaEl.innerHTML = `Error getting the model: ${error}`
 					})
 
-				new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath })
 
-			}
-
-			for (const light of this.lights) {
-				this.stage.scene.add(light)
 			}
 
 			if (typeof onModelLoading === 'function') {
@@ -111,8 +127,14 @@ class Scene {
 			this.stage.camera.updateProjectionMatrix()
 			this.stage.camera.updateMatrixWorld(true)
 
-			this.background.animate()
-			this.sparks.animate(time)
+			if (this.background) {
+				this.background.animate()
+			}
+
+			if (this.sparks) {
+				this.sparks.animate(time)
+			}
+
 			if (this.dev) {
 				this.orbitControls.update()
 			}
