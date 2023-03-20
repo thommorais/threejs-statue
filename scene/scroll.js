@@ -60,12 +60,20 @@ class CameraOnScroll {
 
 class LockPlugin extends ScrollbarPlugin {
 	static pluginName = 'lock'
+
+
 	transformDelta(delta) {
-		if (this.options.isLock) {
+
+		if (this.options.locked) {
 			return { x: 0, y: 0 }
 		}
-		return delta
+
+		return {
+			x: delta.x * 1.5,
+			y: delta.y * 1.5,
+		};
 	}
+
 }
 
 class SmoothScroller {
@@ -87,6 +95,8 @@ class SmoothScroller {
 			viewportHeight: this.scroller.offsetHeight,
 		})
 
+		Scrollbar.use(LockPlugin)
+
 		this.bodyScrollBar = Scrollbar.init(this.scroller, {
 			damping: 1,
 			continuousScrolling: false,
@@ -94,12 +104,10 @@ class SmoothScroller {
 			delegateTo: document.body,
 			plugins: {
 				lock: {
-					isLock: false,
+					locked: false,
 				},
 			},
 		})
-
-		Scrollbar.use(LockPlugin)
 
 		this.bodyScrollBar.addListener((status) => {
 			this.store.setState({
@@ -108,8 +116,8 @@ class SmoothScroller {
 			})
 		})
 
-		this.store.subscribe(({ locked: isLock }) => {
-			this.bodyScrollBar.updatePluginOptions('lock', { isLock })
+		this.store.subscribe(({ locked }) => {
+			this.bodyScrollBar.updatePluginOptions('lock', { locked })
 		}, 'locked')
 
 		this.store.subscribe(({syntaticScroll}) => this.handleWheel(syntaticScroll), 'syntaticScroll')
