@@ -165,7 +165,7 @@ class SmoothScroller {
 
 		this.bodyScrollBar.scrollTo(0, positionY, max(duration, 100), {
 			callback: () => {
-				const timeout = setTimeout(() => this.store.lockScroll(), max(duration - 100, 100))
+				const timeout = setTimeout(() => this.store.lockScroll(), max(duration - 200, 100))
 				const { sections } = this.store.getState()
 				this.store.setState({ current, currentSection: sections[current], timeout })
 			},

@@ -115,14 +115,16 @@ meter {
 
 .delta{
 	position: fixed;
-	bottom: 0;
-	left: 0;
+	bottom: 1vw;
+	left: 1vw;
 	z-index: 10;
 	pointer-events: none;
 	background: linear-gradient(180deg, #242424 0%, #212121 50%, #202020 100%);
 	width: clamp(120px, 50vw, 240px);
 	height: clamp(120px, 50vh, 240px);
-	padding: 1vw
+	padding: 1vw;
+	border-radius: 4px;
+	font-size: 0.8rem
 }
 
 #app {
@@ -137,7 +139,7 @@ meter {
 .chapter {
 	position: relative;
 	z-index: 4;
-	height: 200svh;
+	height: 100svh;
 	width: 100vw;
 	display: grid;
 	place-items: center;
@@ -150,8 +152,10 @@ meter {
 }
 
 
-.chapter:nth-child(odd){
+.chapter:last-child {
 	--bg: rgba(255, 0, 255, 0.025);
+	height:300svh;
+
 }
 
 .chapter h2 {
