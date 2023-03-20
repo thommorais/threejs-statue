@@ -204,6 +204,7 @@ class SmoothScroller {
 		this.store.setState({ currentScrollThreshold: desktop })
 
 		const direction = deltaY > 0 ? NORMAL : REVERSE
+
 		this.store.setState({ mouseWheel: true })
 
 		const clampedDelta = clamp(deltaY, [-120, 120])
@@ -230,9 +231,9 @@ class SmoothScroller {
 
 		this.store.setState({ mouseWheel: false })
 
-		this.store.lockScroll()
 
 		if (this.hasReachedScrollBoundary(clampedDelta)) {
+			this.store.lockScroll()
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })
 		}
 	}
