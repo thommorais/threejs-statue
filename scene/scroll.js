@@ -60,18 +60,11 @@ class CameraOnScroll {
 
 class LockPlugin extends ScrollbarPlugin {
 	static pluginName = 'lock'
-
-
 	transformDelta(delta) {
-
 		if (this.options.locked) {
 			return { x: 0, y: 0 }
 		}
-
-		return {
-			...delta,
-			y: delta.y >= 0 ? delta.y * 2 : delta.y * 0.5
-		};
+		return delta
 	}
 
 }
