@@ -3,21 +3,18 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 
-const deltaEl = document.querySelector('.delta')
 
 
 function getModel(modelPath, store) {
     const dracoLoader = new DRACOLoader();
 
-    try {
-        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
-        dracoLoader.preload();
-    }catch (e) {
-        deltaEl.innerHTML = `error: ${e}`
-    }
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+    dracoLoader.preload();
 
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
+
+
     try {
 
         return new Promise((resolve, reject) => {
@@ -55,13 +52,12 @@ function getModel(modelPath, store) {
                     store.setState({ loadingProgress });
                 },
                 (error) => {
-                    deltaEl.innerHTML = `error: ${error}`
                     reject(error)
                 },
             );
         });
     } catch (error) {
-        deltaEl.innerHTML = `error: ${error}`
+       console.log(error)
     }
 }
 
