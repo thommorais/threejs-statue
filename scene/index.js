@@ -104,11 +104,11 @@ class Scene {
 	}
 
 	lockScroll() {
-		this.store.lockScroll(true)
+		this.store.lockScroll()
 	}
 
 	unlockScroll() {
-		this.store.lockScroll(false)
+		this.store.unlockScroll()
 	}
 
 	scrollTo(y) {

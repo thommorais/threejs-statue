@@ -181,8 +181,9 @@ class SmoothScroller {
 
 
 	handleMouseWheel({ deltaY }) {
+		const { thresholdScroll: { desktop } } = this.store.getState()
 		const direction = deltaY > 0 ? NORMAL : REVERSE
-		if (this.hasReachedScrollBoundary(clamp(deltaY, [-10, 10]))) {
+		if (this.hasReachedScrollBoundary(clamp(deltaY, [-desktop, desktop]))) {
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })
 		}
 	}
@@ -192,9 +193,10 @@ class SmoothScroller {
 	}
 
 	handleTouchMove({ touches }) {
+		const { thresholdScroll: {mobile} } = this.store.getState()
 		const deltaY = this.startY - touches[0].clientY
 		const direction = deltaY > 0 ? NORMAL : REVERSE
-		const clampedDelta = clamp(deltaY, [-90, 90])
+		const clampedDelta = clamp(deltaY, [-mobile, mobile])
 
 		if (this.hasReachedScrollBoundary(clampedDelta)) {
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })

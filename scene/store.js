@@ -75,7 +75,7 @@ class Store {
 			duration: 750,
 			viewportHeight: window.innerHeight,
 			syntaticScroll: { scroll: 0, duration: 200 },
-			thresholdScroll: { desktop: 120, mobile: 30 },
+			thresholdScroll: { desktop: 10, mobile: 60 },
 			currentScrollThreshold: 0,
 			afterEventTimeout: 200,
 			locked: false,
@@ -86,7 +86,6 @@ class Store {
 			sections: [],
 			currentSection: null,
 			scenesRect: [],
-			mouseWheel: false,
 			scrollerSection: null,
 			scrollStatus: {
 				"offset": {
