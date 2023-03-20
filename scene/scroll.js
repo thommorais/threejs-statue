@@ -69,8 +69,8 @@ class LockPlugin extends ScrollbarPlugin {
 		}
 
 		return {
-			x: delta.x * 1.5,
-			y: delta.y * 1.5,
+			...delta,
+			y: delta.y >= 0 ? delta.y * 2 : delta.y * 0.5
 		};
 	}
 
@@ -98,7 +98,7 @@ class SmoothScroller {
 		Scrollbar.use(LockPlugin)
 
 		this.bodyScrollBar = Scrollbar.init(this.scroller, {
-			damping: 0.5,
+			damping: 1,
 			continuousScrolling: false,
 			renderByPixels: true,
 			delegateTo: document.body,
