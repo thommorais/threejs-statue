@@ -41,9 +41,6 @@ const initialState = {
 }
 
 
-const deltaEl = document.querySelector('.delta')
-
-
 class Scene {
 	constructor(dev = false) {
 		this.dev = dev;
@@ -84,12 +81,8 @@ class Scene {
 				this.orbitControls = new DevMode(this.store, this.stage, this.lights, characterPath, cameraStatePath)
 			} else {
 
-				try {
-					deltaEl.innerHTML = `try to load model`
-
 					getModel(characterPath, this.store)
 						.then((model) => {
-							deltaEl.innerHTML = 'Model loaded'
 							this.lights = new CreateLights();
 
 							for (const light of this.lights) {
@@ -102,21 +95,16 @@ class Scene {
 
 						})
 						.catch((error) => {
-							deltaEl.innerHTML = `Error getting the model`
 							console.error('Error getting the model:', error)
 						})
 
-					}catch (error) {
-						deltaEl.innerHTML = `MODEL ISSUE ${JSON.stringify(error)}`
-					}
+
 			}
 
 			if (typeof onModelLoading === 'function') {
 				this.subscribe(({ loadingProgress }) => onModelLoading(loadingProgress), 'loadingProgress')
 			}
 		} catch (error) {
-			deltaEl.innerHTML = `Error initializing the scene`
-
 			// eslint-disable-next-line no-console
 			console.error('Error initializing the scene:', error)
 		}
