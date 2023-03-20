@@ -94,7 +94,6 @@ class SmoothScroller {
 			damping: 1,
 			continuousScrolling: false,
 			renderByPixels: true,
-			thumbMinSize: 32,
 			delegateTo: document.body,
 			plugins: {
 				lock: {
@@ -227,7 +226,7 @@ class SmoothScroller {
 		const deltaY = this.startY - event.touches[0].clientY
 		const direction = deltaY > 0 ? NORMAL : REVERSE
 
-		const clampedDelta = clamp(deltaY, [-36, 36])
+		const clampedDelta = clamp(deltaY, [-72, 72])
 
 		this.store.setState({ mouseWheel: false })
 

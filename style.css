@@ -131,7 +131,7 @@ meter {
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: 2;
+	z-index: 3;
 }
 
 .chapter {
@@ -179,9 +179,8 @@ meter {
 	place-self: end;
 }
 
-html, body{
-  -webkit-overflow-scrolling: touch; /* Disable smooth scrolling on iOS */
+/* html, body{
   smooth-scrolling: touch;
   width: 100vmin;
   height: 100vmin;
-}
+} */
