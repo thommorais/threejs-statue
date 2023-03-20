@@ -111,7 +111,9 @@ class SmoothScroller {
 			})
 		})
 
-		this.store.subscribe((isLock) => this.bodyScrollBar.updatePluginOptions('lock', { isLock }), 'locked')
+		this.store.subscribe(({ locked }) => {
+			this.bodyScrollBar.updatePluginOptions('lock', { isLock: locked })
+		}, 'locked')
 
 		this.store.subscribe((syntaticScroll) => this.handleWheel(syntaticScroll), 'syntaticScroll')
 
@@ -125,13 +127,19 @@ class SmoothScroller {
 		this.scroller.addEventListener('touchstart', this.handleTouchStart, { passive: false })
 		this.scroller.addEventListener('touchmove', this.handleTouchMove, { passive: false })
 
-		this.store.subscribe((isLock) => deltaEl.innerHTML = `locked: ${isLock}`, 'locked')
+		this.throttledUpdateMouseWhell = throttle(({ scroll, direction }) => {
+			this.handleWheel({ scroll, direction })
+		}, 240)
+
+
+		this.store.subscribe(({ locked }) => {
+			deltaEl.innerHTML = `
+		     locked: ${locked} <br>
+		`
+		}, 'locked')
 
 
 	}
-
-
-
 
 	hasReachedScrollBoundary(threshold) {
 		const { scenesRect, scrollStatus, scrollerSection, locked, mouseWheel } = this.store.getState()
@@ -146,16 +154,19 @@ class SmoothScroller {
 
 		const goingDown = threshold > 0
 
+
+		const scrollDown = goingDown && !locked && scrollBottom >= bottom + threshold
+		const scrollUp = !goingDown && !locked && scrollTop <= top + threshold
+
+
 		deltaEl.innerHTML = `
 		     locked: ${locked} <br>
 			 threshold: ${threshold} <br>
 			 currentIndex: ${currentIndex} <br>
 			 direction: ${goingDown ? 'down' : 'up'} <br>
-			 wheel: ${mouseWheel}
+			 wheel: ${mouseWheel} <br>
+			scroll: ${scrollDown || scrollUp} <br>
 		`
-
-		const scrollDown = goingDown && !locked && scrollBottom >= bottom + threshold
-		const scrollUp = !goingDown && !locked && scrollTop <= top + threshold
 
 		return scrollDown || scrollUp
 	}
@@ -233,7 +244,7 @@ class SmoothScroller {
 
 		if (this.hasReachedScrollBoundary(clampedDelta)) {
 			this.store.lockScroll()
-			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })
+			this.throttledUpdateMouseWhell({ scroll: Math.abs(deltaY) > 0, direction })
 		}
 	}
 }
