@@ -133,14 +133,6 @@ class SmoothScroller {
 			this.handleWheel({ scroll, direction })
 		}, 240)
 
-
-		this.store.subscribe(({ locked }) => {
-			deltaEl.innerHTML = `
-		     locked: ${locked} <br>
-		`
-		}, 'locked')
-
-
 	}
 
 	hasReachedScrollBoundary(threshold) {
