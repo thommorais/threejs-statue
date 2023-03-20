@@ -71,8 +71,6 @@ class LockPlugin extends ScrollbarPlugin {
 	}
 }
 
-const deltaEl = document.querySelector('.delta')
-
 class SmoothScroller {
 	constructor(scrollerContainer, store) {
 		this.scroller = document.querySelector(scrollerContainer)
@@ -148,19 +146,8 @@ class SmoothScroller {
 
 		const goingDown = threshold > 0
 
-
 		const scrollDown = goingDown && !locked && scrollBottom >= bottom + threshold
 		const scrollUp = !goingDown && !locked && scrollTop <= top + threshold
-
-
-		deltaEl.innerHTML = `
-		     locked: ${locked} <br>
-			 threshold: ${threshold} <br>
-			 currentIndex: ${currentIndex} <br>
-			 direction: ${goingDown ? 'down' : 'up'} <br>
-			 wheel: ${mouseWheel} <br>
-			scroll: ${scrollDown || scrollUp} <br>
-		`
 
 		return scrollDown || scrollUp
 	}
