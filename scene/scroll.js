@@ -55,11 +55,13 @@ class CameraOnScroll {
 		const { direction, from, to } = this.store.getState()
 		const range = direction === NORMAL ? [from, to] : [to, from]
 		this.sheet.sequence.play({ range, direction, rate: getDistance(from, to) })
+		this.store.setState({ from: range[0] })
 	}
 }
 
 class LockPlugin extends ScrollbarPlugin {
 	static pluginName = 'lock'
+
 	transformDelta(delta) {
 		if (this.options.locked) {
 			return { x: 0, y: 0 }
@@ -93,7 +95,6 @@ class SmoothScroller {
 		this.bodyScrollBar = Scrollbar.init(this.scroller, {
 			damping: 1,
 			continuousScrolling: false,
-			renderByPixels: true,
 			delegateTo: document.body,
 			plugins: {
 				lock: {
@@ -103,6 +104,7 @@ class SmoothScroller {
 		})
 
 		this.bodyScrollBar.addListener((status) => {
+			console.log(status.offset.y)
 			this.store.setState({
 				scrollProgress: status.offset.y / status.limit.y,
 				scrollStatus: status,
@@ -129,32 +131,37 @@ class SmoothScroller {
 	}
 
 
-	scrollTo({ positionY, nextPoint }) {
-		const { duration, sections } = this.store.getState()
+	scrollTo({ scrollToY, nextPoint }) {
+		const { duration, sections, timeout } = this.store.getState()
 
-		this.bodyScrollBar.scrollTo(0, positionY, max(duration, 200), {
+		this.store.lockScroll()
+		clearTimeout(timeout)
+		this.bodyScrollBar.scrollTo(0, scrollToY, max(duration, 200), {
 			callback: () => {
-				const timeout = setTimeout(() => this.store.unLockScroll(), max(duration - 100, 100))
-				this.store.setState({ currentSection: sections[nextPoint], timeout, current: nextPoint })
+				const newTimeout = setTimeout(() => this.store.unLockScroll(), max(duration - 100, 100))
+				this.store.setState({ currentSection: sections[nextPoint], timeout: newTimeout, current: nextPoint })
 			},
 		})
 	}
 
 	handleWheel({ scroll, direction }) {
-		const { scenesRect, current, locked, timeout, viewportHeight } = this.store.getState()
+		const { scenesRect, current, locked } = this.store.getState()
 		const goingDown = direction === NORMAL
 		const scenesCount = scenesRect.length - 1
+
 		const avoidScroll = (current === scenesCount && goingDown) || (current === 0 && !goingDown) || locked
 
 		if (scroll && !avoidScroll) {
 			cancelAnimationFrame(this.RAF)
 			this.RAF = requestAnimationFrame(() => {
-				clearTimeout(timeout)
+				const { scenesRect, current, viewportHeight } = this.store.getState()
+
 				const nextPoint = clamp(current + (goingDown ? +1 : -1), [0, scenesCount])
-				const positionY = goingDown ? scenesRect[nextPoint].top : scenesRect[nextPoint].bottom - viewportHeight
-				this.store.lockScroll()
+				const scrollToY = goingDown ? scenesRect[nextPoint].top : scenesRect[nextPoint].bottom - viewportHeight
+
 				this.store.setState({ from: current, to: nextPoint, direction })
-				this.scrollTo({ positionY, nextPoint })
+				this.scrollTo({ scrollToY, nextPoint })
+
 			})
 
 		}
@@ -199,7 +206,7 @@ class SmoothScroller {
 		const direction = deltaY > 0 ? NORMAL : REVERSE
 		const clampedDelta = clamp(deltaY, [-mobile, mobile])
 
-		if (this.hasReachedScrollBoundary(deltaY)) {
+		if (this.hasReachedScrollBoundary(clampedDelta)) {
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })
 		}
 	}
