@@ -104,7 +104,6 @@ class SmoothScroller {
 		})
 
 		this.bodyScrollBar.addListener((status) => {
-			console.log(status.offset.y)
 			this.store.setState({
 				scrollProgress: status.offset.y / status.limit.y,
 				scrollStatus: status,
@@ -136,6 +135,10 @@ class SmoothScroller {
 
 		this.store.lockScroll()
 		clearTimeout(timeout)
+
+		this.bodyScrollBar.update()
+
+		this.bodyScrollBar.addMomentum(0, scrollToY - this.bodyScrollBar.offset.y)
 		this.bodyScrollBar.scrollTo(0, scrollToY, max(duration, 200), {
 			callback: () => {
 				const newTimeout = setTimeout(() => this.store.unLockScroll(), max(duration - 100, 100))
