@@ -54,9 +54,8 @@ class Scene {
 		// this.sparks = new Sparks(this.stage.renderer, this.stage.camera, 1450);
 		// this.stage.scene.add(this.sparks.getSparks());
 
-		setTimeout(() => {
-			this.animation();
-		}, 250)
+		this.animation();
+
 	}
 
 	init({ sectionSelectors, scrollSelector, characterPath, cameraStatePath, onModelLoading }) {
