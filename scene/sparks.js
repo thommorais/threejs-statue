@@ -20,7 +20,7 @@ class Sparks {
 		this.camera = camera
 		this.count = count
 
-		const w = window.innerWidth / 2
+		const w = window.innerWidth
 		const h = window.innerHeight
 
 		const material = new ShaderMaterial({
@@ -49,7 +49,7 @@ class Sparks {
 				},
 				_WorldSize: { value: new Vector3(80, 75, 4) },
 				_Resolution: {
-					value: new Vector2(w, h),
+					value: new Vector2(w * 2, h * 2),
 				},
 			},
 			vertexShader,
