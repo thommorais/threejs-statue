@@ -85,21 +85,19 @@ class Scene {
 				this.orbitControls = new DevMode(this.store, this.stage, this.lights, characterPath, cameraStatePath)
 			} else {
 
+				deltaEl.innerHTML = 'try to load model'
+
+
 				getModel(characterPath, this.store)
 					.then((model) => {
-						setTimeout(() => {
+						this.lights = new CreateLights();
 
-							this.lights = new CreateLights();
+						for (const light of this.lights) {
+							light.target = model
+							this.stage.scene.add(light)
+						}
 
-							for (const light of this.lights) {
-								light.target = model
-								this.stage.scene.add(light)
-							}
-
-							this.stage.scene.add(model)
-
-						}, 1000)
-
+						this.stage.scene.add(model)
 
 						deltaEl.innerHTML = 'Model loaded'
 
