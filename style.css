@@ -110,7 +110,6 @@ meter {
 	height: 100vh;
 	z-index: 4;
 	overflow: hidden;
-	background: rgba(0, 0, 0, 0.5);
 }
 
 .delta{
