@@ -91,7 +91,7 @@ class SmoothScroller {
 		})
 
 		this.bodyScrollBar = Scrollbar.init(this.scroller, {
-			damping:0.75,
+			damping:0.05,
 			continuousScrolling: false,
 			renderByPixels: true,
 			thumbMinSize: 32,
