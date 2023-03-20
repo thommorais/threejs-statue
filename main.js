@@ -2,7 +2,7 @@ import './style.css'
 
 import Scene from './scene'
 
-import './polyfill'
+import './scene/polyfill'
 
 const myScene = new Scene(false);
 
