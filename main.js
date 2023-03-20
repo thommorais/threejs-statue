@@ -2,6 +2,8 @@ import './style.css'
 
 import Scene from './scene'
 
+import './polyfill'
+
 const myScene = new Scene(false);
 
 myScene.init({
