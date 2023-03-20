@@ -115,7 +115,7 @@ meter {
 .delta{
 	position: fixed;
 	left: 2vw;
-	top: 180px;
+	top: 90px;
 	z-index: 10;
 	pointer-events: none;
 	background: linear-gradient(180deg, #101010 0%, #202020 100%);
