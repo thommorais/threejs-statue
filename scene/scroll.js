@@ -230,6 +230,8 @@ class SmoothScroller {
 
 		this.store.setState({ mouseWheel: false })
 
+		this.store.lockScroll()
+
 		if (this.hasReachedScrollBoundary(clampedDelta)) {
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })
 		}
