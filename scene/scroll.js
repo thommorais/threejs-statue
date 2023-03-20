@@ -226,7 +226,7 @@ class SmoothScroller {
 		const deltaY = this.startY - event.touches[0].clientY
 		const direction = deltaY > 0 ? NORMAL : REVERSE
 
-		const clampedDelta = clamp(deltaY, [-120, 120])
+		const clampedDelta = clamp(deltaY, [-280, 280])
 
 		this.store.setState({ mouseWheel: false })
 
