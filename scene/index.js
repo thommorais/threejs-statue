@@ -84,30 +84,34 @@ class Scene {
 				this.orbitControls = new DevMode(this.store, this.stage, this.lights, characterPath, cameraStatePath)
 			} else {
 
-				deltaEl.innerHTML = `try to load model`
+				try {
+					deltaEl.innerHTML = `try to load model`
 
-				getModel(characterPath, this.store)
-					.then((model) => {
-						this.lights = new CreateLights();
+					getModel(characterPath, this.store)
+						.then((model) => {
+							this.lights = new CreateLights();
 
-						for (const light of this.lights) {
-							light.target = model
-							this.stage.scene.add(light)
-						}
+							for (const light of this.lights) {
+								light.target = model
+								this.stage.scene.add(light)
+							}
 
-						this.stage.scene.add(model)
+							this.stage.scene.add(model)
 
-						deltaEl.innerHTML = 'Model loaded'
+							deltaEl.innerHTML = 'Model loaded'
 
-					})
-					.catch((error) => {
-						// eslint-disable-next-line no-console
-						console.error('Error getting the model:', error)
-						deltaEl.innerHTML = `Error getting the model`
-					})
+						})
+						.catch((error) => {
+							// eslint-disable-next-line no-console
+							console.error('Error getting the model:', error)
+							deltaEl.innerHTML = `Error getting the model`
+						})
 
-				deltaEl.innerHTML = `try to load camera state`
+					deltaEl.innerHTML = `try to load camera state`
 
+					}catch (error) {
+						deltaEl.innerHTML = `MODEL ISSUE ${error}`
+					}
 			}
 
 			if (typeof onModelLoading === 'function') {
