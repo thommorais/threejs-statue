@@ -50,9 +50,9 @@ class Scene {
 		this.store = new Store({ ...initialState });
 		this.stage = new Stage();
 
-		this.background = new Background(this.stage.scene, this.stage.renderer);
-		this.sparks = new Sparks(this.stage.renderer, this.stage.camera, 1450);
-		this.stage.scene.add(this.sparks.getSparks());
+		// this.background = new Background(this.stage.scene, this.stage.renderer);
+		// this.sparks = new Sparks(this.stage.renderer, this.stage.camera, 1450);
+		// this.stage.scene.add(this.sparks.getSparks());
 
 		setTimeout(() => {
 			this.animation();
