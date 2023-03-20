@@ -9,42 +9,11 @@ import Background from './background'
 
 import DevMode from './dev'
 
-const initialState = {
-	loadingProgress: 0,
-	current: 0,
-	duration: 750,
-	viewportHeight: window.innerHeight,
-	syntaticScroll: { scroll: 0, duration: 200 },
-	thresholdScroll: { desktop: 120, mobile: 30 },
-	currentScrollThreshold: 0,
-	afterEventTimeout: 200,
-	locked: false,
-	direction: "normal",
-	timeout: null,
-	cameraState: {},
-	scrollProgress: 0,
-	sections: [],
-	currentSection: null,
-	scenesRect: [],
-	mouseWheel: false,
-	scrollerSection: null,
-	scrollStatus: {
-		"offset": {
-			"x": 0,
-			"y": 0
-		},
-		"limit": {
-			"x": 0,
-			"y": 0
-		}
-	}
-}
-
 
 class Scene {
 	constructor(dev = false) {
 		this.dev = dev;
-		this.store = new Store({ ...initialState });
+		this.store = new Store();
 		this.stage = new Stage();
 
 		this.background = new Background(this.stage.scene, this.stage.renderer);

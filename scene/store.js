@@ -61,8 +61,45 @@ function shallowEqual(objA, objB) {
 	return true;
 }
 
+
+
+
 class Store {
-	constructor(initialState) {
+	constructor() {
+
+		const initialState = {
+			loadingProgress: 0,
+			current: 0,
+			from: 0,
+			to: 0,
+			duration: 750,
+			viewportHeight: window.innerHeight,
+			syntaticScroll: { scroll: 0, duration: 200 },
+			thresholdScroll: { desktop: 120, mobile: 30 },
+			currentScrollThreshold: 0,
+			afterEventTimeout: 200,
+			locked: false,
+			direction: "normal",
+			timeout: null,
+			cameraState: {},
+			scrollProgress: 0,
+			sections: [],
+			currentSection: null,
+			scenesRect: [],
+			mouseWheel: false,
+			scrollerSection: null,
+			scrollStatus: {
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"limit": {
+					"x": 0,
+					"y": 0
+				}
+			}
+		}
+
 		this.storeKeys = new Map(
 			Object.keys(initialState).map((key) => [key, key])
 		);
@@ -134,11 +171,15 @@ class Store {
 		}, shallowEqual);
 	}
 
-	lockScroll(isLock = false, mouseWheel) {
-		this.setState({ locked: isLock });
+	lockScroll(mouseWheel) {
+		this.setState({ locked: true });
 		if (mouseWheel) {
 			this.setState({ mouseWheel });
 		}
+	}
+
+	unLockScroll() {
+		this.setState({ locked: false });
 	}
 
 	scrollTo(scroll, duration = 200) {

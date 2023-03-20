@@ -32,3 +32,19 @@ export function throttle(func, delay) {
         }
     };
 }
+
+
+export function debounce(func, wait) {
+    let timeoutId = null;
+
+    return function (...args) {
+        const context = this;
+        const later = () => {
+            timeoutId = null;
+            func.apply(context, args);
+        };
+
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(later, wait);
+    };
+}
