@@ -125,10 +125,13 @@ class SmoothScroller {
 		this.scroller.addEventListener('touchstart', this.handleTouchStart, { passive: false })
 		this.scroller.addEventListener('touchmove', this.handleTouchMove, { passive: false })
 
-		this.throttledUpdateMouseWhell = throttle(({ scroll, direction }) => {
-			this.handleWheel({ scroll, direction })
-		}, 0)
+		this.store.subscribe((isLock) => deltaEl.innerHTML = `locked: ${isLock}`, 'locked')
+
+
 	}
+
+
+
 
 	hasReachedScrollBoundary(threshold) {
 		const { scenesRect, scrollStatus, scrollerSection, locked, mouseWheel } = this.store.getState()
@@ -144,10 +147,7 @@ class SmoothScroller {
 		const goingDown = threshold > 0
 
 		deltaEl.innerHTML = `
-		     scrollBottom: ${scrollBottom} <br>
-			 scrollTop: ${scrollTop} <br>
-			 bottom: ${bottom} <br>
-			 top: ${top} <br>
+		     locked: ${locked} <br>
 			 threshold: ${threshold} <br>
 			 currentIndex: ${currentIndex} <br>
 			 direction: ${goingDown ? 'down' : 'up'} <br>
@@ -230,7 +230,6 @@ class SmoothScroller {
 		const clampedDelta = clamp(deltaY, [-180, 180])
 
 		this.store.setState({ mouseWheel: false })
-
 
 		if (this.hasReachedScrollBoundary(clampedDelta)) {
 			this.store.lockScroll()
