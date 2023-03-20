@@ -46,7 +46,9 @@ class CameraOnScroll {
 			this.camera.updateProjectionMatrix()
 		})
 
-		this.store.subscribe(this.onBodyScroll.bind(this), 'current')
+		this.store.subscribe(() => {
+			this.onBodyScroll()
+		}, 'current')
 	}
 
 	onBodyScroll() {
