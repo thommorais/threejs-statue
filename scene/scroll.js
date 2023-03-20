@@ -146,11 +146,12 @@ class SmoothScroller {
 
 		deltaEl.innerHTML = `
 		     scrollBottom: ${scrollBottom} <br>
+			 scrollTop: ${scrollTop} <br>
 			 bottom: ${bottom} <br>
+			 top: ${top} <br>
 			 threshold: ${threshold} <br>
 			 currentIndex: ${currentIndex} <br>
 			 direction: ${goingDown ? 'down' : 'up'} <br>
-			 locked: ${locked} <br>
 			 wheel: ${mouseWheel}
 		`
 
@@ -204,8 +205,11 @@ class SmoothScroller {
 		this.store.setState({ currentScrollThreshold: desktop })
 
 		const direction = deltaY > 0 ? NORMAL : REVERSE
+		this.store.setState({ mouseWheel: true })
 
-		if (this.hasReachedScrollBoundary(deltaY)) {
+		const clampedDelta = clamp(deltaY, [-120, 120])
+
+		if (this.hasReachedScrollBoundary(clampedDelta)) {
 			this.throttledUpdateMouseWhell({ scroll: Math.abs(deltaY) > 0, direction })
 		}
 	}
@@ -224,6 +228,8 @@ class SmoothScroller {
 		const direction = deltaY > 0 ? NORMAL : REVERSE
 
 		const clampedDelta = clamp(deltaY, [-36, 36])
+
+		this.store.setState({ mouseWheel: false })
 
 		if (this.hasReachedScrollBoundary(clampedDelta)) {
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })
