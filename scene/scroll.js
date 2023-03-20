@@ -115,7 +115,7 @@ class SmoothScroller {
 			this.bodyScrollBar.updatePluginOptions('lock', { isLock: locked })
 		}, 'locked')
 
-		this.store.subscribe((syntaticScroll) => this.handleWheel(syntaticScroll), 'syntaticScroll')
+		this.store.subscribe(({syntaticScroll}) => this.handleWheel(syntaticScroll), 'syntaticScroll')
 
 		this.onScrollTimeout = null
 		this.handleMouseWheel = this.handleMouseWheel.bind(this)
