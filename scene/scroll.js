@@ -90,7 +90,7 @@ class SmoothScroller {
 			viewportHeight: this.scroller.offsetHeight,
 		})
 
-		Scrollbar.use(LockPlugin)
+		// Scrollbar.use(LockPlugin)
 
 		this.bodyScrollBar = Scrollbar.init(this.scroller, {
 			damping: 1,
@@ -171,20 +171,21 @@ class SmoothScroller {
 	}
 
 	hasReachedScrollBoundary(threshold) {
-		const { scenesRect, scrollStatus, scrollerSection, locked } = this.store.getState()
+		const { scenesRect, scrollStatus, viewportHeight, locked,  to } = this.store.getState()
 
 		const scrollTop = scrollStatus.offset.y
-		const scrollBottom = scrollTop + scrollerSection.offsetHeight
+		const scrollBottom = scrollTop + viewportHeight
 
 		const currentIndex = scenesRect.findIndex((scene) => isNumberInRange(scrollTop, [scene.top, scene.bottom]))
 
-		const { bottom } = scenesRect[currentIndex]
-		const { top } = scenesRect[min(currentIndex + 1, scenesRect.length - 1)]
+		const { bottom, top } = scenesRect[currentIndex]
 
 		const goingDown = threshold > 0
 
+
 		const scrollDown = goingDown && !locked && scrollBottom >= bottom + threshold
-		const scrollUp = !goingDown && !locked && scrollTop <= top + threshold
+		const scrollUp = !goingDown && !locked && scrollTop <= scenesRect[to].top - threshold
+
 
 		return scrollDown || scrollUp
 	}
