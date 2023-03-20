@@ -118,7 +118,7 @@ meter {
 	top: 180px;
 	z-index: 10;
 	pointer-events: none;
-	background: linear-gradient(180deg, #242424 0%, #212121 50%, #202020 100%);
+	background: linear-gradient(180deg, #101010 0%, #202020 100%);
 	--size:  clamp(120px, 50vw, 240px);
 	width: var(--size);
 	height: var(--size);
