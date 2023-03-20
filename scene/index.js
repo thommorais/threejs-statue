@@ -50,9 +50,9 @@ class Scene {
 		this.store = new Store({ ...initialState });
 		this.stage = new Stage();
 
-		// this.background = new Background(this.stage.scene, this.stage.renderer);
-		// this.sparks = new Sparks(this.stage.renderer, this.stage.camera, 1450);
-		// this.stage.scene.add(this.sparks.getSparks());
+		this.background = new Background(this.stage.scene, this.stage.renderer);
+		this.sparks = new Sparks(this.stage.renderer, this.stage.camera, 1450);
+		this.stage.scene.add(this.sparks.getSparks());
 
 		this.animation();
 
@@ -102,15 +102,12 @@ class Scene {
 
 						})
 						.catch((error) => {
-							// eslint-disable-next-line no-console
-							console.error('Error getting the model:', error)
 							deltaEl.innerHTML = `Error getting the model`
+							console.error('Error getting the model:', error)
 						})
 
-					deltaEl.innerHTML = `try to load camera state`
-
 					}catch (error) {
-						deltaEl.innerHTML = `MODEL ISSUE ${error}`
+						deltaEl.innerHTML = `MODEL ISSUE ${JSON.stringify(error)}`
 					}
 			}
 
