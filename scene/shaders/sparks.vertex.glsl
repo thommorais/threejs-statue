@@ -24,9 +24,13 @@ uniform float _TemporalFrequency;
 uniform float _BlinkFrequency;
 uniform float _DOF;
 uniform float _Gradient;
+uniform float _BoxHeight;
 
 varying vec2 vUv;
 varying vec4 vColor;
+attribute vec3 velocity;
+varying vec3 vVelocity;
+
 
 #define m3 mat3(-0.73736, 0.45628, 0.49808, 0, -0.73736, 0.67549, 0.67549, 0.49808, 0.54371)
 
@@ -34,7 +38,7 @@ vec3 sineNoise(in vec3 p) {
   vec3 q = p;
   vec3 c = vec3(0);
   float a = 1.;
-  for (int i = 0; i < 6; i++) {
+  for(int i = 0; i < 6; i++) {
     q = m3 * q;
     vec3 s = sin(q.zxy / a) * a;
     q += s * _Twist;
@@ -63,7 +67,9 @@ void main() {
 
   vec3 p = position.xyz;
   p.y += t * _WindY;
-  p.y = fract(p.y + 0.5) - 0.5;
+  // p.y = fract(p.y + 0.5) - 0.5;
+  p.y = mod(p.y + 0.5, _BoxHeight) - 1.5;
+
   p += turbulence(p, t);
 
   vec4 modelPosition = modelMatrix * vec4(p, .065);
@@ -73,23 +79,24 @@ void main() {
   gl_Position = projectedPosition;
 
   float coc = getCoc(p);
-  float size =_PointSize * (aRandom1 + 0.5);
-  gl_PointSize = size * (_ScreenHeight * .5) / gl_Position.w;
+  float size = _PointSize * (aRandom1 + 0.5);
+  gl_PointSize = size * (_ScreenHeight) / gl_Position.w;
   gl_PointSize += coc;
 
   float phase = t * _BlinkFrequency * (0.5 + aRandom0);
   float brightness = max(0.5 + sin(phase) + sin(phase * 1.618), 0.);
 
-    float alpha = brightness * _Opacity * min(gl_PointSize, 1.0) * aRandom2;
-    // alpha *= p.y * 0.0 + 0.5;
-    alpha *= 0.5 - p.y * 0.5;
-    alpha /= 1.0 + coc;
+  float alpha = brightness * _Opacity * min(gl_PointSize, 1.0) * aRandom2;
+  alpha *= 0.5 - p.y * 0.005;
+  alpha /= 1.0 + coc;
 
   float gradient = 1. - ((gl_Position.y / gl_Position.w) * .5 + .5) * _Gradient;
   alpha *= gradient * gradient;
 
-  vec3 c = spectrum(0.1 +  aRandom3 * 0.8);
+  vec3 c = spectrum(0.1 + aRandom3 * 0.8);
   vColor = vec4(c, alpha);
+
+  vVelocity = velocity;
 
   vUv = uv;
 

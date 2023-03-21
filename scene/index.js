@@ -7,21 +7,19 @@ import Store from './store'
 import Sparks from './sparks'
 import Background from './background'
 
-import DevMode from './dev'
 
+
+
+
+const SPARKS_LAYER = 1;
 
 class Scene {
-	constructor(dev = false) {
-		this.dev = dev;
-		this.store = new Store();
-		this.stage = new Stage();
+	constructor() {
+		this.store = new Store()
+		this.stage = new Stage()
 
-		this.background = new Background(this.stage.scene, this.stage.renderer);
-		this.sparks = new Sparks(this.stage.renderer, this.stage.camera, 1450);
-		this.stage.scene.add(this.sparks.getSparks());
 
-		this.animation();
-
+		this.animation()
 	}
 
 	init({ sectionSelectors, scrollSelector, characterPath, cameraStatePath, onModelLoading }) {
@@ -41,34 +39,30 @@ class Scene {
 			if (!cameraStatePath) {
 				throw new Error('cameraStatePath is required')
 			}
-
 			new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath })
 
+			getModel(characterPath, this.store)
+				.then((model) => {
+					this.lights = new CreateLights()
 
-			if (this.dev) {
-				document.querySelector(scrollSelector).style.pointerEvents = 'none'
-				this.orbitControls = new DevMode(this.store, this.stage, this.lights, characterPath, cameraStatePath)
-			} else {
+					for (const light of this.lights) {
+						light.target = model
+						this.stage.scene.add(light)
+					}
 
-					getModel(characterPath, this.store)
-						.then((model) => {
-							this.lights = new CreateLights();
-
-							for (const light of this.lights) {
-								light.target = model
-								this.stage.scene.add(light)
-							}
-
-							this.stage.scene.add(model)
-
-
-						})
-						.catch((error) => {
-							console.error('Error getting the model:', error)
-						})
+					this.stage.scene.add(model)
+				})
+				.catch((error) => {
+					console.error('Error getting the model:', error)
+				})
+			this.stage.camera.layers.enable(SPARKS_LAYER);
 
 
-			}
+			this.background = new Background(this.stage.scene, this.stage.renderer)
+
+			this.sparks = new Sparks(this.stage.renderer, this.stage.camera)
+			this.stage.scene.add(this.sparks.getSparks())
+
 
 			if (typeof onModelLoading === 'function') {
 				this.subscribe(({ loadingProgress }) => onModelLoading(loadingProgress), 'loadingProgress')
@@ -79,10 +73,14 @@ class Scene {
 		}
 	}
 
+
+
 	animation() {
 		this.stage.renderer.setAnimationLoop((time) => {
+
 			this.stage.camera.updateProjectionMatrix()
 			this.stage.camera.updateMatrixWorld(true)
+
 
 			if (this.background) {
 				this.background.animate()
@@ -92,15 +90,14 @@ class Scene {
 				this.sparks.animate(time)
 			}
 
-			if (this.dev) {
-				this.orbitControls.update()
-			}
 			this.stage.renderer.render(this.stage.scene, this.stage.camera)
 		})
 	}
 
 	modelLoading(callback) {
-		this.store.subscribe(({ loadingProgress }) => callback(loadingProgress), 'loadingProgress')
+		if (typeof callback !== 'function') {
+			this.store.subscribe(({ loadingProgress }) => callback(loadingProgress), 'loadingProgress')
+		}
 	}
 
 	lockScroll() {

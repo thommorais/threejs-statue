@@ -18,6 +18,7 @@ class Stage {
 
 		// this.camera.position.z = 5
 
+
 		window.addEventListener('resize', () => {
 			const { width, height } = getDefaultSizes();
 			this.camera.aspect = width / height;

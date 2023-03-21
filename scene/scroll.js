@@ -171,19 +171,16 @@ class SmoothScroller {
 	}
 
 	hasReachedScrollBoundary(threshold) {
-		const { scenesRect, scrollStatus, viewportHeight, locked,  to } = this.store.getState()
+		const { scenesRect, scrollStatus, viewportHeight, locked, to } = this.store.getState()
 
 		const scrollTop = scrollStatus.offset.y
 		const scrollBottom = scrollTop + viewportHeight
 
 		const currentIndex = scenesRect.findIndex((scene) => isNumberInRange(scrollTop, [scene.top, scene.bottom]))
 
-		const { bottom, top } = scenesRect[currentIndex]
-
 		const goingDown = threshold > 0
 
-
-		const scrollDown = goingDown && !locked && scrollBottom >= bottom + threshold
+		const scrollDown = goingDown && !locked && scrollBottom >= scenesRect[currentIndex].bottom + threshold
 		const scrollUp = !goingDown && !locked && scrollTop <= scenesRect[to].top - threshold
 
 

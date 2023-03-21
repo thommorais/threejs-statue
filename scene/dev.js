@@ -1,4 +1,4 @@
-import { Vector3, SpotLightHelper } from 'three'
+import { Vector3, SpotLightHelper, Quaternion } from 'three'
 
 import Stats from './stats'
 
@@ -7,6 +7,7 @@ import { getProject, types } from '@theatre/core'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import getModel from './model'
+import CreateLights from './lights'
 
 
 async function theatre(lights, model, camera, store) {
@@ -17,8 +18,10 @@ async function theatre(lights, model, camera, store) {
 
 	studio.initialize()
 
+	studio.ui.hide()
+
 	// Create a sheet
-	const sheet = getProject('lights', { state: cameraState }).sheet('lights')
+	const sheet = getProject('lights').sheet('lights')
 
 	const [leftLight, topLight, rightLight, one] = lights
 
@@ -50,39 +53,39 @@ async function theatre(lights, model, camera, store) {
 		)
 	}
 
-	lightSheets.forEach(({ name, light }) => {
-		const leftObj = sheet.object(name, {
-			position: types.compound({
-				x: types.number(light.position.x, { range: [-500, 500] }),
-				y: types.number(light.position.y, { range: [-500, 500] }),
-				z: types.number(light.position.z, { range: [-500, 500] }),
-			}),
-			intensity: types.number(light.intensity, { range: [0, 5000] }),
-			penumbra: types.number(light.penumbra, { range: [0, 1] }),
-			angle: types.number(light.angle, { range: [Math.PI / 3, Math.PI / 2] }),
-			power: types.number(light.power, { range: [0, 1200] }),
-			color: types.rgba({ r: light.color.r, g: light.color.g, b: light.color.b, a: 1 }),
-		})
+	// lightSheets.forEach(({ name, light }) => {
+	// 	const leftObj = sheet.object(name, {
+	// 		position: types.compound({
+	// 			x: types.number(light.position.x, { range: [-500, 500] }),
+	// 			y: types.number(light.position.y, { range: [-500, 500] }),
+	// 			z: types.number(light.position.z, { range: [-500, 500] }),
+	// 		}),
+	// 		intensity: types.number(light.intensity, { range: [0, 5000] }),
+	// 		penumbra: types.number(light.penumbra, { range: [0, 1] }),
+	// 		angle: types.number(light.angle, { range: [Math.PI / 3, Math.PI / 2] }),
+	// 		power: types.number(light.power, { range: [0, 1200] }),
+	// 		color: types.rgba({ r: light.color.r, g: light.color.g, b: light.color.b, a: 1 }),
+	// 	})
 
-		leftObj.onValuesChange((values) => {
-			const { x, y, z } = values.position
-			light.position.set(x, y, z)
-			light.intensity = values.intensity
-			light.angle = values.angle
-			light.penumbra = values.penumbra
-			light.color.set(rgbToHex([values.color.r, values.color.g, values.color.b]))
-		})
-	})
+	// 	leftObj.onValuesChange((values) => {
+	// 		const { x, y, z } = values.position
+	// 		light.position.set(x, y, z)
+	// 		light.intensity = values.intensity
+	// 		light.angle = values.angle
+	// 		light.penumbra = values.penumbra
+	// 		light.color.set(rgbToHex([values.color.r, values.color.g, values.color.b]))
+	// 	})
+	// })
 
-	const modelObj = sheet.object('model', {
-		metalness: types.number(model.children[0].material.metalness, { range: [0, 1] }),
-		roughness: types.number(model.children[0].material.roughness, { range: [0, 1] }),
-	})
+	// const modelObj = sheet.object('model', {
+	// 	metalness: types.number(model.children[0].material.metalness, { range: [0, 1] }),
+	// 	roughness: types.number(model.children[0].material.roughness, { range: [0, 1] }),
+	// })
 
-	modelObj.onValuesChange((values) => {
-		model.children[0].material.metalness = values.metalness
-		model.children[0].material.roughness = values.roughness
-	})
+	// modelObj.onValuesChange((values) => {
+	// 	model.children[0].material.metalness = values.metalness
+	// 	model.children[0].material.roughness = values.roughness
+	// })
 
 	const cameraObj = sheet.object('Camera', {
 		position: types.compound({
@@ -95,13 +98,17 @@ async function theatre(lights, model, camera, store) {
 			y: types.number(camera.position.y, { range: [-100, 100] }),
 			z: types.number(camera.position.z, { range: [-100, 100] }),
 		}),
+
+		rotateZ: types.number(0, { range: [-Math.PI, Math.PI] }),
 	})
 
 	cameraObj.onValuesChange((values) => {
 		camera.position.set(values.position.x, values.position.y, values.position.z)
 		const { x, y, z } = values.lookAt
+
 		camera.lookAt(new Vector3(x, y, z))
 		camera.updateProjectionMatrix()
+		camera.updateMatrixWorld(true)
 	})
 
 }
@@ -114,33 +121,46 @@ function dev(scene, camera, lights, model, store) {
 
 		const stats = new Stats()
 
+		scene.add(stats.dom)
+
 		const internalLoop = () => {
 			stats.update()
 			requestAnimationFrame(internalLoop)
 		}
 
-		lights.forEach((light) => {
-			const spotLightHelper = new SpotLightHelper(light)
-			scene.add(spotLightHelper)
-			const s = () =>
-				requestAnimationFrame(() => {
-					spotLightHelper.update()
-					s()
-				})
-			s()
-		})
+
+		internalLoop()
+
+		// lights.forEach((light) => {
+		// 	const spotLightHelper = new SpotLightHelper(light)
+		// 	scene.add(spotLightHelper)
+		// 	const s = () =>
+		// 		requestAnimationFrame(() => {
+		// 			spotLightHelper.update()
+		// 			s()
+		// 		})
+		// 	s()
+		// })
 	}
 }
 
 export default class DevMode {
 
-	constructor(store, stage, lights, characterPath, cameraStatePath) {
+	constructor(store, stage, characterPath, cameraStatePath) {
+
 		getModel(characterPath, store).then(async (model) => {
 			fetch(cameraStatePath)
 				.then((response) => response.json())
 				.then((cameraState) => {
 					store.setState({ cameraState })
+					const lights = new CreateLights();
 					dev(stage.scene, stage.camera, lights, model, store)
+					stage.scene.add(model)
+
+					for (const light of lights) {
+						light.target = model
+						stage.scene.add(light)
+					}
 					stage.scene.add(model)
 				})
 
