@@ -18,10 +18,8 @@ async function theatre(lights, model, camera, store) {
 
 	studio.initialize()
 
-	studio.ui.hide()
-
 	// Create a sheet
-	const sheet = getProject('lights').sheet('lights')
+	const sheet = getProject('lights', { state: cameraState }).sheet('lights')
 
 	const [leftLight, topLight, rightLight, one] = lights
 
@@ -119,28 +117,16 @@ function dev(scene, camera, lights, model, store) {
 
 		theatre(lights, model, camera, store)
 
-		const stats = new Stats()
-
-		scene.add(stats.dom)
-
-		const internalLoop = () => {
-			stats.update()
-			requestAnimationFrame(internalLoop)
-		}
-
-
-		internalLoop()
-
-		// lights.forEach((light) => {
-		// 	const spotLightHelper = new SpotLightHelper(light)
-		// 	scene.add(spotLightHelper)
-		// 	const s = () =>
-		// 		requestAnimationFrame(() => {
-		// 			spotLightHelper.update()
-		// 			s()
-		// 		})
-		// 	s()
-		// })
+		lights.forEach((light) => {
+			const spotLightHelper = new SpotLightHelper(light)
+			scene.add(spotLightHelper)
+			const s = () =>
+				requestAnimationFrame(() => {
+					spotLightHelper.update()
+					s()
+				})
+			s()
+		})
 	}
 }
 
@@ -165,6 +151,7 @@ export default class DevMode {
 				})
 
 		})
+
 
 		return this.createOrbitControl(stage.camera, stage.renderer)
 	}

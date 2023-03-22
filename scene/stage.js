@@ -36,6 +36,7 @@ class Stage {
 			stencil: true,
 			depth: true,
 			powerPreference: 'high-performance',
+			antialias: true, // Add this line
 		});
 
 		renderer.physicallyCorrectLights = true;
@@ -43,12 +44,10 @@ class Stage {
 		renderer.toneMapping = ACESFilmicToneMapping;
 		renderer.toneMappingExposure = 1.25;
 		renderer.logarithmicDepthBuffer = true;
+
+
 		renderer.setSize(width, height);
 		renderer.setPixelRatio(pixelRatio);
-
-		if (pixelRatio === 1) {
-			renderer.antialias = true;
-		}
 
 		return renderer;
 	}

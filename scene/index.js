@@ -4,22 +4,16 @@ import Scroll from './scroll'
 import CreateLights from './lights'
 import getModel from './model'
 import Store from './store'
-import Sparks from './sparks'
 import Background from './background'
+import Sparks from './sparks'
 
+// import Dev from './dev'
 
-
-
-
-const SPARKS_LAYER = 1;
 
 class Scene {
 	constructor() {
 		this.store = new Store()
 		this.stage = new Stage()
-
-
-		this.animation()
 	}
 
 	init({ sectionSelectors, scrollSelector, characterPath, cameraStatePath, onModelLoading }) {
@@ -39,6 +33,7 @@ class Scene {
 			if (!cameraStatePath) {
 				throw new Error('cameraStatePath is required')
 			}
+
 			new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath })
 
 			getModel(characterPath, this.store)
@@ -55,40 +50,33 @@ class Scene {
 				.catch((error) => {
 					console.error('Error getting the model:', error)
 				})
-			this.stage.camera.layers.enable(SPARKS_LAYER);
-
 
 			this.background = new Background(this.stage.scene, this.stage.renderer)
-
-			this.sparks = new Sparks(this.stage.renderer, this.stage.camera)
-			this.stage.scene.add(this.sparks.getSparks())
-
+			this.sparks = new Sparks(this.stage, 0)
 
 			if (typeof onModelLoading === 'function') {
 				this.subscribe(({ loadingProgress }) => onModelLoading(loadingProgress), 'loadingProgress')
 			}
+
+			this.animation()
+
 		} catch (error) {
-			// eslint-disable-next-line no-console
 			console.error('Error initializing the scene:', error)
 		}
 	}
 
-
-
 	animation() {
+
 		this.stage.renderer.setAnimationLoop((time) => {
 
-			this.stage.camera.updateProjectionMatrix()
-			this.stage.camera.updateMatrixWorld(true)
-
+			this.sparks.update(time)
 
 			if (this.background) {
 				this.background.animate()
 			}
 
-			if (this.sparks) {
-				this.sparks.animate(time)
-			}
+			this.stage.camera.updateProjectionMatrix()
+			this.stage.camera.updateMatrixWorld(true)
 
 			this.stage.renderer.render(this.stage.scene, this.stage.camera)
 		})

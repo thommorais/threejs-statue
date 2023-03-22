@@ -139,15 +139,12 @@ meter {
 .chapter {
 	position: relative;
 	z-index: 4;
-	height: 200vh;
+	height: 100vh;
 	width: 100vw;
 	display: grid;
-	place-items: center;
 }
 
-.chapter:first-child {
-	height: 100vh;
-}
+
 
 /* .chapter:nth-child(2) {
 	height:300vh;
