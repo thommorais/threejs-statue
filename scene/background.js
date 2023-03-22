@@ -60,8 +60,8 @@ class Background {
 	animateThumder() {
 		const thunder = Math.random() > this.frequency;
 		if (thunder && this.flash) {
-			if (this.flash.power < 100) {
-				this.flash.intensity = 400;
+			if (this.flash.power < 200) {
+				this.flash.intensity = 100;
 				const x = randomIntFromInterval(-20, 20);
 				const y = randomIntFromInterval(-40, 45);
 				const z = randomIntFromInterval(this.flashMinZ, this.flashMaxZ);

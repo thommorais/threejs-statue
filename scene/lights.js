@@ -1,41 +1,56 @@
 import { SpotLight } from 'three';
 
+const colors = {
+	demon: [0xc9bbff, 0xff3d0c, 0xff0633, 0xc9bbff],
+	mage: [0xbd50ff, 0xff6b47, 0xff03a5, 0xbd50ff]
+}
+
+const LIGHTS_CONFIG = [
+	{
+		intensity: 3500,
+		distance: 150,
+		position: [-56, 87, 47],
+		penumbra: 1,
+	},
+	{
+		intensity: 1800,
+		distance: 150,
+		position: [6, 80, 0],
+		penumbra: 0.75,
+	},
+	{
+		intensity: 1016.4556962025315,
+		distance: 150,
+		position: [46, 70, -20],
+		penumbra: 1,
+	},
+	{
+		intensity: 190,
+		distance: 400,
+		position: [-13.89, -22.29, 30.41],
+		penumbra: 1,
+	},
+];
+
 class Lights {
 	constructor() {
 		this.intensityFactor = 1;
 		this.lights = [];
+		this.character = 'mage'
 		this.create();
 		return this.lights;
 	}
 
 	create() {
-		const leftSpotLight = new SpotLight(0xc9bbff, 1);
-		leftSpotLight.distance = 150;
-		leftSpotLight.position.set(-56, 87, 47);
-		leftSpotLight.intensity = 3500 * this.intensityFactor;
-		leftSpotLight.penumbra = 1;
-
-		const topSpotLight = new SpotLight(0xff3d0c, 1);
-		topSpotLight.distance = 150;
-		topSpotLight.position.set(6, 80, 0);
-		topSpotLight.intensity = 1800 * this.intensityFactor;
-		topSpotLight.penumbra = 0.75;
-
-		const rightSpotLight = new SpotLight(0xff0633, 1);
-		rightSpotLight.distance = 150;
-		rightSpotLight.position.set(46, 70, -20);
-		rightSpotLight.intensity = 1016.4556962025315 * this.intensityFactor;
-		rightSpotLight.penumbra = 1;
-
-		const extraSpotLight = new SpotLight(0xc9bbff, 1);
-		rightSpotLight.distance = 400;
-		rightSpotLight.position.set(-13.89, -22.29, 30.41);
-		rightSpotLight.intensity = 190 * this.intensityFactor;
-		rightSpotLight.penumbra = 1;
-
-		const lights = [leftSpotLight, topSpotLight, rightSpotLight, extraSpotLight];
-
-		this.lights = lights;
+		this.lights = LIGHTS_CONFIG.map((config, index) => {
+			const color = colors[this.character][index];
+			const light = new SpotLight(color, 1);
+			light.distance = config.distance;
+			light.position.set(...config.position);
+			light.intensity = config.intensity * this.intensityFactor;
+			light.penumbra = config.penumbra;
+			return light;
+		});
 	}
 }
 
