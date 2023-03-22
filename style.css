@@ -171,6 +171,10 @@ meter {
 	color: rgba(255, 255, 255, 0.85);
 }
 
+.chapter :is(h1, h2) {
+	opacity: 0;
+}
+
 .chapter .top{
 	place-self: start;
 }
