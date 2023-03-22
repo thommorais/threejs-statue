@@ -52,8 +52,14 @@ vec3 turbulence(vec3 p, float t) {
   return sineNoise(p) * u_amplitude;
 }
 
+// vec3 spectrum(float b) {
+//     return vec3(b * 2.0, b * 1.5, b * 0.5);
+//   return vec3(b, b * b, b * b * b * b);
+//   // return vec3(b, 0.2 * b * b, b * b);
+// }
+
 vec3 spectrum(float b) {
-  return vec3(b, b * b, b * b * b * b);
+  return vec3(b, 0.2 * b * b, b * b);
 }
 
 float getCoc(vec3 p) {
@@ -81,6 +87,9 @@ void main() {
 
   float phase = t * u_blink * (0.5 + aRandom0);
   float brightness = max(0.5 + sin(phase) + sin(phase * 1.618), 0.);
+
+  // float brightness = sin(phase) + sin(phase * 1.618);
+
 
   float alpha = brightness * u_opacity * min(gl_PointSize, 1.0) * aRandom2;
   alpha *= p.y * 0. + 0.5;

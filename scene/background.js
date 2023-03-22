@@ -48,7 +48,9 @@ class Background {
 	}
 
 	createThunder(zRange) {
-		this.flash = new PointLight(0xff0000, 175, 250, 1.5);
+		const witch = 0x7c00ff
+		const demon = 0xff0000
+		this.flash = new PointLight(witch, 175, 250, 1.5);
 		this.flashMaxZ = Math.max(...zRange);
 		this.flashMinZ = this.flashMaxZ - 1;
 		this.flash.position.set(0, 0, this.flashMinZ);
