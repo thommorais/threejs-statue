@@ -45,8 +45,7 @@ function getModel(modelPath, store) {
             },
             // called while loading is progressing
             (xhr) => {
-                const loadingProgress = Math.round((xhr.loaded / xhr.total) * 100);
-                store.setState({ loadingProgress });
+                store.setState({ modelLoadingProgress: Math.round((xhr.loaded / xhr.total) * 100) });
             },
             (error) => {
                 reject(error)

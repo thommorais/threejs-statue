@@ -17,7 +17,7 @@ class Scene {
 		this.devMode = dev
 	}
 
-	init({ sectionSelectors, scrollSelector, characterPath, cameraStatePath, characterClass, onModelLoading }) {
+	init({ sectionSelectors, scrollSelector, characterPath, cameraStatePath, characterClass, modelLoading }) {
 		try {
 			if (!sectionSelectors) {
 				throw new Error('sectionSelectors is required')
@@ -35,10 +35,8 @@ class Scene {
 				throw new Error('cameraStatePath is required')
 			}
 
-			if (typeof onModelLoading === 'function') {
-				this.subscribe(({ loadingProgress }) => onModelLoading(loadingProgress), 'loadingProgress')
-			}
 
+			this.modelLoading(modelLoading)
 
 			this.store.setState({ characterClass })
 
@@ -94,8 +92,8 @@ class Scene {
 	}
 
 	modelLoading(callback) {
-		if (typeof callback !== 'function') {
-			this.store.subscribe(({ loadingProgress }) => callback(loadingProgress), 'loadingProgress')
+		if (typeof callback === 'function') {
+			this.store.subscribe(({ modelLoadingProgress }) => callback(modelLoadingProgress), 'modelLoadingProgress')
 		}
 	}
 
@@ -112,7 +110,9 @@ class Scene {
 	}
 
 	subscribe(callback, key) {
-		this.store.subscribe(callback, key)
+		if (typeof callback === 'function') {
+			this.store.subscribe(callback, key)
+		}
 	}
 }
 

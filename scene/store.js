@@ -68,7 +68,7 @@ class Store {
 	constructor() {
 
 		const initialState = {
-			loadingProgress: 0,
+			modelLoadingProgress: 0,
 			current: 0,
 			from: 0,
 			to: 0,

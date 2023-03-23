@@ -31,12 +31,15 @@ const devMode = dev || false
 const myScene = new Scene(devMode);
 
 myScene.init({
+	characterClass,
 	characterPath: `${characterClass}/scene.glb`,
 	cameraStatePath: `${characterClass}/camera.json`,
 	sectionSelectors: '.chapter',
 	scrollSelector: '.container-3d',
-	characterClass,
+	modelLoading: console.log,
 });
+
+
 
 setTimeout(() => {
 	myScene.scrollTo({ to: 1, from: 0})
