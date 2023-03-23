@@ -5,8 +5,9 @@ import {
 import { randomIntFromInterval } from './utils';
 
 class Background {
-	constructor(scene) {
+	constructor(scene, store) {
 		this.scene = scene;
+		this.store = store;
 		this.cloudParticles = [];
 		this.zRange = [];
 		this.frequency = 0.85;
@@ -48,10 +49,9 @@ class Background {
 	}
 
 	createThunder(zRange) {
-		const witch = 0x7c00ff
-		const demon = 0xff0000
-		const barbarian = 0xFF401A
-		this.flash = new PointLight(barbarian, 175, 250, 1.5);
+		const { characterClass, backgroundColors } = this.store.getState();
+
+		this.flash = new PointLight(backgroundColors[characterClass], 175, 250, 1.5);
 		this.flashMaxZ = Math.max(...zRange);
 		this.flashMinZ = this.flashMaxZ - 1;
 		this.flash.position.set(0, 0, this.flashMinZ);

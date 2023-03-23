@@ -17,7 +17,7 @@ class Scene {
 		this.devMode = dev
 	}
 
-	init({ sectionSelectors, scrollSelector, characterPath, cameraStatePath, onModelLoading }) {
+	init({ sectionSelectors, scrollSelector, characterPath, cameraStatePath, characterClass, onModelLoading }) {
 		try {
 			if (!sectionSelectors) {
 				throw new Error('sectionSelectors is required')
@@ -40,12 +40,15 @@ class Scene {
 			}
 
 
+			this.store.setState({ characterClass })
+
+
 			if (!this.devMode) {
 				new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath })
 
 				getModel(characterPath, this.store)
 					.then((model) => {
-						this.lights = new CreateLights()
+						this.lights = new CreateLights(this.store)
 
 						for (const light of this.lights) {
 							light.target = model
@@ -57,8 +60,8 @@ class Scene {
 					.catch((error) => {
 						console.error('Error getting the model:', error)
 					})
-				this.background = new Background(this.stage.scene)
-				this.sparks = new Sparks(this.stage, 0)
+				this.background = new Background(this.stage.scene, this.store)
+				this.sparks = new Sparks(this.stage, this.store)
 
 			} else {
 				new Dev(this.store, this.stage, characterPath, cameraStatePath)

@@ -1,11 +1,5 @@
 import { SpotLight } from 'three';
 
-const colors = {
-	demon: [0xc9bbff, 0xff3d0c, 0xff0633, 0xc9bbff],
-	mage: [0xbd50ff, 0xff6b47, 0xff03a5, 0xbd50ff],
-	barbarian: [0xbf744a, 0xff7a50, 0xff7760, 0xbf744a]
-}
-
 const LIGHTS_CONFIG = [
 	{
 		intensity: 3500,
@@ -34,17 +28,20 @@ const LIGHTS_CONFIG = [
 ];
 
 class Lights {
-	constructor() {
+	constructor(store) {
 		this.intensityFactor = 1;
 		this.lights = [];
-		this.character = 'barbarian'
+		this.store = store
 		this.create();
 		return this.lights;
 	}
 
 	create() {
+
+		const { characterClass, classColors } = this.store.getState();
+
 		this.lights = LIGHTS_CONFIG.map((config, index) => {
-			const color = colors[this.character][index];
+			const color = classColors[characterClass][index];
 			const light = new SpotLight(color, 1);
 			light.distance = config.distance;
 			light.position.set(...config.position);

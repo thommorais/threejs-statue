@@ -37,6 +37,8 @@ class CameraOnScroll {
 	}
 
 	setListeners() {
+		const { characterClass } = this.store.getState()
+
 		this.cameraObj = this.sheet.object('Camera', {
 			position: types.compound({ ...this.camera.position }),
 			lookAt: types.compound({ x: 0, y: 0, z: 0 }),
@@ -47,29 +49,40 @@ class CameraOnScroll {
 			this.camera.position.set(position.x, position.y, position.z)
 			const { x, y, z } = lookAt
 			this.camera.lookAt(new Vector3(x, y, z))
-			this.camera.rotation.z = rotateZ
+
+			if (characterClass === 'barbarian') {
+				this.camera.rotation.z = rotateZ
+			}
 		})
 
 		this.store.subscribe(() => this.onBodyScroll(), 'to')
+
 	}
 
 	onBodyScroll() {
 		const { direction, from, to } = this.store.getState()
 		const range = direction === NORMAL ? [from, to] : [to, from]
-		const { position } = this.sheet.sequence
-		this.sheet.sequence.play({ range, direction, rate: position === 2 ? 2 : getDistance(from, to) })
-		this.store.setState({ from: range[0] })
+
+		this.sheet.sequence.play({ direction, range }).then( () => {
+			this.store.setState({ from: range[0] })
+		}).catch(e => {
+		 	console.log(e)
+		})
 	}
 }
 
 class LockPlugin extends ScrollbarPlugin {
 	static pluginName = 'lock'
 
-	transformDelta(delta) {
+	transformDelta(_,fromEvent) {
 		if (this.options.locked) {
 			return { x: 0, y: 0 }
 		}
-		return delta
+
+		return {
+			x: fromEvent.deltaX,
+			y: fromEvent.deltaY,
+		};
 	}
 
 }
@@ -117,7 +130,11 @@ class SmoothScroller {
 			this.bodyScrollBar.updatePluginOptions('lock', { locked })
 		}, 'locked')
 
-		this.store.subscribe(({syntaticScroll}) => this.handleWheel(syntaticScroll), 'syntaticScroll')
+		this.store.subscribe(({ syntaticScroll }) => {
+			if (syntaticScroll.enabled) {
+				this.syntaticScroll(syntaticScroll)
+			}
+		}, ['syntaticScroll'])
 
 		this.onScrollTimeout = null
 		this.handleMouseWheel = this.handleMouseWheel.bind(this)
@@ -150,9 +167,33 @@ class SmoothScroller {
 		})
 	}
 
+	updateScrollState({from, to, direction}) {
+		this.store.setState({ from, to, direction })
+	}
+
+	getCurrentScrollState(direction) {
+		const { scenesRect, current, viewportHeight, syntaticScroll } = this.store.getState()
+		const goingDown = direction === NORMAL
+		const scenesCount = scenesRect.length - 1
+		const nextPoint = clamp(current + (goingDown ? +1 : -1), [0, scenesCount])
+		const { top, bottom } = scenesRect[nextPoint]
+		const scrollToY = goingDown ? top : bottom - viewportHeight
+
+		return {
+			scenesRect,
+			current,
+			nextPoint,
+			scenesCount,
+			goingDown,
+			scrollToY,
+			syntaticScroll
+		}
+	}
+
+
 	handleWheel({ scroll, direction }) {
 		const { scenesRect, current, locked } = this.store.getState()
-		const goingDown = direction === NORMAL
+		const { goingDown } = this.getCurrentScrollState(direction)
 		const scenesCount = scenesRect.length - 1
 
 		const avoidScroll = (current === scenesCount && goingDown) || (current === 0 && !goingDown) || locked
@@ -160,16 +201,31 @@ class SmoothScroller {
 		if (scroll && !avoidScroll) {
 			cancelAnimationFrame(this.RAF)
 			this.RAF = requestAnimationFrame(() => {
-				const { scenesRect, current, viewportHeight } = this.store.getState()
-
-				const nextPoint = clamp(current + (goingDown ? +1 : -1), [0, scenesCount])
-				const {top, bottom} = scenesRect[nextPoint] || {top: 0, bottom: 0}
-				const scrollToY = goingDown ? scenesRect[nextPoint].top : scenesRect[nextPoint].bottom - viewportHeight
-
-				this.store.setState({ from: current, to: nextPoint, direction })
+				const { current, scrollToY, nextPoint } = this.getCurrentScrollState(direction)
+				this.updateScrollState({ from: current, to: nextPoint, direction })
 				this.scrollTo({ scrollToY, nextPoint })
-
 			})
+
+		}
+	}
+
+	syntaticScroll(state) {
+
+		if (state.enabled) {
+			const { current, direction, from, to} = state
+			const { scenesCount, goingDown } = this.getCurrentScrollState(direction)
+
+			const avoidScroll = (current === scenesCount && goingDown) || (current === 0 && !goingDown)
+
+			if (scroll && !avoidScroll) {
+				cancelAnimationFrame(this.RAF)
+				this.RAF = requestAnimationFrame(() => {
+					const nextPoint = to + (goingDown ? -1 : +1)
+					this.store.setState({ from, to, direction, current: nextPoint, syntaticScroll: { enabled: false } })
+					const { scrollToY } = this.getCurrentScrollState(direction)
+					this.scrollTo({ scrollToY, nextPoint: to })
+				})
+			}
 
 		}
 	}
@@ -181,11 +237,10 @@ class SmoothScroller {
 		const scrollBottom = scrollTop + viewportHeight
 
 		const currentIndex = scenesRect.findIndex((scene) => isNumberInRange(scrollTop, [scene.top, scene.bottom]))
-
 		const goingDown = threshold > 0
 
-		const { bottom: currBottom = 0} = scenesRect[currentIndex] || {bottom: 0}
-		const {top: nextTop = 0} = scenesRect[to] || {top: 0}
+		const { bottom: currBottom = 0} = scenesRect[currentIndex]
+		const {top: nextTop = 0} = scenesRect[to]
 
 		const scrollDown = goingDown && !locked && scrollBottom >= currBottom + threshold
 		const scrollUp = !goingDown && !locked && scrollTop <= nextTop - threshold
@@ -195,8 +250,14 @@ class SmoothScroller {
 
 
 	handleMouseWheel({ deltaY }) {
-		const { thresholdScroll: { desktop } } = this.store.getState()
-		const direction = deltaY > 0 ? NORMAL : REVERSE
+		const { thresholdScroll: { desktop }, scenesRect } = this.store.getState()
+
+		if (scenesRect.length === 0) {
+			return null
+		}
+
+
+		const direction = deltaY >= 0 ? NORMAL : REVERSE
 		if (this.hasReachedScrollBoundary(clamp(deltaY, [-desktop, desktop]))) {
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })
 		}
@@ -207,10 +268,16 @@ class SmoothScroller {
 	}
 
 	handleTouchMove({ touches }) {
-		const { thresholdScroll: {mobile} } = this.store.getState()
+		const { thresholdScroll: { mobile }, scenesRect } = this.store.getState()
+
+		if (scenesRect.length === 0) {
+			return null
+		}
+
 		const deltaY = this.startY - touches[0].clientY
 		const direction = deltaY > 0 ? NORMAL : REVERSE
 		const clampedDelta = clamp(deltaY, [-mobile, mobile])
+
 
 		if (this.hasReachedScrollBoundary(clampedDelta)) {
 			this.handleWheel({ scroll: Math.abs(deltaY) > 0, direction })
@@ -230,8 +297,9 @@ class ScrollHandler {
 		this.sections = [...(document.querySelectorAll(this.options.sectionSelectors) || [])]
 		this.store.setState({ sections: this.sections })
 
-		const deboucedOnResize = debounce(this.onResize.bind(this), 1000)
-		deboucedOnResize()
+
+		this.onResize()
+		const deboucedOnResize = debounce(this.onResize.bind(this), 500)
 		window.addEventListener('resize', deboucedOnResize, { passive: true })
 
 		fetch(this.options.cameraStatePath)

@@ -26,7 +26,7 @@ uniform float u_blink;
 uniform float u_dof;
 uniform float u_gradient;
 uniform float u_boxHeight;
-
+uniform float u_characterClass;
 varying vec2 vUv;
 varying vec4 vColor;
 
@@ -54,13 +54,15 @@ vec3 turbulence(vec3 p, float t) {
 
 vec3 spectrum(float b) {
     // return vec3(b * 2.0, b * 1.5, b * 0.5);
+      // return vec3(b, 0.2 * b * b, b * b);
+  if(u_characterClass == 1.0) return vec3(b * 2.0, b * 1.5, b * 0.5);
+  if(u_characterClass == 2.0) return vec3(b, 0.2 * b * b, b * b);
+  if(u_characterClass == 3.0) return vec3(b * b, b * b * b * b, b);
+
   return vec3(b, b * b, b * b * b * b);
-  // return vec3(b, 0.2 * b * b, b * b);
 }
 
-// vec3 spectrum(float b) {
-//   return vec3(b * 2.0, b * 1.5, b * 0.5);
-// }
+
 
 float getCoc(vec3 p) {
   return abs(length(p) - 0.5) * u_dof;

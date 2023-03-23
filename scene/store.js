@@ -72,9 +72,15 @@ class Store {
 			current: 0,
 			from: 0,
 			to: 0,
-			duration: 750,
+			duration: 500,
 			viewportHeight: window.innerHeight,
-			syntaticScroll: { scroll: 0, duration: 200 },
+			syntaticScroll: {
+				from:0,
+				to: 1,
+				duration: 500,
+				direction: "normal",
+				enabled: false,
+			},
 			thresholdScroll: { desktop: 10, mobile: 60 },
 			currentScrollThreshold: 0,
 			afterEventTimeout: 200,
@@ -87,6 +93,26 @@ class Store {
 			currentSection: null,
 			scenesRect: [],
 			scrollerSection: null,
+			characterClass: null,
+
+			classColors: {
+				demon: [0xc9bbff, 0xff3d0c, 0xff0633, 0xc9bbff],
+				mage: [0xbd50ff, 0xff6b47, 0xff03a5, 0xbd50ff],
+				barbarian: [0xbf744a, 0xff7a50, 0xff7760, 0xbf744a]
+			},
+
+			backgroundColors: {
+				mage: 0x7c00ff,
+				demon: 0xff0000,
+				barbarian: 0xFF401A,
+			},
+
+			characterClassUniform: {
+				demon: 0.0,
+				barbarian: 1.0,
+				mage: 2.0,
+			},
+
 			scrollStatus: {
 				"offset": {
 					"x": 0,
@@ -110,21 +136,48 @@ class Store {
 
 	setState(state) {
 
-		if (!state) return;
-
 		if (isObject(state)) {
+			let newState = { ...this.getState() }
+
 			for (const key of Object.keys(state)) {
 				if (this.storeKeys.has(key)) {
-					this.store.setState(state);
+					newState = { ...newState, [key]: state[key]}
+					if (key === 'to' || key === 'from') {
+						newState = {
+							...newState,
+							to: Math.min(Math.max(newState.scenesRect.length - 1, 0), newState.to),
+							from: Math.max(0, newState.from)
+						}
+					}
+
+					if (key === 'direction') {
+
+						const directions = ['normal', 'reverse']
+
+						if (directions.includes(state)) {
+							newState = {
+								...newState,
+								direction: state
+							}
+						}
+
+					}
+
 				} else {
 					console.log(`key ${key} is not valid`);
 				}
 			}
+
+			this.store.setState(newState);
+
+		} else {
+			console.log("state must be an object");
 		}
 	}
 
 	getState() {
-		return this.store.getState();
+		const state = this.store.getState();
+		return {...state}
 	}
 
 	subscribe(callback, selector) {
@@ -181,8 +234,16 @@ class Store {
 		this.setState({ locked: false });
 	}
 
-	scrollTo(scroll, duration = 200) {
-		this.setState({ syntaticScroll: { scroll, duration } });
+	scrollTo(to, duration = 200, direction = "normal") {
+		this.setState({
+			syntaticScroll: {
+				from: this.getState().current,
+				to,
+				duration,
+				direction,
+				enabled: true,
+		} });
+
 	}
 }
 

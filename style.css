@@ -141,14 +141,14 @@ meter {
 .chapter {
 	position: relative;
 	z-index: 4;
-	height: 100vh;
+	height: 200vh;
 	width: 100vw;
 	display: grid;
 }
 
 
-
-/* .chapter:nth-child(2) {
+/*
+ .chapter:nth-child(2) {
 	height:300vh;
 }
 
@@ -173,9 +173,6 @@ meter {
 	color: rgba(255, 255, 255, 0.85);
 }
 
-.chapter :is(h1, h2) {
-	opacity: 0;
-}
 
 .chapter .top{
 	place-self: start;

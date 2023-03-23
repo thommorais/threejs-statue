@@ -15,10 +15,11 @@ import { randomIntFromInterval } from './utils';
 
 
 class Sparks {
-	constructor(stage) {
+	constructor(stage, store) {
 		this.renderer = stage.renderer;
 		this.camera = stage.camera;
 		this.scene = stage.scene;
+		this.store = store;
 		this.count = 720;
 		this.sparks = null;
 		this.init();
@@ -32,6 +33,8 @@ class Sparks {
 		const boxWidth = 4 * aspectRatio;
 		const boxHeight = boxWidth;
 		const boxDepth = boxWidth * 0.5;
+
+		const {characterClass, characterClassUniform} = this.store.getState();
 
 		const material = new ShaderMaterial({
 			transparent: true,
@@ -55,6 +58,7 @@ class Sparks {
 				u_dof: { value: 1 },
 				u_gradient: { value: 1 },
 				u_boxHeight: { value: boxHeight },
+				u_characterClass: { value: characterClassUniform[characterClass] || 0.0 },
 			},
 			vertexShader,
 			fragmentShader,
