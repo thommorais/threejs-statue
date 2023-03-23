@@ -18,7 +18,7 @@ const getQueryParams = (qs) => {
 
 const params = getQueryParams(document.location.search);
 
-let { class: characterClass } = params
+let { class: characterClass, dev } = params
 
 if (['barbarian', 'demon', 'mage'].includes(characterClass)) {
 	characterClass = characterClass
@@ -26,7 +26,9 @@ if (['barbarian', 'demon', 'mage'].includes(characterClass)) {
 	characterClass = 'barbarian'
 }
 
-const myScene = new Scene(false);
+const devMode = dev || false
+
+const myScene = new Scene(devMode);
 
 myScene.init({
 	characterPath: `${characterClass}/scene.glb`,

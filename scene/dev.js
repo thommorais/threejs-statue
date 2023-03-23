@@ -14,7 +14,7 @@ async function theatre(lights, model, camera, store) {
 
 	const {default: studio } = await import('@theatre/studio')
 
-	const { cameraState } = store.getState()
+	const { cameraState, characterClass } = store.getState()
 
 	studio.initialize()
 	// studio.ui.hide(false)
@@ -107,7 +107,10 @@ async function theatre(lights, model, camera, store) {
 
 		const { x, y, z } = values.lookAt
 		camera.lookAt(new Vector3(x, y, z))
-		camera.rotation.z = values.rotateZ
+
+		if (characterClass === 'barbarian') {
+			camera.rotation.z = values.rotateZ
+		}
 
 		camera.updateProjectionMatrix()
 		camera.updateMatrixWorld(true)
@@ -125,7 +128,7 @@ export default class DevMode {
 				.then((response) => response.json())
 				.then(async (cameraState) => {
 					store.setState({ cameraState })
-					const lights = new CreateLights();
+					const lights = new CreateLights(store);
 					await theatre(lights, model, stage.camera, store)
 
 					// lights.forEach((light) => {

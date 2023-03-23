@@ -1,71 +1,6 @@
 {
   "sheetsById": {
     "lights": {
-      "staticOverrides": {
-        "byObject": {
-          "Camera": {
-            "position": {
-              "z": 80,
-              "y": 20
-            },
-            "lookAt": {
-              "x": 0
-            }
-          },
-          "Points aside": {
-            "position": {
-              "z": 0,
-              "x": 2.5,
-              "y": 30
-            }
-          },
-          "Points chest": {
-            "position": {
-              "z": 4
-            },
-            "rotation": {
-              "y": 0
-            }
-          },
-          "Points half_face": {
-            "position": {
-              "x": 10,
-              "z": -10,
-              "y": 28
-            }
-          },
-          "Points belt": {
-            "position": {
-              "x": 9,
-              "y": 5,
-              "z": 7.5
-            }
-          },
-          "Points hand": {
-            "position": {
-              "y": 22,
-              "x": 23.75,
-              "z": 1.5
-            },
-            "rotation": {
-              "x": 0,
-              "y": 1.5
-            }
-          },
-          "Points face": {
-            "position": {
-              "x": 0.75
-            }
-          },
-          "Points footer": {
-            "position": {
-              "x": -9,
-              "y": -24,
-              "z": 1.5
-            }
-          }
-        }
-      },
       "sequence": {
         "subUnitsPerUnit": 30,
         "length": 10,
@@ -114,20 +49,8 @@
                     "value": 20
                   },
                   {
-                    "id": "xICXzz_Wr4",
-                    "position": 3,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "value": 4
-                  },
-                  {
                     "id": "uwixpM3GBr",
-                    "position": 4,
+                    "position": 3,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -139,7 +62,7 @@
                   },
                   {
                     "id": "2EuRDYAktz",
-                    "position": 5.033,
+                    "position": 4,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -151,7 +74,7 @@
                   },
                   {
                     "id": "gLQBIXv4-2",
-                    "position": 5.967,
+                    "position": 5.033,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -160,6 +83,18 @@
                       0
                     ],
                     "value": 0
+                  },
+                  {
+                    "id": "xICXzz_Wr4",
+                    "position": 6.967,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 4
                   }
                 ]
               },
@@ -204,20 +139,8 @@
                     "value": 26
                   },
                   {
-                    "id": "exyY6NXHQe",
-                    "position": 3,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "value": 29
-                  },
-                  {
                     "id": "btfK-AQ5eP",
-                    "position": 4,
+                    "position": 3,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -229,7 +152,7 @@
                   },
                   {
                     "id": "rvf7SARQLk",
-                    "position": 5.033,
+                    "position": 4,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -241,7 +164,7 @@
                   },
                   {
                     "id": "Beohp3REin",
-                    "position": 5.967,
+                    "position": 5.033,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -250,6 +173,18 @@
                       0
                     ],
                     "value": -22
+                  },
+                  {
+                    "id": "exyY6NXHQe",
+                    "position": 6.967,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 29
                   }
                 ]
               },
@@ -294,20 +229,8 @@
                     "value": 10
                   },
                   {
-                    "id": "zBozEkGuTl",
-                    "position": 3,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "value": 20
-                  },
-                  {
                     "id": "CvBQy_1RE9",
-                    "position": 4,
+                    "position": 3,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -319,7 +242,7 @@
                   },
                   {
                     "id": "0kxy_Wn3NO",
-                    "position": 5.033,
+                    "position": 4,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -331,7 +254,7 @@
                   },
                   {
                     "id": "_hfloYFZfe",
-                    "position": 5.967,
+                    "position": 5.033,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -340,6 +263,18 @@
                       0
                     ],
                     "value": 30.379746835443058
+                  },
+                  {
+                    "id": "zBozEkGuTl",
+                    "position": 6.967,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 20
                   }
                 ]
               },
@@ -384,20 +319,8 @@
                     "value": 2.5
                   },
                   {
-                    "id": "OzqMlCbiLv",
-                    "position": 3,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "value": 11
-                  },
-                  {
                     "id": "_d1fZvlxYP",
-                    "position": 4,
+                    "position": 3,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -409,7 +332,7 @@
                   },
                   {
                     "id": "UDm0YvnlTO",
-                    "position": 5.033,
+                    "position": 4,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -421,7 +344,7 @@
                   },
                   {
                     "id": "HUe-ao3N2Q",
-                    "position": 5.967,
+                    "position": 5.033,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -430,6 +353,18 @@
                       0
                     ],
                     "value": -9
+                  },
+                  {
+                    "id": "OzqMlCbiLv",
+                    "position": 6.967,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 11
                   }
                 ]
               },
@@ -474,20 +409,8 @@
                     "value": 30
                   },
                   {
-                    "id": "v61ESLv4Wc",
-                    "position": 3,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "value": 29
-                  },
-                  {
                     "id": "qsFUJSS2U_",
-                    "position": 4,
+                    "position": 3,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -499,7 +422,7 @@
                   },
                   {
                     "id": "tPQuoJ-GmW",
-                    "position": 5.033,
+                    "position": 4,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -511,7 +434,7 @@
                   },
                   {
                     "id": "VXKzzmXwYS",
-                    "position": 5.967,
+                    "position": 5.033,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -520,6 +443,18 @@
                       0
                     ],
                     "value": -24
+                  },
+                  {
+                    "id": "v61ESLv4Wc",
+                    "position": 6.967,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 29
                   }
                 ]
               },
@@ -564,20 +499,8 @@
                     "value": 0
                   },
                   {
-                    "id": "jwQ-1adWyu",
-                    "position": 3,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "value": 2
-                  },
-                  {
                     "id": "wOjPVO-Its",
-                    "position": 4,
+                    "position": 3,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -589,7 +512,7 @@
                   },
                   {
                     "id": "A3R2uSNxL6",
-                    "position": 5.033,
+                    "position": 4,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -601,7 +524,7 @@
                   },
                   {
                     "id": "8asgG-6M_G",
-                    "position": 5.967,
+                    "position": 5.033,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -610,6 +533,18 @@
                       0
                     ],
                     "value": 1.5
+                  },
+                  {
+                    "id": "jwQ-1adWyu",
+                    "position": 6.967,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 2
                   }
                 ]
               }
@@ -629,6 +564,7 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "kg67OXP7LJL1kG-3",
     "gUpB5BBbiNq78rSH",
     "luxxskKvdVII5dVl"
   ]

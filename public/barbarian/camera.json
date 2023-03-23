@@ -1,22 +1,6 @@
 {
   "sheetsById": {
     "lights": {
-      "staticOverrides": {
-        "byObject": {
-          "Camera": {
-            "rotateZ": -1.5509128289873644,
-            "position": {
-              "x": 18,
-              "y": 20,
-              "z": 65
-            },
-            "lookAt": {
-              "y": 20,
-              "z": 4.1
-            }
-          }
-        }
-      },
       "sequence": {
         "subUnitsPerUnit": 30,
         "length": 10,
