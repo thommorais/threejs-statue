@@ -41,11 +41,21 @@ function getModel(modelPath, store) {
                     child.receiveShadow = true;
                 });
 
+                store.setState({ modelLoadingProgress:100 });
                 resolve(box);
             },
             // called while loading is progressing
             (xhr) => {
-                store.setState({ modelLoadingProgress: Math.round((xhr.loaded / xhr.total) * 100) });
+                let contentLength = 0
+                if (xhr.lengthComputable) {
+                    contentLength = xhr.total;
+                } else {
+                    contentLength = xhr.target.getResponseHeader('content-length');
+                }
+                if (contentLength > 0) {
+                    store.setState({ modelLoadingProgress: Math.round((xhr.loaded / contentLength) * 100) });
+                }
+
             },
             (error) => {
                 reject(error)
