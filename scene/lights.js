@@ -2,7 +2,8 @@ import { SpotLight } from 'three';
 
 const colors = {
 	demon: [0xc9bbff, 0xff3d0c, 0xff0633, 0xc9bbff],
-	mage: [0xbd50ff, 0xff6b47, 0xff03a5, 0xbd50ff]
+	mage: [0xbd50ff, 0xff6b47, 0xff03a5, 0xbd50ff],
+	barbarian: [0xbf744a, 0xff7a50, 0xff7760, 0xbf744a]
 }
 
 const LIGHTS_CONFIG = [
@@ -36,7 +37,7 @@ class Lights {
 	constructor() {
 		this.intensityFactor = 1;
 		this.lights = [];
-		this.character = 'mage'
+		this.character = 'barbarian'
 		this.create();
 		return this.lights;
 	}

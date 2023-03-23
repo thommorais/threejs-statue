@@ -71,18 +71,30 @@
                     "handles": [
                       0.5,
                       1,
-                      0.5,
-                      0
+                      1,
+                      0.372
                     ],
-                    "value": 2.075
+                    "value": -1
                   },
                   {
-                    "id": "2Y0zLeihu5",
+                    "id": "dsXrrDYPYT",
                     "position": 4,
                     "connectedRight": true,
                     "handles": [
                       0.5,
                       1,
+                      0.5,
+                      0
+                    ],
+                    "value": 0
+                  },
+                  {
+                    "id": "2Y0zLeihu5",
+                    "position": 5,
+                    "connectedRight": true,
+                    "handles": [
+                      0.2,
+                      0.824,
                       0.5,
                       0
                     ],
@@ -143,8 +155,20 @@
                     "value": 41
                   },
                   {
-                    "id": "5pqPtqIrFJ",
+                    "id": "Hg-ZQoD1z-",
                     "position": 4,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 15
+                  },
+                  {
+                    "id": "5pqPtqIrFJ",
+                    "position": 5,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -206,11 +230,23 @@
                       0.5,
                       0
                     ],
-                    "value": 0.0001
+                    "value": -4.25
+                  },
+                  {
+                    "id": "Eja_LBrLDh",
+                    "position": 4,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 25
                   },
                   {
                     "id": "ClbY4wyskJ",
-                    "position": 4,
+                    "position": 5,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -272,11 +308,23 @@
                       0.5,
                       0
                     ],
-                    "value": -16.5
+                    "value": -190
+                  },
+                  {
+                    "id": "dWmL-elsmm",
+                    "position": 4,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 0
                   },
                   {
                     "id": "JMxPeD41Hn",
-                    "position": 4,
+                    "position": 5,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -338,11 +386,23 @@
                       0.5,
                       0
                     ],
-                    "value": 36
+                    "value": 46
+                  },
+                  {
+                    "id": "DUeBssunCa",
+                    "position": 4,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 15
                   },
                   {
                     "id": "dvbSUczqdA",
-                    "position": 4,
+                    "position": 5,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -404,11 +464,23 @@
                       0.5,
                       0
                     ],
+                    "value": -1.8
+                  },
+                  {
+                    "id": "MTmF6ZUcFv",
+                    "position": 4,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
                     "value": 0
                   },
                   {
                     "id": "T3feGhWnEf",
-                    "position": 4,
+                    "position": 5,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -423,7 +495,80 @@
               "bojhC7ciIj": {
                 "type": "BasicKeyframedTrack",
                 "__debugName": "Camera:[\"rotateZ\"]",
-                "keyframes": []
+                "keyframes": [
+                  {
+                    "id": "8-Yia41oLA",
+                    "position": 0,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 0
+                  },
+                  {
+                    "id": "lP8dW7UwZ3",
+                    "position": 1,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 0
+                  },
+                  {
+                    "id": "WSd_olEpWT",
+                    "position": 2,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 0
+                  },
+                  {
+                    "id": "ZCLJCb91py",
+                    "position": 3,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": -2.29
+                  },
+                  {
+                    "id": "JoTNNCEwYE",
+                    "position": 4,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 0
+                  },
+                  {
+                    "id": "vkaz00UKoR",
+                    "position": 5,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 0
+                  }
+                ]
               }
             },
             "trackIdByPropPath": {
@@ -442,6 +587,7 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "WnIBL9gyGimEZb9J",
     "SaECFQ3avhd_1jtf",
     "L1yzr0c32IiFnQhW"
   ]

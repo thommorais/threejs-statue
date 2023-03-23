@@ -52,15 +52,15 @@ vec3 turbulence(vec3 p, float t) {
   return sineNoise(p) * u_amplitude;
 }
 
-// vec3 spectrum(float b) {
-//     return vec3(b * 2.0, b * 1.5, b * 0.5);
-//   return vec3(b, b * b, b * b * b * b);
-//   // return vec3(b, 0.2 * b * b, b * b);
-// }
-
 vec3 spectrum(float b) {
-  return vec3(b, 0.2 * b * b, b * b);
+    // return vec3(b * 2.0, b * 1.5, b * 0.5);
+  return vec3(b, b * b, b * b * b * b);
+  // return vec3(b, 0.2 * b * b, b * b);
 }
+
+// vec3 spectrum(float b) {
+//   return vec3(b * 2.0, b * 1.5, b * 0.5);
+// }
 
 float getCoc(vec3 p) {
   return abs(length(p) - 0.5) * u_dof;

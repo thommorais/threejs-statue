@@ -17,6 +17,7 @@ async function theatre(lights, model, camera, store) {
 	const { cameraState } = store.getState()
 
 	studio.initialize()
+	// studio.ui.hide(false)
 
 	// Create a sheet
 	const sheet = getProject('lights', { state: cameraState }).sheet('lights')
@@ -97,38 +98,23 @@ async function theatre(lights, model, camera, store) {
 			z: types.number(camera.position.z, { range: [-100, 100] }),
 		}),
 
-		rotateZ: types.number(0, { range: [-Math.PI, Math.PI] }),
+		rotateZ: types.number(0, { range: [-10, 10] }),
 	})
 
 	cameraObj.onValuesChange((values) => {
 		camera.position.set(values.position.x, values.position.y, values.position.z)
-		const { x, y, z } = values.lookAt
 
+
+		const { x, y, z } = values.lookAt
 		camera.lookAt(new Vector3(x, y, z))
+		camera.rotation.z = values.rotateZ
+
 		camera.updateProjectionMatrix()
 		camera.updateMatrixWorld(true)
 	})
 
 }
 
-function dev(scene, camera, lights, model, store) {
-	if (true) {
-		// camera.position.set(0, 20, 90)
-
-		theatre(lights, model, camera, store)
-
-		lights.forEach((light) => {
-			const spotLightHelper = new SpotLightHelper(light)
-			scene.add(spotLightHelper)
-			const s = () =>
-				requestAnimationFrame(() => {
-					spotLightHelper.update()
-					s()
-				})
-			s()
-		})
-	}
-}
 
 export default class DevMode {
 
@@ -137,10 +123,22 @@ export default class DevMode {
 		getModel(characterPath, store).then(async (model) => {
 			fetch(cameraStatePath)
 				.then((response) => response.json())
-				.then((cameraState) => {
+				.then(async (cameraState) => {
 					store.setState({ cameraState })
 					const lights = new CreateLights();
-					dev(stage.scene, stage.camera, lights, model, store)
+					await theatre(lights, model, stage.camera, store)
+
+					// lights.forEach((light) => {
+					// 	const spotLightHelper = new SpotLightHelper(light)
+					// 	stage.scene.add(spotLightHelper)
+					// 	const s = () =>
+					// 		requestAnimationFrame(() => {
+					// 			spotLightHelper.update()
+					// 			s()
+					// 		})
+					// 	s()
+					// })
+
 					stage.scene.add(model)
 
 					for (const light of lights) {
@@ -152,8 +150,8 @@ export default class DevMode {
 
 		})
 
-
-		return this.createOrbitControl(stage.camera, stage.renderer)
+		console.log('dev mode')
+		// return this.createOrbitControl(stage.camera, stage.renderer)
 	}
 
 

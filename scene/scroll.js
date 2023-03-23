@@ -25,27 +25,29 @@ const clamp = (number, [lowerBound, upperBound]) => {
 
 const getDistance = (a, b) => Math.abs(a - b)
 
-
 class CameraOnScroll {
 	constructor(camera, store) {
 		this.camera = camera
 		this.store = store
 
 		const { cameraState } = this.store.getState()
-
 		this.project = getProject('lights', { state: cameraState })
-
 		this.sheet = this.project.sheet('lights')
+		this.setListeners()
+	}
 
+	setListeners() {
 		this.cameraObj = this.sheet.object('Camera', {
 			position: types.compound({ ...this.camera.position }),
 			lookAt: types.compound({ x: 0, y: 0, z: 0 }),
+			rotateZ: types.number(0, { range: [-10, 10], nudgeMultiplier: 0.1 }),
 		})
 
-		this.cameraObj.onValuesChange((values) => {
-			this.camera.position.set(values.position.x, values.position.y, values.position.z)
-			const { x, y, z } = values.lookAt
+		this.cameraObj.onValuesChange(({ position, lookAt, rotateZ }) => {
+			this.camera.position.set(position.x, position.y, position.z)
+			const { x, y, z } = lookAt
 			this.camera.lookAt(new Vector3(x, y, z))
+			this.camera.rotation.z = rotateZ
 		})
 
 		this.store.subscribe(() => this.onBodyScroll(), 'to')
@@ -54,7 +56,8 @@ class CameraOnScroll {
 	onBodyScroll() {
 		const { direction, from, to } = this.store.getState()
 		const range = direction === NORMAL ? [from, to] : [to, from]
-		this.sheet.sequence.play({ range, direction, rate: getDistance(from, to) })
+		const { position } = this.sheet.sequence
+		this.sheet.sequence.play({ range, direction, rate: position === 2 ? 2 : getDistance(from, to) })
 		this.store.setState({ from: range[0] })
 	}
 }
@@ -160,6 +163,7 @@ class SmoothScroller {
 				const { scenesRect, current, viewportHeight } = this.store.getState()
 
 				const nextPoint = clamp(current + (goingDown ? +1 : -1), [0, scenesCount])
+				const {top, bottom} = scenesRect[nextPoint] || {top: 0, bottom: 0}
 				const scrollToY = goingDown ? scenesRect[nextPoint].top : scenesRect[nextPoint].bottom - viewportHeight
 
 				this.store.setState({ from: current, to: nextPoint, direction })
@@ -180,13 +184,14 @@ class SmoothScroller {
 
 		const goingDown = threshold > 0
 
-		const scrollDown = goingDown && !locked && scrollBottom >= scenesRect[currentIndex].bottom + threshold
-		const scrollUp = !goingDown && !locked && scrollTop <= scenesRect[to].top - threshold
+		const { bottom: currBottom = 0} = scenesRect[currentIndex] || {bottom: 0}
+		const {top: nextTop = 0} = scenesRect[to] || {top: 0}
 
+		const scrollDown = goingDown && !locked && scrollBottom >= currBottom + threshold
+		const scrollUp = !goingDown && !locked && scrollTop <= nextTop - threshold
 
 		return scrollDown || scrollUp
 	}
-
 
 
 	handleMouseWheel({ deltaY }) {

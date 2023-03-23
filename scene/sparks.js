@@ -15,12 +15,11 @@ import { randomIntFromInterval } from './utils';
 
 
 class Sparks {
-	constructor(stage, layer) {
+	constructor(stage) {
 		this.renderer = stage.renderer;
 		this.camera = stage.camera;
 		this.scene = stage.scene;
-		this.count = 240;
-		this.layer = layer;
+		this.count = 720;
 		this.sparks = null;
 		this.init();
 	}
@@ -32,7 +31,7 @@ class Sparks {
 
 		const boxWidth = 4 * aspectRatio;
 		const boxHeight = boxWidth;
-		const boxDepth = boxWidth;
+		const boxDepth = boxWidth * 0.5;
 
 		const material = new ShaderMaterial({
 			transparent: true,
@@ -42,18 +41,18 @@ class Sparks {
 			uniforms: {
 				u_hardness: { value: 0.9 },
 				u_time: { value: 0 },
-				u_opacity: { value: 1 },
+				u_opacity: { value: 3 },
 				u_screenHeight: { value: wHeight },
-				u_pointSize: { value: 0.01 },
+				u_pointSize: { value: 0.005 },
 				u_tailLength: { value: .15 },
-				u_windY: { value: 0.3 },
-				u_amplitude: { value: 0.25 },
+				u_windY: { value: .3 },
+				u_amplitude: { value: 0.5 },
 				u_falloff: { value: 0.9 },
-				u_twist: { value: 0.05 },
+				u_twist: { value: 0.35 },
 				u_spatialFrequency: { value: boxHeight * 0.5 },
-				u_temporalFrequency: { value: 0.05 },
-				u_blink: { value: 4.0 },
-				u_dof: { value: 2 },
+				u_temporalFrequency: { value: 0.15 },
+				u_blink: { value: 1.0 },
+				u_dof: { value: 1 },
 				u_gradient: { value: 1 },
 				u_boxHeight: { value: boxHeight },
 			},
@@ -61,7 +60,7 @@ class Sparks {
 			fragmentShader,
 		});
 
-		this.bitSize = 16;
+		this.bitSize = 32;
 		const deep = this.count * this.bitSize;
 
 		const geometry = new BufferGeometry();
@@ -83,11 +82,12 @@ class Sparks {
 			const zz = random();
 			const ww = random();
 
-			const posX = (2 * random() - 1) * boxWidth;
+			const posX = (2 * random() - 1) * boxWidth / 2;
 			const posY = (2 * random() - 1) * yHeight;
-			const posZ = randomIntFromInterval(-boxDepth, boxDepth);
+			const posZ = randomIntFromInterval(boxDepth * -1, boxDepth);
 
 			for (let j = 0; j < this.bitSize; j++) {
+
 				const px = index1++;
 				const py = index1++;
 				const pz = index1++;
@@ -109,8 +109,6 @@ class Sparks {
 			}
 		}
 
-		console.log(index1, index2)
-
 		geometry.setAttribute('aData0', new BufferAttribute(data0Array, 4));
 		geometry.setAttribute('aData1', new BufferAttribute(data1Array, 4));
 		geometry.setAttribute('position', new BufferAttribute(positions, 3));
@@ -127,7 +125,6 @@ class Sparks {
 				() => {
 					this.draw()
 					timeout = randomIntFromInterval(480, 1240)
-					console.log(timeout)
 					requestAnimationFrame(runDraw)
 			}, timeout);
 		}
@@ -138,7 +135,7 @@ class Sparks {
 
 	draw() {
 		const deltaTime = this.clock.getDelta();
-		this.sparks.material.uniforms.u_opacity.value = 1.2 * deltaTime;
+		this.sparks.material.uniforms.u_opacity.value = 2 * deltaTime;
 	}
 
 	update(time) {

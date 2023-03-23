@@ -110,6 +110,7 @@ meter {
 	height: 100vh;
 	overflow: hidden;
 	z-index: 4;
+	/* pointer-events: none; */
 }
 
 .delta{
@@ -134,6 +135,7 @@ meter {
 	bottom: 0;
 	left: 0;
 	z-index: 3;
+
 }
 
 .chapter {

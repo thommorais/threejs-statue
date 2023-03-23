@@ -34,7 +34,7 @@ class Background {
 				cloud.rotation.x = 0;
 				cloud.rotation.y = -0.15;
 				cloud.rotation.z = rz;
-				cloud.material.opacity = 0.33;
+				cloud.material.opacity = 0.66;
 				cloud.name = 'cloud';
 				this.cloudParticles.push(cloud);
 				this.scene.add(cloud);
@@ -50,7 +50,8 @@ class Background {
 	createThunder(zRange) {
 		const witch = 0x7c00ff
 		const demon = 0xff0000
-		this.flash = new PointLight(witch, 175, 250, 1.5);
+		const barbarian = 0xFF401A
+		this.flash = new PointLight(barbarian, 175, 250, 1.5);
 		this.flashMaxZ = Math.max(...zRange);
 		this.flashMinZ = this.flashMaxZ - 1;
 		this.flash.position.set(0, 0, this.flashMinZ);

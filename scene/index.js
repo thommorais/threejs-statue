@@ -7,13 +7,14 @@ import Store from './store'
 import Background from './background'
 import Sparks from './sparks'
 
-// import Dev from './dev'
+import Dev from './dev'
 
 
 class Scene {
-	constructor() {
+	constructor(dev) {
 		this.store = new Store()
 		this.stage = new Stage()
+		this.devMode = dev
 	}
 
 	init({ sectionSelectors, scrollSelector, characterPath, cameraStatePath, onModelLoading }) {
@@ -34,28 +35,33 @@ class Scene {
 				throw new Error('cameraStatePath is required')
 			}
 
-			new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath })
-
-			getModel(characterPath, this.store)
-				.then((model) => {
-					this.lights = new CreateLights()
-
-					for (const light of this.lights) {
-						light.target = model
-						this.stage.scene.add(light)
-					}
-
-					this.stage.scene.add(model)
-				})
-				.catch((error) => {
-					console.error('Error getting the model:', error)
-				})
-
-			this.background = new Background(this.stage.scene, this.stage.renderer)
-			this.sparks = new Sparks(this.stage, 0)
-
 			if (typeof onModelLoading === 'function') {
 				this.subscribe(({ loadingProgress }) => onModelLoading(loadingProgress), 'loadingProgress')
+			}
+
+
+			if (!this.devMode) {
+				new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath })
+
+				getModel(characterPath, this.store)
+					.then((model) => {
+						this.lights = new CreateLights()
+
+						for (const light of this.lights) {
+							light.target = model
+							this.stage.scene.add(light)
+						}
+
+						this.stage.scene.add(model)
+					})
+					.catch((error) => {
+						console.error('Error getting the model:', error)
+					})
+				this.background = new Background(this.stage.scene)
+				this.sparks = new Sparks(this.stage, 0)
+
+			} else {
+				new Dev(this.store, this.stage, characterPath, cameraStatePath)
 			}
 
 			this.animation()
@@ -69,7 +75,9 @@ class Scene {
 
 		this.stage.renderer.setAnimationLoop((time) => {
 
-			this.sparks.update(time)
+			if (this.sparks) {
+				this.sparks.update(time)
+			}
 
 			if (this.background) {
 				this.background.animate()
