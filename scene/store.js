@@ -234,10 +234,20 @@ class Store {
 		this.setState({ locked: false });
 	}
 
-	scrollTo(to, duration = 200, direction = "normal") {
+	scrollTo({ to, from, duration = 200 }) {
+
+		const f = from || this.getState().current;
+
+		let direction = "normal";
+		if (to < from) {
+			direction = "reverse";
+		}
+
+		if(to === from) return;
+
 		this.setState({
 			syntaticScroll: {
-				from: this.getState().current,
+				from: f,
 				to,
 				duration,
 				direction,

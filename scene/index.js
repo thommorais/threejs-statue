@@ -107,8 +107,8 @@ class Scene {
 		this.store.unlockScroll()
 	}
 
-	scrollTo(y) {
-		this.store.scrollTo(y)
+	scrollTo({to, from, duration}) {
+		this.store.scrollTo({ to, from, duration })
 	}
 
 	subscribe(callback, key) {

@@ -26,7 +26,6 @@ if (['barbarian', 'demon', 'mage'].includes(characterClass)) {
 	characterClass = 'barbarian'
 }
 
-
 const myScene = new Scene(false);
 
 myScene.init({
@@ -38,5 +37,5 @@ myScene.init({
 });
 
 setTimeout(() => {
-	myScene.scrollTo(1)
-}, 1000)
+	myScene.scrollTo({ to: 1, from: 0})
+}, 3000)

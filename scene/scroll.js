@@ -212,10 +212,10 @@ class SmoothScroller {
 	syntaticScroll(state) {
 
 		if (state.enabled) {
-			const { current, direction, from, to} = state
-			const { scenesCount, goingDown } = this.getCurrentScrollState(direction)
+			const { direction, from, to} = state
+			const { scenesCount, goingDown  } = this.getCurrentScrollState(direction)
 
-			const avoidScroll = (current === scenesCount && goingDown) || (current === 0 && !goingDown)
+			const avoidScroll = (from === scenesCount && goingDown) || (from === 0 && !goingDown)
 
 			if (scroll && !avoidScroll) {
 				cancelAnimationFrame(this.RAF)
