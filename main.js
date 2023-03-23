@@ -40,7 +40,11 @@ myScene.init({
 });
 
 
+myScene.subscribe(({ modelLoadingProgress }) => {
 
-setTimeout(() => {
-	myScene.scrollTo({ to: 1, from: 0})
-}, 3000)
+	if (modelLoadingProgress === 100) {
+		myScene.scrollTo({to: 1})
+	}
+
+
+}, 'modelLoadingProgress')
