@@ -55,7 +55,6 @@ function getModel(modelPath, store) {
                 if (contentLength > 0) {
                     store.setState({ modelLoadingProgress: Math.round((xhr.loaded / contentLength) * 100) });
                 }
-
             },
             (error) => {
                 reject(error)
