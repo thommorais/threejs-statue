@@ -11,8 +11,14 @@ import {
 import fragmentShader from './shaders/sparks.fragment.glsl';
 import vertexShader from './shaders/sparks.vertex.glsl';
 
-import { randomIntFromInterval } from './utils';
+import { randomIntFromInterval, clamp } from './utils';
 
+
+const classIntervals = {
+	demon: [0.85, 2],
+	mage: [2, 4],
+	barbarian: [0.5, 2.5],
+}
 
 class Sparks {
 	constructor(stage, store) {
@@ -22,6 +28,8 @@ class Sparks {
 		this.store = store;
 		this.count = 720;
 		this.sparks = null;
+		this.characterClass = 'demon';
+
 		this.init();
 	}
 
@@ -30,10 +38,11 @@ class Sparks {
 		const wHeight = window.innerHeight;
 		const aspectRatio = wWidth / wHeight;
 
-		const boxWidth = 4 * aspectRatio;
+		const boxWidth = clamp(4 * aspectRatio, [0.5, 4]);
 		const boxHeight = boxWidth;
-		const boxDepth = boxWidth * 0.5;
+		const boxDepth = boxWidth * 2;
 
+		console.log(boxWidth, aspectRatio)
 
 
 		const material = new ShaderMaterial({
@@ -121,6 +130,8 @@ class Sparks {
 		}
 
 		this.store.subscribe(({ characterClass, characterClassUniform }) => {
+
+			this.characterClass = characterClass;
 			const value = characterClassUniform[characterClass] || 0.0;
 			material.uniforms.u_characterClass.value = value;
 
@@ -136,14 +147,12 @@ class Sparks {
 				material.uniforms.u_windY.value = -0.75;
 				// make the particles slower
 				material.uniforms.u_temporalFrequency.value = 0.0005;
-				// reduce the twist
-				material.uniforms.u_twist.value = 0.02;
 				// reduce the tail length
 				material.uniforms.u_tailLength.value = 0.025;
 				// reduce the amplitude
 				material.uniforms.u_amplitude.value = 0.1;
 				// make the particles more dense
-				populateAttributes(32, this.count * 0.5)
+				populateAttributes(16, this.count * 0.95)
 			} else {
 				populateAttributes(32, this.count)
 			}
@@ -158,12 +167,13 @@ class Sparks {
 
 			this.clock = new Clock();
 			this.draw(1);
-			let timeout = 480
+			const minimalTimeout = 480;
+			let timeout = minimalTimeout
 			const runDraw = () => {
 				setTimeout(
 					() => {
 						this.draw()
-						timeout = randomIntFromInterval(480, 1240)
+						timeout = randomIntFromInterval(minimalTimeout, minimalTimeout * 2)
 						requestAnimationFrame(runDraw)
 					}, timeout);
 			}
@@ -174,9 +184,13 @@ class Sparks {
 
 	}
 
+	randomValueFromInterval([min, max]) {
+		return Math.random() * (max - min + 1) + min;
+	}
+
 	draw() {
 		const deltaTime = this.clock.getDelta();
-		this.sparks.material.uniforms.u_opacity.value = 2 * deltaTime;
+		this.sparks.material.uniforms.u_opacity.value = this.randomValueFromInterval(classIntervals[this.characterClass]) * deltaTime;
 	}
 
 	update(time) {
