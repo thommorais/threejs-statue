@@ -131,30 +131,46 @@ class Sparks {
 				populateAttributes(56, this.count * 0.75)
 			}
 
-						geometry.attributes.position.needsUpdate = true;
-				geometry.attributes.aData0.needsUpdate = true;
-				geometry.attributes.aData1.needsUpdate = true;
+			else if(characterClass === 'demon') {
+				// invert the direction of the wind
+				material.uniforms.u_windY.value = -0.75;
+				// make the particles slower
+				material.uniforms.u_temporalFrequency.value = 0.0005;
+				// reduce the twist
+				material.uniforms.u_twist.value = 0.02;
+				// reduce the tail length
+				material.uniforms.u_tailLength.value = 0.025;
+				// reduce the amplitude
+				material.uniforms.u_amplitude.value = 0.1;
+				// make the particles more dense
+				populateAttributes(32, this.count * 0.5)
+			} else {
+				populateAttributes(32, this.count)
+			}
+
+
+			this.sparks = new Points(geometry, material);
+			this.scene.add(this.sparks);
+
+			geometry.attributes.position.needsUpdate = true;
+			geometry.attributes.aData0.needsUpdate = true;
+			geometry.attributes.aData1.needsUpdate = true;
+
+			this.clock = new Clock();
+			this.draw(1);
+			let timeout = 480
+			const runDraw = () => {
+				setTimeout(
+					() => {
+						this.draw()
+						timeout = randomIntFromInterval(480, 1240)
+						requestAnimationFrame(runDraw)
+					}, timeout);
+			}
+
+			runDraw()
 
 		}, ['characterClassUniform', 'characterClass'])
-
-		populateAttributes(32, this.count)
-
-		this.sparks = new Points(geometry, material);
-		this.scene.add(this.sparks);
-
-		this.clock = new Clock();
-		this.draw(1);
-		let timeout = 480
-		const runDraw = () => {
-			setTimeout(
-				() => {
-					this.draw()
-					timeout = randomIntFromInterval(480, 1240)
-					requestAnimationFrame(runDraw)
-			}, timeout);
-		}
-
-		runDraw()
 
 	}
 
@@ -164,7 +180,9 @@ class Sparks {
 	}
 
 	update(time) {
-		this.sparks.material.uniforms.u_time.value = time * 0.002;
+		if (this.sparks) {
+			this.sparks.material.uniforms.u_time.value = time * 0.002;
+		}
 	}
 }
 
