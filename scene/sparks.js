@@ -69,7 +69,7 @@ class Sparks {
 
 		this.wWidth = window.innerWidth;
 		this.wHeight = window.innerHeight;
-		this.aspectRatio = (this.wWidth / this.wHeight).toPrecision(2);
+		this.aspectRatio = clamp((this.wWidth / this.wHeight).toPrecision(2), [1, 5]);
 
 		this.debug.innerHTML = `aspect ratio: ${this.aspectRatio}`
 
