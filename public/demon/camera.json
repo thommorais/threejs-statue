@@ -37,18 +37,6 @@
                     "value": -0.75
                   },
                   {
-                    "id": "nlVnt6whze",
-                    "position": 1.5,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "value": 9
-                  },
-                  {
                     "id": "f1mkjfHCoX",
                     "position": 2,
                     "connectedRight": true,
@@ -504,6 +492,7 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "Hs8c0lMct-2c3Y41",
     "bhoPsRBgvLNY8ioF",
     "ChBQ3cOHQbw_6sIU",
     "t6EMYfBrTFMR7GO2",

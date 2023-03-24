@@ -49,13 +49,17 @@ class Background {
 	}
 
 	createThunder(zRange) {
-		const { characterClass, backgroundColors } = this.store.getState();
-
-		this.flash = new PointLight(backgroundColors[characterClass], 175, 250, 1.5);
+		this.flash = new PointLight(0xffffff, 175, 250, 1.5);
 		this.flashMaxZ = Math.max(...zRange);
 		this.flashMinZ = this.flashMaxZ - 1;
 		this.flash.position.set(0, 0, this.flashMinZ);
 		this.scene.add(this.flash);
+
+		this.store.subscribe(({ characterClass, backgroundColors }) => {
+			const value = backgroundColors[characterClass] || backgroundColors[0];
+			this.flash.color.setHex(value);
+		}, ['backgroundColors', 'characterClass'])
+
 	}
 
 	animateThumder() {

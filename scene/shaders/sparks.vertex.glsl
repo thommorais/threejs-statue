@@ -27,6 +27,7 @@ uniform float u_dof;
 uniform float u_gradient;
 uniform float u_boxHeight;
 uniform float u_characterClass;
+
 varying vec2 vUv;
 varying vec4 vColor;
 
@@ -52,16 +53,11 @@ vec3 turbulence(vec3 p, float t) {
   return sineNoise(p) * u_amplitude;
 }
 
-vec3 spectrum(float b) {
-    // return vec3(b * 2.0, b * 1.5, b * 0.5);
-      // return vec3(b, 0.2 * b * b, b * b);
-  if(u_characterClass == 1.0) return vec3(b * 2.0, b * 1.5, b * 0.5);
-  if(u_characterClass == 2.0) return vec3(b, 0.2 * b * b, b * b);
-  if(u_characterClass == 3.0) return vec3(b * b, b * b * b * b, b);
-
-  return vec3(b, b * b, b * b * b * b);
+vec3 spectrum(float b, float c) {
+    return (c == 1.0) ? vec3(b * 2.0, b * 1.5, b * 0.5) :
+           (c == 2.0) ? vec3(b, 0.2 * b * b, b * b) :
+                                       vec3(b, b * b, b * b * b * b);
 }
-
 
 
 float getCoc(vec3 p) {
@@ -90,17 +86,14 @@ void main() {
   float phase = t * u_blink * (0.5 + aRandom0);
   float brightness = max(0.5 + sin(phase) + sin(phase * 1.618), 0.);
 
-  // float brightness = sin(phase) + sin(phase * 1.618);
-
-
   float alpha = brightness * u_opacity * min(gl_PointSize, 1.0) * aRandom2;
-  alpha *= p.y * 0. + 0.5;
+  alpha *= 0.5 - p.y * 0.005;
   alpha /= 1. + coc;
 
   float gradient = 1. - ((gl_Position.y / gl_Position.w) * .5 + .5) * u_gradient;
   alpha *= gradient * gradient;
 
-  vec3 c = spectrum(0.1 + aRandom3 * 0.8);
+  vec3 c = spectrum(0.1 + aRandom3 * 0.8, u_characterClass);
   vColor = vec4(c, alpha);
 
   vUv = uv;

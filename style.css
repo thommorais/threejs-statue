@@ -141,20 +141,20 @@ meter {
 .chapter {
 	position: relative;
 	z-index: 4;
-	height: 200vh;
+	height: 100vh;
 	width: 100vw;
 	display: grid;
 }
 
 
-/*
+
  .chapter:nth-child(2) {
 	height:300vh;
 }
 
 .chapter:last-child {
 	height:300vh;
-} */
+}
 
 .chapter h2 {
 	width: 100%;
@@ -171,6 +171,10 @@ meter {
 	font-size: 6vw;
 	line-height: 1em;
 	color: rgba(255, 255, 255, 0.85);
+}
+
+.chapter :is(h1, h2){
+	opacity: 0.1
 }
 
 

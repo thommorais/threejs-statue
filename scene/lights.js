@@ -32,16 +32,15 @@ class Lights {
 		this.intensityFactor = 1;
 		this.lights = [];
 		this.store = store
-		this.create();
-		return this.lights;
+		return this.create();
 	}
 
 	create() {
 
-		const { characterClass, classColors } = this.store.getState();
+		const { classColors } = this.store.getState();
 
 		this.lights = LIGHTS_CONFIG.map((config, index) => {
-			const color = classColors[characterClass][index];
+			const color = classColors['demon'][index];
 			const light = new SpotLight(color, 1);
 			light.distance = config.distance;
 			light.position.set(...config.position);
@@ -49,6 +48,16 @@ class Lights {
 			light.penumbra = config.penumbra;
 			return light;
 		});
+
+		this.store.subscribe(({ characterClass, classColors }) => {
+			const value = classColors[characterClass] || classColors['demon'];
+			this.lights.forEach((light, index) => {
+				light.color.setHex(value[index]);
+			})
+		}, ['characterClass', 'classColors'])
+
+
+		return this.lights
 	}
 }
 

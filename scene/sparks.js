@@ -34,7 +34,7 @@ class Sparks {
 		const boxHeight = boxWidth;
 		const boxDepth = boxWidth * 0.5;
 
-		const {characterClass, characterClassUniform} = this.store.getState();
+
 
 		const material = new ShaderMaterial({
 			transparent: true,
@@ -58,72 +58,93 @@ class Sparks {
 				u_dof: { value: 1 },
 				u_gradient: { value: 1 },
 				u_boxHeight: { value: boxHeight },
-				u_characterClass: { value: characterClassUniform[characterClass] || 0.0 },
+				u_characterClass: { value:  0.0 },
 			},
 			vertexShader,
 			fragmentShader,
 		});
 
-		this.bitSize = 32;
-		const deep = this.count * this.bitSize;
-
 		const geometry = new BufferGeometry();
-		const data0Array = new Float32Array(deep * 4);
-		const data1Array = new Float32Array(deep * 4);
-		const positions = new Float32Array(deep * 3);
 
-		const random = () => Math.random();
+		const populateAttributes = (bitLength, count) => {
+			const deep = count * bitLength;
 
-		let index1 = 0;
-		let index2 = 0;
+			const data0Array = new Float32Array(deep * 4);
+			const data1Array = new Float32Array(deep * 4);
+			const positions = new Float32Array(deep * 3);
 
-		const yHeight = boxHeight * 150
+			const random = () => Math.random();
 
-		for (let i = 0; i < this.count; i++) {
+			const yHeight = boxHeight * 4
 
-			const xx = random();
-			const yy = random();
-			const zz = random();
-			const ww = random();
+			let index1 = 0;
+			let index2 = 0;
 
-			const posX = (2 * random() - 1) * boxWidth / 2;
-			const posY = (2 * random() - 1) * yHeight;
-			const posZ = randomIntFromInterval(boxDepth * -1, boxDepth);
+			for (let i = 0; i < count; i++) {
 
-			for (let j = 0; j < this.bitSize; j++) {
+				const xx = random();
+				const yy = random();
+				const zz = random();
+				const ww = random();
 
-				const px = index1++;
-				const py = index1++;
-				const pz = index1++;
-				const pw = index1++;
+				const posX = (2 * random() - 1) * (boxWidth / 2);
+				const posY = (2 * random() - 1) * yHeight;
+				const posZ = randomIntFromInterval(boxDepth * -1, boxDepth);
 
-				positions[px] = posX;
-				positions[py] = posY;
-				positions[pz] = posZ;
+				for (let j = 0; j < bitLength; j++) {
 
-				data0Array[px] = posX;
-				data0Array[py] = posY;
-				data0Array[pz] = posZ;
-				data0Array[pw] = j / this.bitSize;
+					const px = index1++;
+					const py = index1++;
+					const pz = index1++;
+					const pw = index1++;
 
-				data1Array[index2++] = xx;
-				data1Array[index2++] = yy;
-				data1Array[index2++] = zz;
-				data1Array[index2++] = ww;
+					positions[px] = posX;
+					positions[py] = posY;
+					positions[pz] = posZ;
+
+					data0Array[px] = posX;
+					data0Array[py] = posY;
+					data0Array[pz] = posZ;
+					data0Array[pw] = j / bitLength;
+
+					data1Array[index2++] = xx;
+					data1Array[index2++] = yy;
+					data1Array[index2++] = zz;
+					data1Array[index2++] = ww;
+				}
 			}
+
+			geometry.setAttribute('aData0', new BufferAttribute(data0Array, 4));
+			geometry.setAttribute('aData1', new BufferAttribute(data1Array, 4));
+			geometry.setAttribute('position', new BufferAttribute(positions, 3));
+
 		}
 
-		geometry.setAttribute('aData0', new BufferAttribute(data0Array, 4));
-		geometry.setAttribute('aData1', new BufferAttribute(data1Array, 4));
-		geometry.setAttribute('position', new BufferAttribute(positions, 3));
+		this.store.subscribe(({ characterClass, characterClassUniform }) => {
+			const value = characterClassUniform[characterClass] || 0.0;
+			material.uniforms.u_characterClass.value = value;
+
+			if (characterClass === 'mage') {
+				material.uniforms.u_twist.value = 1.0;
+				material.uniforms.u_falloff.value = 0.5;
+				material.uniforms.u_windY.value = 0.75;
+				populateAttributes(56, this.count * 0.75)
+			}
+
+						geometry.attributes.position.needsUpdate = true;
+				geometry.attributes.aData0.needsUpdate = true;
+				geometry.attributes.aData1.needsUpdate = true;
+
+		}, ['characterClassUniform', 'characterClass'])
+
+		populateAttributes(32, this.count)
 
 		this.sparks = new Points(geometry, material);
 		this.scene.add(this.sparks);
-		this.clock = new Clock();
 
+		this.clock = new Clock();
 		this.draw(1);
 		let timeout = 480
-
 		const runDraw = () => {
 			setTimeout(
 				() => {

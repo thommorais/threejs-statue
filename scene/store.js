@@ -72,7 +72,7 @@ class Store {
 			current: 0,
 			from: 0,
 			to: 0,
-			duration: 500,
+			duration: 700,
 			viewportHeight: window.innerHeight,
 			syntaticScroll: {
 				from:0,
@@ -81,8 +81,7 @@ class Store {
 				direction: "normal",
 				enabled: false,
 			},
-			thresholdScroll: { desktop: 10, mobile: 60 },
-			currentScrollThreshold: 0,
+			thresholdScroll: { desktop: 100, mobile: 60 },
 			afterEventTimeout: 200,
 			locked: false,
 			direction: "normal",

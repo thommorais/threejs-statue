@@ -35,15 +35,14 @@ myScene.init({
 	characterPath: `${characterClass}/scene.glb`,
 	cameraStatePath: `${characterClass}/camera.json`,
 	sectionSelectors: '.chapter',
-	scrollSelector: '.container-3d',
-	modelLoading: console.log,
+	scrollSelector: '.container-3d'
 });
 
 
 myScene.subscribe(({ modelLoadingProgress }) => {
 
 	if (modelLoadingProgress === 100) {
-		myScene.scrollTo({to: 1})
+		// myScene.scrollTo({to: 1})
 	}
 
 
