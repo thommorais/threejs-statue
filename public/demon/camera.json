@@ -1,6 +1,6 @@
 {
   "sheetsById": {
-    "lights": {
+    "camera": {
       "sequence": {
         "subUnitsPerUnit": 30,
         "length": 10,

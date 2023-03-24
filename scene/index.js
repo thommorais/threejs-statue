@@ -6,12 +6,14 @@ import getModel from './model';
 import Store from './store';
 import Background from './background';
 import Sparks from './sparks';
+import Dev from './dev';
 
 class Scene {
-	constructor() {
+	constructor(devMode = false) {
 		this.store = new Store();
 		window.fsStore = this.store;
 		this.stage = new Stage();
+		this.devMode = devMode;
 	}
 
 	init({
@@ -36,29 +38,36 @@ class Scene {
 
 			this.modelLoading(modelLoading);
 
-			// eslint-disable-next-line max-len, no-new
-			new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath });
+			if (this.devMode) {
+				this.dev = new Dev(this.store, this.stage, characterPath, cameraStatePath);
+				this.store.setState({ characterClass });
+			} else {
+				// eslint-disable-next-line max-len, no-new
+				new Scroll(this.store, this.stage.camera, { sectionSelectors, scrollSelector, cameraStatePath });
 
-			getModel(characterPath, this.store)
-				.then((model) => {
-					try {
-						this.lights = new CreateLights(this.store);
-						for (const light of this.lights) {
-							light.target = model;
-							this.stage.scene.add(light);
+				getModel(characterPath, this.store)
+					.then((model) => {
+						try {
+							this.lights = new CreateLights(this.store);
+							for (const light of this.lights) {
+								light.target = model;
+								this.stage.scene.add(light);
+							}
+						} catch (error) {
+							// eslint-disable-next-line no-console
+							console.error('Error adding lights:', error);
+						} finally {
+							this.store.setState({ characterClass });
+							this.stage.scene.add(model);
 						}
-					} catch (error) {
+					})
+					.catch((error) => {
 						// eslint-disable-next-line no-console
-						console.error('Error adding lights:', error);
-					} finally {
-						this.store.setState({ characterClass });
-						this.stage.scene.add(model);
-					}
-				})
-				.catch((error) => {
-					// eslint-disable-next-line no-console
-					console.error('Error getting the model:', error);
-				});
+						console.error('Error getting the model:', error);
+					});
+
+			}
+
 
 			this.background = new Background(this.stage.scene, this.store);
 			this.sparks = new Sparks(this.stage, this.store);

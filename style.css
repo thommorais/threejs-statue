@@ -146,16 +146,6 @@ meter {
 	display: grid;
 }
 
-
-
- .chapter:nth-child(2) {
-	height:300vh;
-}
-
-.chapter:last-child {
-	height:300vh;
-}
-
 .chapter h2 {
 	width: 100%;
 	text-align: center;

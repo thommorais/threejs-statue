@@ -8,32 +8,24 @@ class CameraOnScroll {
     this.store = store;
 
     const { cameraState } = this.store.getState();
-    this.project = getProject('lights', { state: cameraState });
-    this.sheet = this.project.sheet('lights');
+    this.project = getProject('FAS', { state: cameraState });
+    this.sheet = this.project.sheet('camera');
     this.setListeners();
   }
 
   setListeners() {
 
-    let isBarbarian = false;
-    this.store.subscribe(({ characterClass }) => {
-      if (characterClass === 'barbarian') {
-        isBarbarian = true;
-      }
-    }, 'characterClass')
-
     this.cameraObj = this.sheet.object('Camera', {
       position: types.compound({ ...this.camera.position }),
       lookAt: types.compound({ x: 0, y: 0, z: 0 }),
-      rotateZ: types.number(0, { range: [-10, 10], nudgeMultiplier: 0.1 }),
+      rotateZ: types.number(-0.000, { range: [-10, 10] }),
     });
 
     this.cameraObj.onValuesChange(({ position, lookAt, rotateZ }) => {
       this.camera.position.set(position.x, position.y, position.z);
       const { x, y, z } = lookAt;
       this.camera.lookAt(new Vector3(x, y, z));
-
-      if (isBarbarian) {
+      if (rotateZ !== -0.000) {
         this.camera.rotation.z = rotateZ;
       }
     });

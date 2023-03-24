@@ -20,7 +20,7 @@ async function theatre(lights, model, camera, store) {
 	// studio.ui.hide(false)
 
 	// Create a sheet
-	const sheet = getProject('lights', { state: cameraState }).sheet('lights')
+	const sheet = getProject('FAS', { state: cameraState }).sheet('camera')
 
 	const [leftLight, topLight, rightLight, one] = lights
 
