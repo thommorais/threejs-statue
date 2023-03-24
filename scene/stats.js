@@ -7,24 +7,43 @@ class StatsMonitor {
 			document.body.removeChild(prevStats);
 		}
 
-		this.stats = new Stats();
+		this.panels = [];
 
-		this.stats.showPanel(0);
+		this.panel = document.createElement('div');
+		this.panel.classList.add('stats');
 
-		this.stats.dom.classList.add('stats');
-
-		Object.assign(this.stats.dom.style, {
+		Object.assign(this.panel.style, {
+			position: 'fixed',
+			top: 0,
+			left: 0,
+			zIndex: 100,
 			display: 'flex',
-			width: '320px',
-			background: 'rgba(0, 0, 0, 0.5)',
-		})
+			gap: '1rem'
+		});
 
+		document.body.appendChild(this.panel);
 
-		document.body.appendChild(this.stats.dom);
+		this.createPanel(0)
+		this.createPanel(1)
+		this.createPanel(2)
+		this.createPanel(3)
+
 	}
 
+	createPanel(type) {
+		const panel = new Stats();
+		panel.showPanel(type);
+		panel.domElement.style.cssText = 'position:relative;top:0px;left:0px;';
+
+		this.panel.appendChild(panel.dom);
+		this.panels.push(panel);
+	}
+
+
 	update() {
-		this.stats.update();
+		this.panels.forEach((panel) => {
+			panel.update();
+		})
 	}
 }
 

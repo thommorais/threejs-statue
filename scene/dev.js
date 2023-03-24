@@ -120,7 +120,7 @@ async function theatre(lights, model, camera, store) {
 
 export default class DevMode {
 
-	constructor(store, stage, characterPath, cameraStatePath, characterClass) {
+	constructor(store, {camera, scene}, { characterPath, cameraStatePath, characterClass }) {
 
 		store.setState({ characterClass });
 
@@ -130,11 +130,11 @@ export default class DevMode {
 				.then(async (cameraState) => {
 					store.setState({ cameraState })
 					const lights = new CreateLights(store);
-					await theatre(lights, model, stage.camera, store)
+					await theatre(lights.lights, model, camera, store)
 
 					// lights.forEach((light) => {
 					// 	const spotLightHelper = new SpotLightHelper(light)
-					// 	stage.scene.add(spotLightHelper)
+					// 	scene.add(spotLightHelper)
 					// 	const s = () =>
 					// 		requestAnimationFrame(() => {
 					// 			spotLightHelper.update()
@@ -143,13 +143,13 @@ export default class DevMode {
 					// 	s()
 					// })
 
-					stage.scene.add(model)
+					scene.add(model)
 
-					for (const light of lights) {
+					for (const light of lights.lights) {
 						light.target = model
-						stage.scene.add(light)
+						scene.add(light)
 					}
-					stage.scene.add(model)
+					scene.add(model)
 				})
 
 		})

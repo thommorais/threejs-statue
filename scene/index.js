@@ -40,7 +40,7 @@ class Scene extends Stage {
 		this.animation();
 
 		if (this.devMode) {
-			this.dev = new Dev(this.store, this, options.characterPath, options.characterPath, options.characterPath);
+			this.dev = new Dev(this.store, {camera: this.camera, scene: this.scene}, options);
 			return null
 		}
 
@@ -57,7 +57,6 @@ class Scene extends Stage {
 
 		this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, characterClass);
-
 
 		this.handleModel(characterPath).then(() => {
 			this.turnOnTheLights();

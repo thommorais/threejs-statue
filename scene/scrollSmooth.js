@@ -27,11 +27,22 @@ class SmoothScroller {
       scrollerSection: this.scroller,
     });
 
+    this.initScrollBody();
+
+    this.onScrollTimeout = null;
+
+    this.addEventListeners();
+
+
+    this.RAF = null;
+  }
+
+  initScrollBody() {
     // Scrollbar.use(LockPlugin)
 
     this.bodyScrollBar = Scrollbar.init(this.scroller, {
       damping: 1,
-      continuousScrolling: false,
+      continuousScrolling: true,
       delegateTo: document.body,
       plugins: {
         lock: {
@@ -51,13 +62,18 @@ class SmoothScroller {
       this.bodyScrollBar.updatePluginOptions('lock', { locked });
     }, 'locked');
 
+
     this.store.subscribe(({ syntaticScroll }) => {
       if (syntaticScroll.enabled) {
         this.syntaticScroll(syntaticScroll);
       }
     }, ['syntaticScroll']);
 
-    this.onScrollTimeout = null;
+  }
+
+
+  addEventListeners() {
+
     this.handleMouseWheel = this.handleMouseWheel.bind(this);
     this.handleTouchStart = this.handleTouchStart.bind(this);
     this.handleTouchMove = this.handleTouchMove.bind(this);
@@ -66,23 +82,6 @@ class SmoothScroller {
     this.scroller.addEventListener('wheel', this.handleMouseWheel, { passive: false });
     this.scroller.addEventListener('touchstart', this.handleTouchStart, { passive: false });
     this.scroller.addEventListener('touchmove', this.handleTouchMove, { passive: false });
-
-    this.debug = document.createElement('div');
-
-    Object.assign(this.debug.style, {
-      position: 'fixed',
-      right: '0',
-      top: '0',
-      width: '20vw',
-      zIndex: '100',
-      padding: '1rem'
-    })
-
-
-    document.body.appendChild(this.debug);
-
-
-    this.RAF = null;
   }
 
   scrollTo({ scrollToY }) {
@@ -208,16 +207,6 @@ class SmoothScroller {
 
   handleTouchMove({ touches }) {
     const { thresholdScroll: { mobile }, scenesRect } = this.store.getState();
-
-    // avoid scroll when user is scrolling horizontally
-    const deltaXDiff = Math.abs(this.startX - touches[0].clientX);
-
-    this.debug.innerText = `deltaX abs: ${deltaXDiff}`
-
-    if (deltaXDiff > 10) {
-      return null;
-    }
-
 
     if (scenesRect.length === 0) {
       return null;

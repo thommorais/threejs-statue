@@ -32,6 +32,21 @@ class Sparks {
 		this.currentDrwaTimeout = 0;
 		this.initialized = false
 		rIC(this.init.bind(this), { timeout: 240 })
+
+		this.debug = document.createElement('div');
+
+		Object.assign(this.debug.style, {
+			position: 'fixed',
+			right: '0',
+			top: '0',
+			width: '20vw',
+			zIndex: '100',
+			padding: '1rem',
+			background: 'rgba(0,0,0,0.5)',
+		})
+
+		document.body.appendChild(this.debug);
+
 	}
 
 	init() {
@@ -54,7 +69,9 @@ class Sparks {
 
 		this.wWidth = window.innerWidth;
 		this.wHeight = window.innerHeight;
-		this.aspectRatio = this.wWidth / this.wHeight;
+		this.aspectRatio = (this.wWidth / this.wHeight).toPrecision(2);
+
+		this.debug.innerHTML = `aspect ratio: ${this.aspectRatio}`
 
 		this.boxWidth = clamp(4 * this.aspectRatio, [0.5, 4]);
 		this.boxHeight = this.boxWidth;
