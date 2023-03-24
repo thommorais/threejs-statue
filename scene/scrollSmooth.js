@@ -67,6 +67,21 @@ class SmoothScroller {
     this.scroller.addEventListener('touchstart', this.handleTouchStart, { passive: false });
     this.scroller.addEventListener('touchmove', this.handleTouchMove, { passive: false });
 
+    this.debug = document.createElement('div');
+
+    Object.assign(this.debug.style, {
+      position: 'fixed',
+      right: '0',
+      top: '0',
+      width: '20vw',
+      zIndex: '100',
+      padding: '1rem'
+    })
+
+
+    document.body.appendChild(this.debug);
+
+
     this.RAF = null;
   }
 
@@ -194,9 +209,15 @@ class SmoothScroller {
   handleTouchMove({ touches }) {
     const { thresholdScroll: { mobile }, scenesRect } = this.store.getState();
 
-    if ((this.startX - touches[0].clientX) > 5) {
-      return null
+    // avoid scroll when user is scrolling horizontally
+    const deltaXDiff = Math.abs(this.startX - touches[0].clientX);
+
+    this.debug.innerText = `deltaX abs: ${deltaXDiff}`
+
+    if (deltaXDiff > 10) {
+      return null;
     }
+
 
     if (scenesRect.length === 0) {
       return null;

@@ -20,14 +20,14 @@ const classIntervals = {
 }
 
 class Sparks {
-	constructor(scene, clock, store, pixelRatio) {
+	constructor(scene, clock, store, pixelRatio, characterClass = 'demon') {
 		this.store = store;
 		this.clock = clock;
 		this.scene = scene;
 		this.pixelRatio = pixelRatio;
 		this.count = 720 * clamp(pixelRatio, [1, 1.5]);
 		this.sparks = null;
-		this.characterClass = 'demon';
+		this.characterClass = characterClass;
 		this.minimalDrawTimeout = 2000;
 		this.currentDrwaTimeout = 0;
 		this.initialized = false
@@ -37,6 +37,7 @@ class Sparks {
 	init() {
 		this.updateWindowDimensions();
 		this.createParticles();
+		this.updateSparksByCharacterClass();
 		this.subscribeToCharacterClassChange()
 		this.runDrawLoop(classIntervals[this.characterClass], 100);
 		this.addEventListener();
@@ -66,7 +67,7 @@ class Sparks {
 
 	updateSparksByCharacterClass() {
 		if (this.characterClass === 'mage') {
-			this.updateGeometryAttributes(56, this.count * 0.75);
+			this.updateGeometryAttributes(42, this.count * 0.75);
 			this.sparks.material.uniforms.u_twist.value = 1.0;
 			this.sparks.material.uniforms.u_falloff.value = 0.5;
 			this.sparks.material.uniforms.u_windY.value = 0.75;
@@ -85,25 +86,12 @@ class Sparks {
 			this.updateGeometryAttributes(18, this.count);
 		}
 
-		const debug = document.createElement('div');
-
-		Object.assign(debug.style, {
-			position: 'fixed',
-			right: '0',
-			top: '0',
-			width: '20vw',
-			zIndex: '100'
-		})
-
-
-		debug.innerText = `${this.characterClass}`
-		document.body.appendChild(debug)
-
 		this.sparks.material.needsUpdate = true;
 	}
 
 	subscribeToCharacterClassChange() {
 		this.store.subscribe(({ characterClass, characterClassUniform }) => {
+			if (this.characterClass === characterClass) return
 			this.characterClass = characterClass;
 			this.updateClassUniform(characterClassUniform)
 			this.updateSparksByCharacterClass()
@@ -130,6 +118,7 @@ class Sparks {
 	}
 
 	createMaterial() {
+		const { characterClassUniform } = this.store.getState()
 		this.material = new ShaderMaterial({
 			transparent: true,
 			depthTest: true,
@@ -152,7 +141,7 @@ class Sparks {
 				u_dof: { value: 1 },
 				u_gradient: { value: 1 },
 				u_boxHeight: { value: this.boxHeight },
-				u_characterClass: { value: 0.0 },
+				u_characterClass: { value: characterClassUniform[this.characterClass] || 0.0 },
 			},
 			vertexShader,
 			fragmentShader,

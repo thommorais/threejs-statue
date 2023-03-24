@@ -56,7 +56,7 @@ class Scene extends Stage {
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
 
 		this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
-		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio);
+		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, characterClass);
 
 
 		this.handleModel(characterPath).then(() => {

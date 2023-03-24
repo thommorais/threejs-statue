@@ -141,7 +141,7 @@ meter {
 .chapter {
 	position: relative;
 	z-index: 4;
-	height: 100svh;
+	height: 100vh;
 	width: 100vw;
 	display: grid;
 }
