@@ -71,7 +71,7 @@ class SmoothScroller {
   }
 
   scrollTo({ scrollToY }) {
-    const { duration, sections, timeout, direction } = this.store.getState();
+    const { duration, timeout, direction } = this.store.getState();
     const { nextPoint } = this.getCurrentScrollState(direction);
 
     this.store.lockScroll();
@@ -83,7 +83,7 @@ class SmoothScroller {
     this.bodyScrollBar.scrollTo(0, scrollToY, max(duration, 200), {
       callback: () => {
         const newTimeout = setTimeout(() => this.store.unLockScroll(), max(duration - 100, 100));
-        this.store.setState({ currentSection: sections[nextPoint], timeout: newTimeout, current: nextPoint });
+        this.store.setState({ timeout: newTimeout, current: nextPoint });
       },
     });
   }
@@ -175,9 +175,6 @@ class SmoothScroller {
       return null;
     }
 
-
-    console.log('deltaY', deltaY)
-
     const direction = deltaY >= 0 ? NORMAL : REVERSE;
     const goingDown = direction === NORMAL;
     const threshold = goingDown ? deltaY + desktop : deltaY - desktop;
@@ -191,10 +188,15 @@ class SmoothScroller {
 
   handleTouchStart({ touches }) {
     this.startY = touches[0].clientY;
+    this.startX = touches[0].clientX;
   }
 
   handleTouchMove({ touches }) {
     const { thresholdScroll: { mobile }, scenesRect } = this.store.getState();
+
+    if ((this.startX - touches[0].clientX) > 5) {
+      return null
+    }
 
     if (scenesRect.length === 0) {
       return null;

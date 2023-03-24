@@ -36,8 +36,12 @@ class CameraOnScroll {
   onBodyScroll() {
     const { direction, from, to } = this.store.getState();
     const range = direction === NORMAL ? [from, to] : [to, from];
-    this.sheet.sequence.play({ direction, range, rate: 0.3 }).then(() => {
-      this.store.setState({ from: range[0], currentSection: range[0] });
+
+
+    this.sheet.sequence.play({ direction, range, rate: 0.4 }).then((done) => {
+      if (done) {
+        this.store.setState({ from: range[0], currentSection: range[0] });
+      }
     }).catch((error) => {
       // eslint-disable-next-line no-console
       console.log(error);

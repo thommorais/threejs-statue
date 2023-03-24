@@ -141,7 +141,7 @@ meter {
 .chapter {
 	position: relative;
 	z-index: 4;
-	height: 100vh;
+	height: 100svh;
 	width: 100vw;
 	display: grid;
 }
@@ -164,7 +164,7 @@ meter {
 }
 
 .chapter :is(h1, h2){
-	opacity: 1
+	opacity: 0
 }
 
 

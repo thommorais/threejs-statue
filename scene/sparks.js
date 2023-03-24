@@ -85,10 +85,22 @@ class Sparks {
 			this.updateGeometryAttributes(18, this.count);
 		}
 
+		const debug = document.createElement('div');
+
+		Object.assign(debug.style, {
+			position: 'fixed',
+			right: '0',
+			top: '0',
+			width: '20vw',
+			zIndex: '100'
+		})
+
+
+		debug.innerText = `${this.characterClass}`
+		document.body.appendChild(debug)
+
 		this.sparks.material.needsUpdate = true;
 	}
-
-
 
 	subscribeToCharacterClassChange() {
 		this.store.subscribe(({ characterClass, characterClassUniform }) => {
