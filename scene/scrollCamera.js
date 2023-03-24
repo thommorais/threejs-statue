@@ -14,7 +14,13 @@ class CameraOnScroll {
   }
 
   setListeners() {
-    const { characterClass } = this.store.getState();
+
+    let isBarbarian = false;
+    this.store.subscribe(({ characterClass }) => {
+      if (characterClass === 'barbarian') {
+        isBarbarian = true;
+      }
+    }, 'characterClass')
 
     this.cameraObj = this.sheet.object('Camera', {
       position: types.compound({ ...this.camera.position }),
@@ -26,7 +32,8 @@ class CameraOnScroll {
       this.camera.position.set(position.x, position.y, position.z);
       const { x, y, z } = lookAt;
       this.camera.lookAt(new Vector3(x, y, z));
-      if (characterClass === 'barbarian') {
+
+      if (isBarbarian) {
         this.camera.rotation.z = rotateZ;
       }
     });
