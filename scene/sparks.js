@@ -5,13 +5,12 @@ import {
 	Points,
 	ShaderMaterial,
 	AdditiveBlending,
-	Clock,
 } from 'three';
 
 import fragmentShader from './shaders/sparks.fragment.glsl';
 import vertexShader from './shaders/sparks.vertex.glsl';
 
-import { randomIntFromInterval, clamp } from './utils';
+import { randomIntFromInterval, clamp, rIC } from './utils';
 
 
 const classIntervals = {
@@ -21,31 +20,105 @@ const classIntervals = {
 }
 
 class Sparks {
-	constructor(stage, store) {
-		this.renderer = stage.renderer;
-		this.camera = stage.camera;
-		this.scene = stage.scene;
+	constructor(scene, clock, store, pixelRatio) {
 		this.store = store;
-		this.count = 720;
+		this.clock = clock;
+		this.scene = scene;
+		this.pixelRatio = pixelRatio;
+		this.count = 720 * clamp(pixelRatio, [1, 1.5]);
 		this.sparks = null;
 		this.characterClass = 'demon';
-
-		this.init();
+		this.minimalDrawTimeout = 2000;
+		this.currentDrwaTimeout = 0;
+		this.initialized = false
+		rIC(this.init.bind(this), { timeout: 240 })
 	}
 
 	init() {
-		const wWidth = window.innerWidth;
-		const wHeight = window.innerHeight;
-		const aspectRatio = wWidth / wHeight;
+		this.updateWindowDimensions();
+		this.createParticles();
+		this.subscribeToCharacterClassChange()
+		this.runDrawLoop(classIntervals[this.characterClass], 100);
+		this.addEventListener();
+		this.initialized = true
+	}
 
-		const boxWidth = clamp(4 * aspectRatio, [0.5, 4]);
-		const boxHeight = boxWidth;
-		const boxDepth = boxWidth * 2;
+	addEventListener() {
+		window.addEventListener('resize', () => {
+			this.updateWindowDimensions();
+		});
+	}
 
-		console.log(boxWidth, aspectRatio)
+	updateWindowDimensions() {
+
+		this.wWidth = window.innerWidth;
+		this.wHeight = window.innerHeight;
+		this.aspectRatio = this.wWidth / this.wHeight;
+
+		this.boxWidth = clamp(4 * this.aspectRatio, [0.5, 4]);
+		this.boxHeight = this.boxWidth;
+		this.boxDepth = this.boxWidth * 2;
+
+		if (this.sparks) {
+			this.sparks.material.uniforms.u_screenHeight.value = this.wHeight;
+		}
+	}
+
+	updateSparksByCharacterClass() {
+		if (this.characterClass === 'mage') {
+			this.updateGeometryAttributes(56, this.count * 0.75);
+			this.sparks.material.uniforms.u_twist.value = 1.0;
+			this.sparks.material.uniforms.u_falloff.value = 0.5;
+			this.sparks.material.uniforms.u_windY.value = 0.75;
+		}
+
+		if (this.characterClass === 'demon') {
+			this.updateGeometryAttributes(16, this.count * 0.95);
+			this.sparks.material.uniforms.u_windY.value = -0.75;
+			this.sparks.material.uniforms.u_temporalFrequency.value = 0.0005;
+			this.sparks.material.uniforms.u_tailLength.value = 0.025;
+			this.sparks.material.uniforms.u_amplitude.value = 0.1;
+		}
 
 
-		const material = new ShaderMaterial({
+		if (this.characterClass === 'barbarian') {
+			this.updateGeometryAttributes(18, this.count);
+		}
+
+		this.sparks.material.needsUpdate = true;
+	}
+
+
+
+	subscribeToCharacterClassChange() {
+		this.store.subscribe(({ characterClass, characterClassUniform }) => {
+			this.characterClass = characterClass;
+			this.updateClassUniform(characterClassUniform)
+			this.updateSparksByCharacterClass()
+			this.updateDrawLoop()
+		}, ['characterClassUniform', 'characterClass'])
+	}
+
+	updateDrawLoop() {
+		clearTimeout(this.currentDrwaTimeout)
+		const currentClassInterval = classIntervals[this.characterClass]
+		this.draw(this.clock.getDelta(), currentClassInterval)
+	}
+
+	updateClassUniform(characterClassUniform) {
+		this.sparks.material.uniforms.u_characterClass.value = characterClassUniform[this.characterClass] || 0.0;
+	}
+
+	createParticles() {
+		this.createGeometry();
+		this.createMaterial();
+		this.sparks = new Points(this.geometry, this.material);
+		this.updateGeometryAttributes(32, this.count);
+		this.scene.add(this.sparks);
+	}
+
+	createMaterial() {
+		this.material = new ShaderMaterial({
 			transparent: true,
 			depthTest: true,
 			depthWrite: false,
@@ -54,133 +127,88 @@ class Sparks {
 				u_hardness: { value: 0.9 },
 				u_time: { value: 0 },
 				u_opacity: { value: 3 },
-				u_screenHeight: { value: wHeight },
-				u_pointSize: { value: 0.005 },
+				u_screenHeight: { value: this.wHeight },
+				u_pointSize: { value: 0.005 * this.pixelRatio},
 				u_tailLength: { value: .15 },
 				u_windY: { value: .3 },
 				u_amplitude: { value: 0.5 },
 				u_falloff: { value: 0.9 },
 				u_twist: { value: 0.35 },
-				u_spatialFrequency: { value: boxHeight * 0.5 },
+				u_spatialFrequency: { value: this.boxHeight * 0.5 },
 				u_temporalFrequency: { value: 0.15 },
 				u_blink: { value: 1.0 },
 				u_dof: { value: 1 },
 				u_gradient: { value: 1 },
-				u_boxHeight: { value: boxHeight },
-				u_characterClass: { value:  0.0 },
+				u_boxHeight: { value: this.boxHeight },
+				u_characterClass: { value: 0.0 },
 			},
 			vertexShader,
 			fragmentShader,
 		});
 
-		const geometry = new BufferGeometry();
+		return this.material;
+	}
 
-		const populateAttributes = (bitLength, count) => {
-			const deep = count * bitLength;
+	createGeometry() {
+		this.geometry = new BufferGeometry();
+		return this.geometry
+	}
 
-			const data0Array = new Float32Array(deep * 4);
-			const data1Array = new Float32Array(deep * 4);
-			const positions = new Float32Array(deep * 3);
+	updateGeometryAttributes(bitLength, count) {
+		const deep = count * bitLength;
 
-			const random = () => Math.random();
+		const data0Array = new Float32Array(deep * 4);
+		const data1Array = new Float32Array(deep * 4);
+		const positions = new Float32Array(deep * 3);
 
-			const yHeight = boxHeight * 4
+		const random = () => Math.random();
 
-			let index1 = 0;
-			let index2 = 0;
+		const yHeight = this.boxHeight * 4
 
-			for (let i = 0; i < count; i++) {
+		let index1 = 0;
+		let index2 = 0;
 
-				const xx = random();
-				const yy = random();
-				const zz = random();
-				const ww = random();
+		for (let i = 0; i < count; i++) {
 
-				const posX = (2 * random() - 1) * (boxWidth / 2);
-				const posY = (2 * random() - 1) * yHeight;
-				const posZ = randomIntFromInterval(boxDepth * -1, boxDepth);
+			const xx = random();
+			const yy = random();
+			const zz = random();
+			const ww = random();
 
-				for (let j = 0; j < bitLength; j++) {
+			const posX = (2 * random() - 1) * (this.boxWidth / 2);
+			const posY = (2 * random() - 1) * yHeight;
+			const posZ = randomIntFromInterval(this.boxDepth * -1, this.boxDepth);
 
-					const px = index1++;
-					const py = index1++;
-					const pz = index1++;
-					const pw = index1++;
+			for (let j = 0; j < bitLength; j++) {
 
-					positions[px] = posX;
-					positions[py] = posY;
-					positions[pz] = posZ;
+				const px = index1++;
+				const py = index1++;
+				const pz = index1++;
+				const pw = index1++;
 
-					data0Array[px] = posX;
-					data0Array[py] = posY;
-					data0Array[pz] = posZ;
-					data0Array[pw] = j / bitLength;
+				positions[px] = posX;
+				positions[py] = posY;
+				positions[pz] = posZ;
 
-					data1Array[index2++] = xx;
-					data1Array[index2++] = yy;
-					data1Array[index2++] = zz;
-					data1Array[index2++] = ww;
-				}
+				data0Array[px] = posX;
+				data0Array[py] = posY;
+				data0Array[pz] = posZ;
+				data0Array[pw] = j / bitLength;
+
+				data1Array[index2++] = xx;
+				data1Array[index2++] = yy;
+				data1Array[index2++] = zz;
+				data1Array[index2++] = ww;
 			}
-
-			geometry.setAttribute('aData0', new BufferAttribute(data0Array, 4));
-			geometry.setAttribute('aData1', new BufferAttribute(data1Array, 4));
-			geometry.setAttribute('position', new BufferAttribute(positions, 3));
-
 		}
 
-		this.store.subscribe(({ characterClass, characterClassUniform }) => {
+		this.sparks.geometry.setAttribute('aData0', new BufferAttribute(data0Array, 4));
+		this.sparks.geometry.setAttribute('aData1', new BufferAttribute(data1Array, 4));
+		this.sparks.geometry.setAttribute('position', new BufferAttribute(positions, 3));
 
-			this.characterClass = characterClass;
-			const value = characterClassUniform[characterClass] || 0.0;
-			material.uniforms.u_characterClass.value = value;
-
-			if (characterClass === 'mage') {
-				material.uniforms.u_twist.value = 1.0;
-				material.uniforms.u_falloff.value = 0.5;
-				material.uniforms.u_windY.value = 0.75;
-				populateAttributes(56, this.count * 0.75)
-			}
-
-			else if(characterClass === 'demon') {
-				// invert the direction of the wind
-				material.uniforms.u_windY.value = -0.75;
-				// make the particles slower
-				material.uniforms.u_temporalFrequency.value = 0.0005;
-				// reduce the tail length
-				material.uniforms.u_tailLength.value = 0.025;
-				// reduce the amplitude
-				material.uniforms.u_amplitude.value = 0.1;
-				// make the particles more dense
-				populateAttributes(16, this.count * 0.95)
-			} else {
-				populateAttributes(32, this.count)
-			}
-
-
-			this.sparks = new Points(geometry, material);
-			this.scene.add(this.sparks);
-
-			geometry.attributes.position.needsUpdate = true;
-			geometry.attributes.aData0.needsUpdate = true;
-			geometry.attributes.aData1.needsUpdate = true;
-
-			this.clock = new Clock();
-			this.draw(1);
-			const minimalTimeout = 480;
-			let timeout = minimalTimeout
-			const runDraw = () => {
-				setTimeout(
-					() => {
-						this.draw()
-						timeout = randomIntFromInterval(minimalTimeout, minimalTimeout * 2)
-						requestAnimationFrame(runDraw)
-					}, timeout);
-			}
-
-			runDraw()
-
-		}, ['characterClassUniform', 'characterClass'])
+		this.sparks.geometry.attributes.position.needsUpdate = true
+		this.sparks.geometry.attributes.aData0.needsUpdate = true
+		this.sparks.geometry.attributes.aData1.needsUpdate = true
 
 	}
 
@@ -188,15 +216,24 @@ class Sparks {
 		return Math.random() * (max - min + 1) + min;
 	}
 
-	draw() {
-		const deltaTime = this.clock.getDelta();
-		this.sparks.material.uniforms.u_opacity.value = this.randomValueFromInterval(classIntervals[this.characterClass]) * deltaTime;
+	runDrawLoop(classInterval, timeout) {
+		const run = () => {
+			const newTimeout = randomIntFromInterval(this.minimalDrawTimeout, this.minimalDrawTimeout * 1.5)
+			this.currentDrwaTimeout = newTimeout
+			requestAnimationFrame(this.runDrawLoop.bind(this, classInterval, newTimeout))
+			this.draw(this.clock.getDelta(), classInterval)
+		}
+		setTimeout(run, timeout);
+	}
+
+	draw(deltaTime, classInterval) {
+		const multiplyer = this.randomValueFromInterval(classInterval)
+		this.sparks.material.uniforms.u_opacity.value = multiplyer * deltaTime;
 	}
 
 	update(time) {
-		if (this.sparks) {
-			this.sparks.material.uniforms.u_time.value = time * 0.002;
-		}
+		if(!this.initialized) return
+		this.sparks.material.uniforms.u_time.value = time * 0.002;
 	}
 }
 

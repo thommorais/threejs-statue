@@ -62,8 +62,6 @@ function shallowEqual(objA, objB) {
 }
 
 
-
-
 class Store {
 	constructor() {
 
@@ -81,7 +79,7 @@ class Store {
 				direction: "normal",
 				enabled: false,
 			},
-			thresholdScroll: { desktop: 100, mobile: 60 },
+			thresholdScroll: { desktop: 40, mobile: 60 },
 			afterEventTimeout: 200,
 			locked: false,
 			direction: "normal",
@@ -93,6 +91,7 @@ class Store {
 			scenesRect: [],
 			scrollerSection: null,
 			characterClass: null,
+			bgTexturePath: '/smoke-o.webp',
 
 			classColors: {
 				demon: [0xc9bbff, 0xff3d0c, 0xff0633, 0xc9bbff],
@@ -131,6 +130,8 @@ class Store {
 		this.store = createStore(() => ({
 			...initialState,
 		}));
+
+		window.fsStore = this.store;
 	}
 
 	setState(state) {

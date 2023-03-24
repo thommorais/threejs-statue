@@ -31,12 +31,26 @@ class Lights {
 	constructor(store) {
 		this.intensityFactor = 1;
 		this.lights = [];
+		this.initialized = false
 		this.store = store
-		return this.create();
+		this.init();
+	}
+	init() {
+		this.createLights();
+		this.subscribeToCharacterUpdate();
+		this.initialized = true
 	}
 
-	create() {
+	subscribeToCharacterUpdate() {
+		this.store.subscribe(({ characterClass, classColors }) => {
+			const value = classColors[characterClass] || classColors['demon'];
+			this.lights.forEach((light, index) => {
+				light.color.setHex(value[index]);
+			})
+		}, ['characterClass', 'classColors'])
+	}
 
+	createLights() {
 		const { classColors } = this.store.getState();
 
 		this.lights = LIGHTS_CONFIG.map((config, index) => {
@@ -48,17 +62,9 @@ class Lights {
 			light.penumbra = config.penumbra;
 			return light;
 		});
-
-		this.store.subscribe(({ characterClass, classColors }) => {
-			const value = classColors[characterClass] || classColors['demon'];
-			this.lights.forEach((light, index) => {
-				light.color.setHex(value[index]);
-			})
-		}, ['characterClass', 'classColors'])
-
-
-		return this.lights
 	}
+
+
 }
 
 export default Lights;

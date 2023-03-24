@@ -1,6 +1,5 @@
 import { Vector3, SpotLightHelper, Quaternion } from 'three'
 
-import Stats from './stats'
 
 import { getProject, types } from '@theatre/core'
 
@@ -121,7 +120,9 @@ async function theatre(lights, model, camera, store) {
 
 export default class DevMode {
 
-	constructor(store, stage, characterPath, cameraStatePath) {
+	constructor(store, stage, characterPath, cameraStatePath, characterClass) {
+
+		store.setState({ characterClass });
 
 		getModel(characterPath, store).then(async (model) => {
 			fetch(cameraStatePath)
@@ -156,7 +157,6 @@ export default class DevMode {
 		console.log('dev mode')
 		// return this.createOrbitControl(stage.camera, stage.renderer)
 	}
-
 
 	createOrbitControl(camera, renderer) {
 		const orbitControls = new OrbitControls(camera, renderer.domElement);

@@ -6,10 +6,21 @@ class StatsMonitor {
 		if (prevStats) {
 			document.body.removeChild(prevStats);
 		}
+
 		this.stats = new Stats();
+
+		this.stats.showPanel(0);
+
 		this.stats.dom.classList.add('stats');
-		const container = document.body;
-		container.appendChild(this.stats.dom);
+
+		Object.assign(this.stats.dom.style, {
+			display: 'flex',
+			width: '320px',
+			background: 'rgba(0, 0, 0, 0.5)',
+		})
+
+
+		document.body.appendChild(this.stats.dom);
 	}
 
 	update() {

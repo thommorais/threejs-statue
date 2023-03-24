@@ -6,6 +6,7 @@ import {
 	Scene,
 	Color,
 	PerspectiveCamera,
+	Clock,
 } from 'three';
 
 
@@ -15,15 +16,19 @@ class Stage {
 		this.scene = this.createScene();
 		this.camera = this.createPerspectiveCamera();
 		this.controls = null // this.createOrbitControl(this.camera, this.renderer);
+		this.clock = new Clock();
+		this.clock.start();
 
-		// this.camera.position.z = 5
+		this.addEventListener();
+	}
 
-
+	addEventListener() {
 		window.addEventListener('resize', () => {
 			const { width, height } = getDefaultSizes();
 			this.camera.aspect = width / height;
 			this.camera.updateProjectionMatrix();
 			this.renderer.setSize(width, height);
+			this.pixelRatio = this.renderer.getPixelRatio()
 		});
 	}
 
@@ -49,6 +54,8 @@ class Stage {
 		renderer.setSize(width, height);
 		renderer.setPixelRatio(pixelRatio);
 
+		this.pixelRatio = renderer.getPixelRatio()
+
 		return renderer;
 	}
 
@@ -62,7 +69,8 @@ class Stage {
 
 	createPerspectiveCamera() {
 		const { width, height } = getDefaultSizes();
-		const camera = new PerspectiveCamera(45, width / height, 1, 250);
+		const camera = new PerspectiveCamera(45, width / height, 1, 180);
+		camera.position.set(0, 0, 50);
 		camera.focus = 0;
 		return camera;
 	}

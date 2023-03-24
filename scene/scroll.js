@@ -1,4 +1,4 @@
-import { debounce } from './utils';
+import { debounce, rIC } from './utils';
 import CameraOnScroll from './scrollCamera';
 import SmoothScroller from './scrollSmooth';
 
@@ -7,24 +7,43 @@ class ScrollHandler {
 		this.store = store;
 		this.options = options;
 		this.camera = camera;
-		this.init();
+		this.initialized = false;
+		rIC(this.init.bind(this), { timeout: 720 });
 	}
 
 	init() {
-		this.sections = [...(document.querySelectorAll(this.options.sectionSelectors) || [])];
-		this.store.setState({ sections: this.sections });
 
+		this.saveSections();
 		this.onResize();
+
+		this.fetchCameraState().then(this.startOtherClasses.bind(this))
+		this.initialized = true;
+	}
+
+	startOtherClasses() {
+		this.smoothScroller = new SmoothScroller(this.options.scrollSelector, this.store);
+		this.cameraOnScroll = new CameraOnScroll(this.camera, this.store);
+	}
+
+	fetchCameraState() {
+		return new Promise((resolve) => {
+			fetch(this.options.cameraStatePath)
+				.then((response) => response.json())
+				.then((cameraState) => {
+					this.store.setState({ cameraState })
+					resolve()
+				});
+		})
+	}
+
+	addEventListener() {
 		const deboucedOnResize = debounce(this.onResize.bind(this), 500);
 		window.addEventListener('resize', deboucedOnResize, { passive: true });
+	}
 
-		fetch(this.options.cameraStatePath)
-			.then((response) => response.json())
-			.then((cameraState) => {
-				this.store.setState({ cameraState });
-				this.smoothScroller = new SmoothScroller(this.options.scrollSelector, this.store);
-				this.cameraOnScroll = new CameraOnScroll(this.camera, this.store);
-			});
+	saveSections() {
+		this.sections = [...(document.querySelectorAll(this.options.sectionSelectors) || [])];
+		this.store.setState({ sections: this.sections });
 	}
 
 	onResize() {

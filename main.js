@@ -18,7 +18,7 @@ const getQueryParams = (qs) => {
 
 const params = getQueryParams(document.location.search);
 
-let { class: characterClass, dev } = params
+let { class: characterClass, dev, fps} = params
 
 if (['barbarian', 'demon', 'mage'].includes(characterClass)) {
 	characterClass = characterClass
@@ -27,8 +27,9 @@ if (['barbarian', 'demon', 'mage'].includes(characterClass)) {
 }
 
 const devMode = dev || false
+const showFPS = fps || false
 
-const myScene = new Scene(devMode);
+const myScene = new Scene(devMode, showFPS);
 
 myScene.init({
 	characterClass,
@@ -38,6 +39,9 @@ myScene.init({
 	scrollSelector: '.container-3d'
 });
 
+	myScene.store.setState({
+		bgTexturePath: 'smoke-o.webp',
+	});
 
 myScene.subscribe(({ modelLoadingProgress }) => {
 

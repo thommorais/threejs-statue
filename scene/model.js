@@ -20,40 +20,47 @@ function getModel(modelPath, store) {
             reject(new Error('modelPath is required'));
         }
 
-        loader.load(
-            modelPath,
-            (gltf) => {
-                const boxMaterial = new MeshStandardMaterial({
-                    roughness: 0.455,
-                    metalness: 0.475,
-                });
+        const boxMaterial = new MeshStandardMaterial({
+            roughness: 0.455,
+            metalness: 0.475,
+        });
 
-                const box = gltf.scene;
+        try {
+            loader.load(
+                modelPath,
+                ({ scene }) => {
+                    const box = scene;
 
-                box.traverse((child) => {
-                    if (child.isMesh) {
+                    box.name = 'character-model';
+
+                    box.traverse((child) => {
+                        if (child.isMesh) {
+                            // eslint-disable-next-line no-param-reassign
+                            child.material = boxMaterial;
+                        }
                         // eslint-disable-next-line no-param-reassign
-                        child.material = boxMaterial;
+                        child.castShadow = true;
+                        // eslint-disable-next-line no-param-reassign
+                        child.receiveShadow = true;
+                    });
+                    store.setState({ modelLoadingProgress: 100 });
+                    resolve(box);
+                },
+                // called while loading is progressing
+                ({total, loaded}) => {
+                    if (total > 0) {
+                        store.setState({ modelLoadingProgress: Math.round((loaded / total) * 100) });
                     }
-                    // eslint-disable-next-line no-param-reassign
-                    child.castShadow = true;
-                    // eslint-disable-next-line no-param-reassign
-                    child.receiveShadow = true;
-                });
+                },
+                (error) => {
+                    throw new Error('Error loading model:', error);
+                },
+            );
+        } catch (error) {
+            store.setState({ modelLoadingProgress: 0 });
+            reject(error);
+        }
 
-                store.setState({ modelLoadingProgress:100 });
-                resolve(box);
-            },
-            // called while loading is progressing
-            (xhr) => {
-                if (xhr.total > 0) {
-                    store.setState({ modelLoadingProgress: Math.round((xhr.loaded / xhr.total) * 100) });
-                }
-            },
-            (error) => {
-                reject(error)
-            },
-        );
     });
 }
 

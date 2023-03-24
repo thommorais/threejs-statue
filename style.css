@@ -164,7 +164,7 @@ meter {
 }
 
 .chapter :is(h1, h2){
-	opacity: 0.1
+	opacity: 1
 }
 
 

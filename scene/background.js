@@ -1,85 +1,113 @@
 import {
-	TextureLoader, MeshLambertMaterial, Mesh, PlaneGeometry, PointLight,
+	TextureLoader, MeshLambertMaterial, Mesh, PlaneGeometry, PointLight, Group
 } from 'three';
 
-import { randomIntFromInterval } from './utils';
+import { randomIntFromInterval, rIC } from './utils';
 
 class Background {
-	constructor(scene, store) {
+	constructor(scene, store, options, pixelRatio) {
 		this.scene = scene;
 		this.store = store;
-		this.cloudParticles = [];
+		this.characterClass = options.characterClass;
 		this.zRange = [];
-		this.frequency = 0.85;
-		this.init();
+		this.frequency = 0.87;
+		this.cloudsCount = 8 * pixelRatio;
+
+		this.initialized = false
+
+		rIC(this.init.bind(this), { timeout: 720 });
 	}
 
 	init() {
-
-		const loader = new TextureLoader();
-		const cloudGeo = new PlaneGeometry(250, 250);
-
-		const createClouds = (texture) => {
-			const cloudMaterial = new MeshLambertMaterial({
-				map: texture,
-				transparent: true,
-			});
-
-			for (let count = 0; count < 8; count += 1) {
-				const cloud = new Mesh(cloudGeo, cloudMaterial);
-				const z = Math.abs(randomIntFromInterval(-70, -30, this.zRange)) * -1;
-				const x = randomIntFromInterval(-10, 10);
-				const rz = randomIntFromInterval(0, 15);
-				this.zRange.push(z);
-				cloud.position.set(x, -10, z);
-				cloud.rotation.x = 0;
-				cloud.rotation.y = -0.15;
-				cloud.rotation.z = rz;
-				cloud.material.opacity = 0.66;
-				cloud.name = 'cloud';
-				this.cloudParticles.push(cloud);
-				this.scene.add(cloud);
-			}
-			this.createThunder(this.zRange);
-		}
-
-		new Promise(
-			(resolve) => loader.load('smoke-o.webp', (texture) => resolve(texture))
-		).then(createClouds);
+		this.loadTexture().then(() => {
+			this.createThunder();
+			this.subscribeToCharacterClassChange();
+			this.initialized = true
+		});
 	}
 
-	createThunder(zRange) {
-		this.flash = new PointLight(0xffffff, 175, 250, 1.5);
-		this.flashMaxZ = Math.max(...zRange);
-		this.flashMinZ = this.flashMaxZ - 1;
-		this.flash.position.set(0, 0, this.flashMinZ);
-		this.scene.add(this.flash);
 
+	loadTexture() {
+		const { bgTexturePath } = this.store.getState();
+		const loader = new TextureLoader();
+		return new Promise(
+			(resolve) => loader.load(bgTexturePath, (texture) => resolve(texture))
+		).then(this.createClouds.bind(this));
+	}
+
+	createClouds(texture) {
+		const cloudGeo = new PlaneGeometry(175, 175);
+
+		const cloudMaterial = new MeshLambertMaterial({
+			map: texture,
+			transparent: true,
+		});
+
+		this.Clouds = new Group();
+
+		for (let count = 0; count < this.cloudsCount; count += 1) {
+			const cloud = new Mesh(cloudGeo, cloudMaterial);
+			const z = Math.abs(randomIntFromInterval(-36, -20, this.zRange)) * -1;
+			this.zRange.push(z);
+			const x = randomIntFromInterval(-10, 10);
+			cloud.position.set(x, -9, z);
+			cloud.rotation.x = 0;
+			cloud.rotation.y = -0.25;
+			cloud.rotation.z = randomIntFromInterval(-5, 15);
+
+			cloud.material.opacity = 0.55
+			cloud.name = `${cloud}-${count}`;
+			this.Clouds.add(cloud);
+		}
+
+		this.cloudParticlesCount = this.Clouds.children.length;
+		this.scene.add(this.Clouds);
+	}
+
+	createThunder() {
+		const { backgroundColors } = this.store.getState();
+		const value = backgroundColors[this.characterClass] || backgroundColors[0];
+		this.flash = new PointLight(value, 175, 150, 0.99);
+		this.flashMaxZ = Math.max(...this.zRange);
+		this.flash.position.set(0, 0, this.flashMaxZ - 1);
+		this.scene.add(this.flash);
+	}
+
+	subscribeToCharacterClassChange() {
 		this.store.subscribe(({ characterClass, backgroundColors }) => {
+			if(this.characterClass === characterClass) return
 			const value = backgroundColors[characterClass] || backgroundColors[0];
 			this.flash.color.setHex(value);
 		}, ['backgroundColors', 'characterClass'])
-
 	}
 
 	animateThumder() {
 		const thunder = Math.random() > this.frequency;
 		if (thunder && this.flash) {
 			if (this.flash.power < 200) {
-				this.flash.intensity = 100;
-				const x = randomIntFromInterval(-20, 20);
-				const y = randomIntFromInterval(-40, 45);
-				const z = randomIntFromInterval(this.flashMinZ, this.flashMaxZ);
+				this.flash.intensity = randomIntFromInterval(90, 120);
+				const y = randomIntFromInterval(-30, 45);
+				const x = randomIntFromInterval(-18, 18);
+				const z = randomIntFromInterval(Math.min(...this.zRange), this.flashMaxZ);
 				this.flash.position.set(x, y, z);
 			}
-			this.flash.power = 50 + Math.random() * 500;
+			this.flash.power = 50 + Math.random() * 450;
 		}
 	}
 
-	animate() {
-		// eslint-disable-next-line no-param-reassign
-		this.cloudParticles.forEach((cloud) => { cloud.rotation.z -= 0.009; });
-		this.animateThumder();
+	rotateClouds() {
+		for (let i = 0; i < this.cloudParticlesCount; i += 1) {
+			const cloud = this.Clouds.children[i];
+			cloud.rotation.z -= 0.009;
+		}
+	}
+
+	update() {
+		if (!this.initialized) return
+		requestAnimationFrame(() => {
+			this.animateThumder();
+			this.rotateClouds();
+		});
 	}
 }
 

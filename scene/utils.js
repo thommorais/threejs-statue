@@ -68,3 +68,35 @@ export function debounce(func, wait) {
         timeoutId = setTimeout(later, wait);
     };
 }
+
+
+const now = () => +new Date();
+
+class IdleDeadline {
+    constructor(initTime) {
+        this.initTime_ = initTime;
+    }
+    get didTimeout() {
+        return false;
+    }
+    timeRemaining() {
+        return Math.max(0, 50 - (now() - this.initTime_));
+    }
+}
+
+const requestIdleCallbackShim = (callback) => {
+    const deadline = new IdleDeadline(now());
+    return setTimeout(() => callback(deadline), 0);
+};
+
+const cancelIdleCallbackShim = (handle) => {
+    clearTimeout(handle);
+};
+
+const supportsRequestIdleCallback_ = typeof requestIdleCallback === 'function';
+
+export const rIC = supportsRequestIdleCallback_ ?
+    requestIdleCallback : requestIdleCallbackShim;
+
+export const cIC = supportsRequestIdleCallback_ ?
+    cancelIdleCallback : cancelIdleCallbackShim;
