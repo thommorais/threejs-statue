@@ -175,6 +175,9 @@ class SmoothScroller {
       return null;
     }
 
+
+    console.log('deltaY', deltaY)
+
     const direction = deltaY >= 0 ? NORMAL : REVERSE;
     const goingDown = direction === NORMAL;
     const threshold = goingDown ? deltaY + desktop : deltaY - desktop;

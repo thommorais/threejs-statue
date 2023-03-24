@@ -79,7 +79,7 @@ class Store {
 				direction: "normal",
 				enabled: false,
 			},
-			thresholdScroll: { desktop: 40, mobile: 60 },
+			thresholdScroll: { desktop: -40, mobile: 60 },
 			afterEventTimeout: 200,
 			locked: false,
 			direction: "normal",
