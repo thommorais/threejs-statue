@@ -122,7 +122,6 @@ class Scene extends Stage {
 			this.stats = new Stats();
 		}
 
-
 		this.initialized = true;
 	}
 
@@ -145,6 +144,9 @@ class Scene extends Stage {
 					resolve(model);
 				})
 				.catch((error) => {
+					this.mobileDebug.clearAll();
+					this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
+
 					throw new Error('Error loading model:', error);
 				});
 		})

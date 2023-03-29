@@ -23,6 +23,10 @@ class MobileDebugOverlay {
 
     }
 
+    clearAll() {
+        this.debug.innerHTML = '';
+    }
+
     generateClassName() {
         return Math.random().toString(36).substr(2, 9);
     }

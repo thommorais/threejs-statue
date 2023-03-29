@@ -3,15 +3,16 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 function getModel(modelPath, store, manager) {
-    const dracoLoader = new DRACOLoader();
-
-    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
-    dracoLoader.preload();
-
-    const loader = new GLTFLoader(manager);
-    loader.setDRACOLoader(dracoLoader);
-
     return new Promise((resolve, reject) => {
+
+        const dracoLoader = new DRACOLoader();
+
+        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+        dracoLoader.preload();
+
+        const loader = new GLTFLoader(manager);
+        loader.setDRACOLoader(dracoLoader);
+
 
         if (!modelPath) {
             reject(new Error('modelPath is required'));
