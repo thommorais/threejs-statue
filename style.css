@@ -196,3 +196,8 @@ meter {
 	background: #f00;
 	z-index: 100;
 }
+
+body:active .debug,
+body:hover .debug {
+	opacity: 0;
+}

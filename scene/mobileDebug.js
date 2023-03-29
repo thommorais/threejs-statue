@@ -1,10 +1,12 @@
-class MobileDebugOverlay{
+class MobileDebugOverlay {
 
     constructor() {
 
         this.has = true;
 
         this.debug = document.createElement('div');
+
+        this.debug.classList.add('debug')
 
         Object.assign(this.debug.style, {
             position: 'fixed',
