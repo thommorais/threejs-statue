@@ -1,6 +1,8 @@
 class MobileDebugOverlay {
 
-    constructor() {
+    constructor(store) {
+
+        this.store = store;
 
         this.has = true;
 
@@ -20,6 +22,13 @@ class MobileDebugOverlay {
         })
 
         document.body.appendChild(this.debug);
+
+
+        const modelLoading = this.addContent(`<div>model loading: ${0}</div>`)
+        console.log(modelLoading)
+        this.store.subscribe(({ modelLoadingProgress }) => {
+            this.debug.querySelector(`.${modelLoading}`).innerHTML = `<div>model loading: ${modelLoadingProgress}</div>`
+        }, 'modelLoadingProgress')
 
     }
 
