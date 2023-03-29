@@ -7,7 +7,9 @@ import {
 	Color,
 	PerspectiveCamera,
 	Clock,
+	LoadingManager
 } from 'three';
+
 
 
 class Stage {
@@ -18,6 +20,12 @@ class Stage {
 		this.controls = null // this.createOrbitControl(this.camera, this.renderer);
 		this.clock = new Clock();
 		this.clock.start();
+
+		this.loadingManager = new LoadingManager();
+
+		this.loadingManager.onProgress =  (url, itemsLoaded, itemsTotal) => {
+			this.mobileDebug.addContent(`<div>Loading file: ${url}.\nLoaded ${itemsLoaded} of ${itemsTotal} files.</div>`);
+		};
 
 		this.addEventListener();
 	}

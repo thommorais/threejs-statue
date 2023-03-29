@@ -18,7 +18,7 @@ const getQueryParams = (qs) => {
 
 const params = getQueryParams(document.location.search);
 
-let { class: characterClass, dev, fps} = params
+let { class: characterClass, dev, fps } = params
 
 if (['barbarian', 'demon', 'mage'].includes(characterClass)) {
 	characterClass = characterClass
@@ -26,28 +26,36 @@ if (['barbarian', 'demon', 'mage'].includes(characterClass)) {
 	characterClass = 'barbarian'
 }
 
-const devMode = dev || false
-const showFPS = fps || false
 
-const myScene = new Scene(devMode, showFPS);
+
+const myScene = new Scene();
 
 myScene.init({
 	characterClass,
 	characterPath: `${characterClass}/scene.glb`,
-	cameraStatePath: `${characterClass}/camera.json`,
+	cameraPositionsPath: `${characterClass}/camera.json`,
 	sectionSelectors: '.chapter',
 	scrollSelector: '.container-3d'
 });
 
-	myScene.store.setState({
-		bgTexturePath: 'smoke-o.webp',
-	});
+myScene.store.setState({
+	bgTexturePath: 'smoke-o.webp',
+});
 
-myScene.subscribe(({ modelLoadingProgress }) => {
+myScene.subscribe(({ modelLoadingProgress, scrollable, modelAdded }) => {
+	if (modelLoadingProgress === 100 && scrollable && modelAdded) {
 
-	if (modelLoadingProgress === 100) {
-		// myScene.scrollTo({to: 1})
+		myScene.setCameraPose({ from: 0, to: 1 }).then(() => {
+
+		})
+
+		// myScene.setScenePose({ from: 4, to: 0, duration: 500 }).then(({ cameraCurrentPose, sectionCurrent }) => {
+		// 	console.log(cameraCurrentPose, sectionCurrent)
+		// })
+
+		// myScene.setSectionScroll({ from: 4, to: 2, duration: 500 }).then(({ cameraCurrentPose, sectionCurrent }) => {
+		// 	console.log(cameraCurrentPose, sectionCurrent)
+		// })
+
 	}
-
-
-}, 'modelLoadingProgress')
+}, ['modelLoadingProgress', 'scrollable', 'modelAdded'])

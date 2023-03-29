@@ -11,15 +11,15 @@ import CreateLights from './lights'
 
 async function theatre(lights, model, camera, store) {
 
-	const {default: studio } = await import('@theatre/studio')
+	const { default: studio } = await import('@theatre/studio')
 
-	const { cameraState, characterClass } = store.getState()
+	const { cameraPositions, characterClass } = store.getState()
 
 	studio.initialize()
 	// studio.ui.hide(false)
 
 	// Create a sheet
-	const sheet = getProject('FAS', { state: cameraState }).sheet('camera')
+	const sheet = getProject('FAS', { state: cameraPositions }).sheet('camera')
 
 	const [leftLight, topLight, rightLight, one] = lights
 
@@ -120,15 +120,15 @@ async function theatre(lights, model, camera, store) {
 
 export default class DevMode {
 
-	constructor(store, {camera, scene}, { characterPath, cameraStatePath, characterClass }) {
+	constructor(store, { camera, scene }, { characterPath, cameraPositionsPath, characterClass }) {
 
 		store.setState({ characterClass });
 
 		getModel(characterPath, store).then(async (model) => {
-			fetch(cameraStatePath)
+			fetch(cameraPositionsPath)
 				.then((response) => response.json())
-				.then(async (cameraState) => {
-					store.setState({ cameraState })
+				.then(async (cameraPositions) => {
+					store.setState({ cameraPositions })
 					const lights = new CreateLights(store);
 					await theatre(lights.lights, model, camera, store)
 

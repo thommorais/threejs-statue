@@ -113,19 +113,19 @@ meter {
 	/* pointer-events: none; */
 }
 
-.delta{
+.delta {
 	position: fixed;
 	left: 2vw;
 	top: 90px;
 	z-index: 10;
 	pointer-events: none;
 	background: linear-gradient(180deg, #101010 0%, #202020 100%);
-	--size:  clamp(120px, 50vw, 240px);
+	--size: clamp(120px, 50vw, 240px);
 	width: clamp(120px, 30vw, 240px);
 	height: var(--size);
 	padding: 1vw;
 	border-radius: 4px;
-	font-size: 0.8rem
+	font-size: 0.8rem;
 }
 
 #app {
@@ -135,7 +135,6 @@ meter {
 	bottom: 0;
 	left: 0;
 	z-index: 3;
-
 }
 
 .chapter {
@@ -144,6 +143,15 @@ meter {
 	height: 100vh;
 	width: 100vw;
 	display: grid;
+}
+
+.chapter:first-child {
+	height: 200vh;
+}
+
+.chapter:nth-child(odd) {
+	background: rgba(23, 23, 23, 0.5);
+	height: 200vh;
 }
 
 .chapter h2 {
@@ -163,16 +171,15 @@ meter {
 	color: rgba(255, 255, 255, 0.85);
 }
 
-.chapter :is(h1, h2){
-	opacity: 0
+.chapter :is(h1, h2) {
+	opacity: 1;
 }
 
-
-.chapter .top{
+.chapter .top {
 	place-self: start;
 }
 
-.chapter .bottom{
+.chapter .bottom {
 	place-self: end;
 }
 
@@ -181,3 +188,11 @@ meter {
   width: 100vmin;
   height: 100vmin;
 } */
+
+.scroll-top {
+	position: fixed;
+	height: 5px;
+	width: 10px;
+	background: #f00;
+	z-index: 100;
+}

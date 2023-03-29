@@ -1,5 +1,7 @@
 import { createStore } from "zustand/vanilla";
 
+import { NORMAL, REVERSE, clamp } from "./utils";
+
 function isString(string) {
 	return string !== null && typeof string === "string";
 }
@@ -61,38 +63,73 @@ function shallowEqual(objA, objB) {
 	return true;
 }
 
+function isNumber(number) {
+	return number !== null && typeof number === "number";
+}
+
+
+const directions = [NORMAL, REVERSE]
+
 
 class Store {
 	constructor() {
 
-		const initialState = {
-			modelLoadingProgress: 0,
-			current: 0,
-			from: 0,
-			to: 0,
-			duration: 700,
-			viewportHeight: window.innerHeight,
-			syntaticScroll: {
-				from:0,
+		const sectionState = {
+			sectionTransitionComplete: false,
+			sectionCurrent: 0,
+			sections: [],
+			sectionsCount: 0,
+			sectionsRect: [],
+			sectionScroll: {
+				from: 0,
 				to: 1,
 				duration: 500,
-				direction: "normal",
+				direction: NORMAL,
 				enabled: false,
 			},
-			thresholdScroll: { desktop: 40, mobile: 60 },
-			afterEventTimeout: 200,
-			locked: false,
-			direction: "normal",
-			timeout: null,
-			cameraState: {},
-			scrollProgress: 0,
-			sections: [],
-			currentSection: null,
-			scenesRect: [],
-			scrollerSection: null,
-			characterClass: null,
-			bgTexturePath: '/smoke-o.webp',
+		}
 
+		const cameraState = {
+			cameraTransitionProgress: 0,
+			cameraTransitionDuration: 0.33,
+			cameraTransitionComplete: false,
+			cameraTransitionFailedToComplete: false,
+			cameraPositions: {},
+			cameraScenesCount: 0,
+			cameraCurrentPose: 0,
+			cameraPose: {
+				from: 0,
+				to: 1,
+				rate: 0.3,
+				direction: NORMAL,
+				enabled: false,
+			},
+			doCameraScroll: false,
+		}
+
+		const scrollState = {
+			scrollMarginVP: window.innerHeight * 0.5,
+			scrollerSection: null,
+			duration: 700,
+			locked: true,
+			direction: NORMAL,
+			scrollProgress: 0,
+			scrollable: false,
+			viewportHeight: window.innerHeight,
+
+			scrollStatus: {
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"limit": {
+					"x": 0,
+					"y": 0
+				}
+			}
+		}
+
+		const modelState = {
 			classColors: {
 				demon: [0xc9bbff, 0xff3d0c, 0xff0633, 0xc9bbff],
 				mage: [0xbd50ff, 0xff6b47, 0xff03a5, 0xbd50ff],
@@ -110,17 +147,25 @@ class Store {
 				barbarian: 1.0,
 				mage: 2.0,
 			},
+			modelAdded: false,
+			modelLoadingProgress: 0,
+			characterClass: null,
+		}
 
-			scrollStatus: {
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
-				"limit": {
-					"x": 0,
-					"y": 0
-				}
-			}
+		const initialState = {
+			...sectionState,
+			...cameraState,
+			...scrollState,
+			...modelState,
+			sceneChange: {
+				from: 0,
+				to: 1,
+				duration: 500,
+				direction: NORMAL,
+				enabled: false,
+			},
+			bgTexturePath: '/smoke-o.webp',
+			gpuData: {},
 		}
 
 		this.storeKeys = new Map(
@@ -131,7 +176,7 @@ class Store {
 			...initialState,
 		}));
 
-		window.fsStore = this.store;
+		window.fsStore = this;
 	}
 
 	setState(state) {
@@ -141,24 +186,30 @@ class Store {
 
 			for (const key of Object.keys(state)) {
 				if (this.storeKeys.has(key)) {
-					newState = { ...newState, [key]: state[key]}
+					newState = { ...newState, [key]: state[key] }
+
 					if (key === 'to' || key === 'from') {
+
+						if (!isNumber(newState[key])) {
+							throw new Error(`${key} must be a number, got ${newState[key]}`)
+						}
+
 						newState = {
 							...newState,
-							to: Math.min(Math.max(newState.scenesRect.length - 1, 0), newState.to),
-							from: Math.max(0, newState.from)
+							[key]: newState[key]
 						}
 					}
 
 					if (key === 'direction') {
 
-						const directions = ['normal', 'reverse']
-
-						if (directions.includes(state)) {
+						if (directions.includes(newState[key])) {
 							newState = {
 								...newState,
-								direction: state
+								[key]: newState[key]
 							}
+						} else {
+							console.log(`direction ${JSON.stringify(state[key])} is not valid`)
+							console.log(`direction must be one of ${directions}`)
 						}
 
 					}
@@ -177,7 +228,7 @@ class Store {
 
 	getState() {
 		const state = this.store.getState();
-		return {...state}
+		return { ...state }
 	}
 
 	subscribe(callback, selector) {
@@ -223,38 +274,112 @@ class Store {
 		}, shallowEqual);
 	}
 
-	lockScroll(mouseWheel) {
+	lockScroll() {
 		this.setState({ locked: true });
-		if (mouseWheel) {
-			this.setState({ mouseWheel });
-		}
 	}
 
 	unLockScroll() {
 		this.setState({ locked: false });
 	}
 
-	scrollTo({ to, from, duration = 200 }) {
+	scrollTo({ to, from, duration = 200, keepScrollLocked = true }) {
 
-		const f = from || this.getState().current;
-
-		let direction = "normal";
-		if (to < from) {
-			direction = "reverse";
+		// check if to and f are valid numbers
+		if (!isNumber(to)) {
+			throw new Error(`to must be a number, got ${to}`)
 		}
 
-		if(to === from) return;
+		if (!isNumber(from)) {
+			throw new Error(`from must be a number, got ${from}`)
+		}
+
+		let direction = NORMAL
+		if (to < from) {
+			direction = REVERSE
+		}
+
+		if (to === from) return;
+
+		const { sectionsRect } = this.getState();
 
 		this.setState({
-			syntaticScroll: {
-				from: f,
-				to,
+			sceneChange: {
+				from: clamp(from, [0, sectionsRect.length - 1]),
+				to: clamp(to, [0, sectionsRect.length - 1]),
 				duration,
 				direction,
 				enabled: true,
-		} });
+				keepScrollLocked
+			}
+		});
 
 	}
+
+	cameraPose({ to, from, rate = 0.33, keepScrollLocked }) {
+
+		if (!isNumber(to)) {
+			throw new Error(`to must be a number, got ${to}`)
+		}
+
+		if (!isNumber(from)) {
+			throw new Error(`from must be a number, got ${from}`)
+		}
+
+		let direction = NORMAL
+
+		if (to < from) {
+			direction = REVERSE
+		}
+
+		if (to === from) return;
+
+		this.setState({
+			cameraPose: {
+				from: from || 0,
+				to,
+				rate,
+				direction,
+				enabled: true,
+				keepScrollLocked
+			}
+		});
+
+	}
+
+
+	sectionScroll({ to, from, duration = 200, keepScrollLocked = true }) {
+
+		// check if to and f are valid numbers
+		if (!isNumber(to)) {
+			throw new Error(`to must be a number, got ${to}`)
+		}
+
+		if (!isNumber(from)) {
+			throw new Error(`from must be a number, got ${from}`)
+		}
+
+		let direction = NORMAL
+		if (to < from) {
+			direction = REVERSE
+		}
+
+		if (to === from) return;
+
+		const { sectionsRect } = this.getState();
+
+		this.setState({
+			sectionScroll: {
+				from: clamp(from, [0, sectionsRect.length - 1]),
+				to: clamp(to, [0, sectionsRect.length - 1]),
+				duration,
+				direction,
+				enabled: true,
+				keepScrollLocked
+			}
+		});
+
+	}
+
 }
 
 export default Store;

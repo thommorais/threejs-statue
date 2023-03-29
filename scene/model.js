@@ -2,16 +2,13 @@ import { MeshStandardMaterial } from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-
-
-
-function getModel(modelPath, store) {
+function getModel(modelPath, store, manager) {
     const dracoLoader = new DRACOLoader();
 
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
     dracoLoader.preload();
 
-    const loader = new GLTFLoader();
+    const loader = new GLTFLoader(manager);
     loader.setDRACOLoader(dracoLoader);
 
     return new Promise((resolve, reject) => {
@@ -42,12 +39,15 @@ function getModel(modelPath, store) {
                         child.castShadow = true;
                         // eslint-disable-next-line no-param-reassign
                         child.receiveShadow = true;
+
+
                     });
+
                     store.setState({ modelLoadingProgress: 100 });
                     resolve(box);
                 },
                 // called while loading is progressing
-                ({total, loaded}) => {
+                ({ total, loaded }) => {
                     if (total > 0) {
                         store.setState({ modelLoadingProgress: Math.round((loaded / total) * 100) });
                     }

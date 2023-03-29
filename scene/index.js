@@ -6,56 +6,111 @@ import getModel from './model';
 import Store from './store';
 import Background from './background';
 import Sparks from './sparks';
-import Stats from './stats'
 
+import MobileDebugOverlay from './mobileDebug';
+
+import { getGPUTier } from 'detect-gpu';
+
+import Stats from './stats'
 import Dev from './dev';
 
 import { rIC } from './utils';
 
 const classDefaults = {
-	update() {}
+	update() { },
+	addContent() { }
 }
 
+window.mobileDebug = classDefaults;
+
 class Scene extends Stage {
-	constructor(devMode = false, showFPS = false) {
+	constructor() {
 		super();
-		this.devMode = devMode;
-		this.showFPS = showFPS;
+
 		this.store = new Store();
-		this.background = { ...classDefaults }
-		this.sparks = { ...classDefaults }
+
 		this.options = {
 			characterPath: '',
 			characterClass: '',
-			cameraStatePath: '',
+			cameraPositionsPath: '',
 			sectionSelectors: '',
 			scrollSelector: ''
 		}
+
 		this.scrollOptions = {}
 		this.initialized = false;
 
+		this.background = { ...classDefaults }
+		this.sparks = { ...classDefaults }
+		this.mobileDebug = { ...classDefaults }
+
+		const getQueryParams = (qs) => {
+			qs = qs.split('+').join(' ');
+			var params = {},
+				tokens,
+				re = /[?&]?([^=]+)=([^&]*)/g;
+			while (tokens = re.exec(qs)) {
+				params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+			}
+			return params;
+		}
+
+		const params = getQueryParams(document.location.search);
+
+		let { dev, fps, debug } = params
+
+		this.devMode = !!dev;
+		this.showFPS = !!fps;
+		this.debug = !!debug;
+
 	}
+
+
+	getGPUdata() {
+		return new Promise((resolve) => {
+			getGPUTier({ glContext: this.renderer.getContext() }).then((data) => {
+				this.store.setState({ gpuData: data });
+				resolve(data);
+			});
+		});
+	}
+
+
 	init(options) {
 		this.validateInit(options);
 		this.animation();
 
 		if (this.devMode) {
-			this.dev = new Dev(this.store, {camera: this.camera, scene: this.scene}, options);
+			this.dev = new Dev(this.store, { camera: this.camera, scene: this.scene }, options);
 			return null
 		}
 
-		rIC(() => {
-			this.initialize();
-		}, { timeout: 540 });
+		this.getGPUdata().then((gpuData) => {
+			rIC(() => {
+				this.initialize(gpuData);
+			}, { timeout: 280 });
+		});
+
+
 	}
 
-	initialize() {
+	initialize(gpuData) {
+
+		if (this.debug) {
+			this.mobileDebug = new MobileDebugOverlay(this.store);
+			this.mobileDebug.addContent(`<div>GPU: ${JSON.stringify(gpuData)}</div>`);
+			window.mobileDebug = this.mobileDebug;
+		}
+
 		// eslint-disable-next-line max-len, no-new
 		const { characterClass, characterPath } = this.options;
 
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
 
-		this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
+		if (gpuData.tier > 1) {
+			this.background = new Background(this.scene, this.store, this.options, this.pixelRatio, this.loadingManager);
+		}
+
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, characterClass);
 
 		this.handleModel(characterPath).then(() => {
@@ -66,6 +121,7 @@ class Scene extends Stage {
 		if (this.showFPS) {
 			this.stats = new Stats();
 		}
+
 
 		this.initialized = true;
 	}
@@ -79,22 +135,24 @@ class Scene extends Stage {
 		}
 	}
 
-	handleModel(characterPath) {
+	handleModel(characterPath,) {
 		return new Promise((resolve) => {
-			getModel(characterPath, this.store)
+			getModel(characterPath, this.store, this.loadingManager)
 				.then((model) => {
 					rIC(() => {
 						this.scene.add(model);
+						this.store.setState({ modelAdded: true, scrollable: true });
+
 						resolve(model);
 					}, { timeout: 240 })
 				})
 				.catch((error) => {
 					throw new Error('Error loading model:', error);
 				});
-		 })
+		})
 	}
 
-	validateInit({ sectionSelectors, scrollSelector, characterPath, cameraStatePath, modelLoading, characterClass }) {
+	validateInit({ sectionSelectors, scrollSelector, characterPath, cameraPositionsPath, modelLoading, characterClass }) {
 		try {
 			if (!sectionSelectors) {
 				throw new Error('sectionSelectors is required');
@@ -108,14 +166,14 @@ class Scene extends Stage {
 				throw new Error('characterPath is required');
 			}
 
-			if (!cameraStatePath) {
-				throw new Error('cameraStatePath is required');
+			if (!cameraPositionsPath) {
+				throw new Error('cameraPositionsPath is required');
 			}
 
 			this.modelLoading(modelLoading);
-			this.options = { sectionSelectors, scrollSelector, characterPath, cameraStatePath, modelLoading, characterClass };
-			this.scrollOptions = { sectionSelectors, scrollSelector, cameraStatePath, characterPath };
-		}catch (error) {
+			this.options = { sectionSelectors, scrollSelector, characterPath, cameraPositionsPath, modelLoading, characterClass };
+			this.scrollOptions = { sectionSelectors, scrollSelector, cameraPositionsPath, characterPath };
+		} catch (error) {
 			throw new Error(error);
 		}
 	}
@@ -144,12 +202,58 @@ class Scene extends Stage {
 		this.store.lockScroll();
 	}
 
-	unlockScroll() {
-		this.store.unlockScroll();
+	unLockScroll() {
+		this.store.unLockScroll();
 	}
 
-	scrollTo({ to, from, duration }) {
-		this.store.scrollTo({ to, from, duration });
+	setScenePose({ to, from, duration, keepScrollLocked }) {
+		this.lockScroll()
+		this.store.scrollTo({ to, from, duration, keepScrollLocked });
+		return new Promise((resolve) => {
+			this.subscribe(({ sectionTransitionComplete, cameraTransitionComplete }) => {
+				if (cameraTransitionComplete && sectionTransitionComplete) {
+					const state = this.store.getState();
+
+					if (!keepScrollLocked) {
+						this.unLockScroll();
+					}
+
+					resolve(state);
+				}
+			}, ['sectionTransitionComplete', 'cameraTransitionComplete'])
+		})
+	}
+
+	setCameraPose({ to, from, duration, rate, keepScrollLocked }) {
+		this.lockScroll()
+		this.store.cameraPose({ to, from, duration, rate, keepScrollLocked });
+		return new Promise((resolve) => {
+			this.subscribe(({ cameraTransitionComplete }) => {
+				if (cameraTransitionComplete) {
+					const state = this.store.getState();
+					if (!keepScrollLocked) {
+						this.unLockScroll();
+					}
+					resolve(state);
+				}
+			}, 'cameraTransitionComplete')
+		})
+	}
+
+	setSectionScroll({ to, from, duration, keepScrollLocked }) {
+		this.lockScroll()
+		this.store.sectionScroll({ to, from, duration, keepScrollLocked });
+		return new Promise((resolve) => {
+			this.subscribe(({ sectionTransitionComplete, }) => {
+				if (sectionTransitionComplete) {
+					const state = this.store.getState();
+					if (!keepScrollLocked) {
+						this.unLockScroll();
+					}
+					resolve(state);
+				}
+			}, ['sectionTransitionComplete'])
+		})
 	}
 
 	subscribe(callback, key) {

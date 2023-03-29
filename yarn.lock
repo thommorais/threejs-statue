@@ -97,6 +97,13 @@
   "resolved" "https://registry.npmjs.org/core-js/-/core-js-3.29.0.tgz"
   "version" "3.29.0"
 
+"detect-gpu@^5.0.16":
+  "integrity" "sha512-6+o6Sy+FzgQJG7Ray0fN7B4kRGGPuyaM5FHXJ4N3sLcQhsUO9+NEw9emM7vxN7DroZGG16ZydCX6kpgDmNXyKQ=="
+  "resolved" "https://registry.npmjs.org/detect-gpu/-/detect-gpu-5.0.16.tgz"
+  "version" "5.0.16"
+  dependencies:
+    "webgl-constants" "^1.1.1"
+
 "esbuild-darwin-arm64@0.15.18":
   "integrity" "sha512-tKPSxcTJ5OmNb1btVikATJ8NftlyNlc8BVNtyT/UAr62JFOhwHlnoPrhYWz09akBLHI9nElFVfWSTSRsrZiDUA=="
   "resolved" "https://registry.npmjs.org/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.15.18.tgz"
@@ -319,6 +326,11 @@
     "rollup" "^2.79.1"
   optionalDependencies:
     "fsevents" "~2.3.2"
+
+"webgl-constants@^1.1.1":
+  "integrity" "sha512-LkBXKjU5r9vAW7Gcu3T5u+5cvSvh5WwINdr0C+9jpzVB41cjQAP5ePArDtk/WHYdVj0GefCgM73BA7FlIiNtdg=="
+  "resolved" "https://registry.npmjs.org/webgl-constants/-/webgl-constants-1.1.1.tgz"
+  "version" "1.1.1"
 
 "zustand@^4.3.5":
   "integrity" "sha512-2iPUzfwx+g3f0PagOMz2vDO9mZzEp2puFpNe7vrAymVPOEIEUjCPkC4/zy84eAscxIWmTU4j9g6upXYkJdzEFQ=="

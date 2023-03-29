@@ -69,6 +69,11 @@ export function debounce(func, wait) {
     };
 }
 
+export function checkDirection(deltaY) {
+    const direction = deltaY >= 0 ? NORMAL : REVERSE;
+    const goingDown = direction === NORMAL;
+    return { direction, goingDown };
+}
 
 const now = () => +new Date();
 

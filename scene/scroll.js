@@ -1,9 +1,9 @@
 import { debounce, rIC } from './utils';
-import CameraOnScroll from './scrollCamera';
-import SmoothScroller from './scrollSmooth';
+import ScrollSmoth from './scrollSmooth';
 
-class ScrollHandler {
+class ScrollHandler extends ScrollSmoth {
 	constructor(store, camera, options) {
+		super(store, camera, options);
 		this.store = store;
 		this.options = options;
 		this.camera = camera;
@@ -12,28 +12,30 @@ class ScrollHandler {
 	}
 
 	init() {
-
+		this.fetchCameraPositions().then((cameraPositions) => { this.loadProject(cameraPositions) });
 		this.saveSections();
 		this.onResize();
-
-		this.fetchCameraState().then(this.startOtherClasses.bind(this))
+		this.initScrollBody();
 		this.initialized = true;
 	}
 
-	startOtherClasses() {
-		this.smoothScroller = new SmoothScroller(this.options.scrollSelector, this.store);
-		this.cameraOnScroll = new CameraOnScroll(this.camera, this.store);
-	}
 
-	fetchCameraState() {
+	fetchCameraPositions() {
 		return new Promise((resolve) => {
-			fetch(this.options.cameraStatePath)
+			fetch(this.options.cameraPositionsPath)
 				.then((response) => response.json())
-				.then((cameraState) => {
-					this.store.setState({ cameraState })
-					resolve()
+				.then((cameraPositions) => {
+
+					for (let item in cameraPositions.sheetsById) {
+						this.store.setState({
+							cameraScenesCount: cameraPositions.sheetsById[item].sequence.length
+						})
+					}
+
+					this.store.setState({ cameraPositions })
+					resolve(cameraPositions);
 				});
-		})
+		});
 	}
 
 	addEventListener() {
@@ -43,16 +45,18 @@ class ScrollHandler {
 
 	saveSections() {
 		this.sections = [...(document.querySelectorAll(this.options.sectionSelectors) || [])];
-		this.store.setState({ sections: this.sections });
+		this.store.setState({ sections: this.sections, sectionsCount: this.sections.length });
 	}
 
 	onResize() {
-		const scenesRect = this.sections.map((section) => {
+		const sectionsRect = this.sections.map((section) => {
 			const { top, bottom } = section.getBoundingClientRect();
-			return { top, bottom };
+			return { top: top + 1, bottom };
 		});
 
-		this.store.setState({ scenesRect });
+		const viewportHeight = window.innerHeight;
+		const scrollMarginVP = Math.abs(Math.floor(viewportHeight * 0.05));
+		this.store.setState({ sectionsRect, viewportHeight, scrollMarginVP });
 	}
 }
 
