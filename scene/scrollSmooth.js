@@ -152,6 +152,8 @@ class SmoothScroller extends ScrollCamera {
     const { cameraCurrentPose, cameraScenesCount } = this.store.getState()
     const { goingDown } = this.getCurrentScrollState(direction)
 
+    console.log(cameraCurrentPose)
+
     const actualFrom = clamp(cameraCurrentPose || from, [1, cameraScenesCount])
     const actualTo = clamp(goingDown ? max(actualFrom + 1, to) : max(actualFrom - 1, to), [1, cameraScenesCount])
 
@@ -266,7 +268,7 @@ class SmoothScroller extends ScrollCamera {
           from: currentIndex,
           to: currentIndex + 1,
           direction,
-          scrollToY: nextSceneTop + 1,
+          scrollToY: nextSceneTop,
           duration: 450
         })
       }
@@ -280,7 +282,7 @@ class SmoothScroller extends ScrollCamera {
           from: currentIndex,
           to: currentIndex - 1,
           direction,
-          scrollToY: (bottom - viewportHeight) + 1,
+          scrollToY: (bottom - viewportHeight),
           duration: 450
         })
       }

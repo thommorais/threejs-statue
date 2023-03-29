@@ -139,12 +139,10 @@ class Scene extends Stage {
 		return new Promise((resolve) => {
 			getModel(characterPath, this.store, this.loadingManager)
 				.then((model) => {
-					rIC(() => {
-						this.scene.add(model);
-						this.store.setState({ modelAdded: true, scrollable: true });
-
-						resolve(model);
-					}, { timeout: 240 })
+					this.scene.add(model);
+					this.mobileDebug.addContent(`<div>model: on Scene<div>`);
+					this.store.setState({ modelAdded: true, scrollable: true });
+					resolve(model);
 				})
 				.catch((error) => {
 					throw new Error('Error loading model:', error);
