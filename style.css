@@ -197,7 +197,8 @@ meter {
 	z-index: 100;
 }
 
-body:active .debug,
-body:hover .debug {
-	opacity: 0;
+@media (hover: hover) and (pointer: fine) {
+	body:hover .debug {
+		opacity: 0;
+	}
 }
