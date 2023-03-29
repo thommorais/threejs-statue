@@ -7,12 +7,16 @@ function getModel(modelPath, store, manager) {
 
         const dracoLoader = new DRACOLoader();
 
-        dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
-        dracoLoader.preload();
+        try {
+            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+            dracoLoader.preload();
+        } catch (error) {
+            store.setState({ modelLoadingProgress: 0, modelError: error });
+            reject(error);
+        }
 
         const loader = new GLTFLoader(manager);
         loader.setDRACOLoader(dracoLoader);
-
 
         if (!modelPath) {
             reject(new Error('modelPath is required'));

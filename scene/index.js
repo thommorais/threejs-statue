@@ -109,7 +109,6 @@ class Scene extends Stage {
 
 		}
 
-
 		// eslint-disable-next-line max-len, no-new
 		const { characterClass, characterPath } = this.options;
 
@@ -147,14 +146,12 @@ class Scene extends Stage {
 			getModel(characterPath, this.store, this.loadingManager)
 				.then((model) => {
 					this.scene.add(model);
-					this.mobileDebug.addContent(`<div>model: on Scene<div>`);
 					this.store.setState({ modelAdded: true, scrollable: true });
 					resolve(model);
 				})
 				.catch((error) => {
 					this.mobileDebug.clearAll();
 					this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
-
 					throw new Error('Error loading model:', error);
 				});
 		})
