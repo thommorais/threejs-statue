@@ -100,7 +100,15 @@ class Scene extends Stage {
 			this.mobileDebug = new MobileDebugOverlay(this.store);
 			this.mobileDebug.addContent(`<div>GPU: ${JSON.stringify(gpuData)}</div>`);
 			window.mobileDebug = this.mobileDebug;
+
+			this.subscribe(({ modelError }) => {
+				if (modelError) {
+					this.mobileDebug.addContent(`<div>Model Error: ${modelError}</div>`);
+				}
+			}, 'modelError')
+
 		}
+
 
 		// eslint-disable-next-line max-len, no-new
 		const { characterClass, characterPath } = this.options;

@@ -147,6 +147,7 @@ class Store {
 				barbarian: 1.0,
 				mage: 2.0,
 			},
+			modelError: false,
 			modelAdded: false,
 			modelLoadingProgress: 0,
 			characterClass: null,

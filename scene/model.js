@@ -58,7 +58,7 @@ function getModel(modelPath, store, manager) {
                 },
             );
         } catch (error) {
-            store.setState({ modelLoadingProgress: 0 });
+            store.setState({ modelLoadingProgress: 0, modelError: error });
             reject(error);
         }
 
