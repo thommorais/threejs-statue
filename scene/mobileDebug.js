@@ -25,9 +25,11 @@ class MobileDebugOverlay {
 
 
         const modelLoading = this.addContent(`<div>model loading: ${0}</div>`)
-        console.log(modelLoading)
+        const loader = document.body.querySelector(`.${modelLoading}`);
         this.store.subscribe(({ modelLoadingProgress }) => {
-            this.debug.querySelector(`.${modelLoading}`).innerHTML = `<div>model loading: ${modelLoadingProgress}</div>`
+            if (loader) {
+                loader.innerHTML = `<div>model loading: ${modelLoadingProgress}</div>`
+            }
         }, 'modelLoadingProgress')
 
     }

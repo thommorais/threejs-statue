@@ -141,8 +141,12 @@ class Scene extends Stage {
 		}
 	}
 
-	handleModel(characterPath,) {
+	handleModel(characterPath) {
 		return new Promise((resolve) => {
+			if (this.debug) {
+				this.mobileDebug.addContent(`<div>handling model</div>`);
+			}
+
 			getModel(characterPath, this.store, this.loadingManager)
 				.then((model) => {
 					this.scene.add(model);
