@@ -29,19 +29,20 @@ class Sparks {
 		this.store.subscribe(({ gpuData }) => {
 			this.gpuData = gpuData
 			this.count = 240 * this.gpuData.tier * clamp(pixelRatio, [1, 1.5])
-			tasks.pushTask(() => {
-				this.init()
-			});
+			tasks.pushTask(() => { this.init() });
 		}, ['gpuData'])
 	}
 
 	init() {
+		this.addEventListener()
 		this.updateWindowDimensions()
 		this.createParticles()
 		this.updateSparksByCharacterClass()
-		this.subscribeToCharacterClassChange()
+
+		this.scene.add(this.sparks)
+
 		this.runDrawLoop(classIntervals[this.characterClass], 100)
-		this.addEventListener()
+
 		this.initialized = true
 	}
 
@@ -57,7 +58,7 @@ class Sparks {
 		this.aspectRatio = clamp((this.wWidth / this.wHeight).toPrecision(2), [1, 5])
 		this.boxWidth = clamp(4 * this.aspectRatio, [0.5, 4])
 		this.boxHeight = this.boxWidth
-		this.boxDepth = this.boxWidth * 2
+		this.boxDepth = this.boxWidth * 4
 
 		if (this.sparks) {
 			this.sparks.material.uniforms.u_screenHeight.value = this.wHeight
@@ -67,10 +68,9 @@ class Sparks {
 		this.createGeometry()
 		this.createMaterial()
 		this.sparks = new Points(this.geometry, this.material)
-		const depth = clamp(8 * this.gpuData.tier, [8, 20])
-		const count = clamp(this.count * 0.25, [60, 140])
-		this.updateGeometryAttributes(depth, count)
-		this.scene.add(this.sparks)
+		// const depth = clamp(8 * this.gpuData.tier, [8, 20])
+		// const count = clamp(this.count * 0.25, [60, 140])
+		// this.updateGeometryAttributes(depth, count)
 	}
 
 	createMaterial() {
@@ -144,18 +144,6 @@ class Sparks {
 		this.sparks.material.needsUpdate = true
 	}
 
-	subscribeToCharacterClassChange() {
-		this.store.subscribe(
-			({ characterClass, characterClassUniform }) => {
-				if (this.characterClass === characterClass) return
-				this.characterClass = characterClass
-				this.updateClassUniform(characterClassUniform)
-				this.updateSparksByCharacterClass()
-				this.updateDrawLoop()
-			},
-			['characterClassUniform', 'characterClass'],
-		)
-	}
 
 	updateDrawLoop() {
 		clearTimeout(this.currentDrwaTimeout)

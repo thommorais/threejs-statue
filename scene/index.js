@@ -86,9 +86,9 @@ class Scene extends Stage {
 
 		tasks.pushTask(() => { this.addTools(); });
 		tasks.pushTask(() => { this.initStage(this.store) });
+		tasks.pushTask(() => { this.setTupScroll(); });
 		tasks.pushTask(() => { this.setupBackground(); });
 		tasks.pushTask(() => { this.turnOnTheLights(); });
-		tasks.pushTask(() => { this.setTupScroll(); });
 		tasks.pushTask(() => { this.addModel(); });
 		tasks.pushTask(() => { this.setAnimation(); });
 		tasks.pushTask(() => { this.getGPUdata(); });

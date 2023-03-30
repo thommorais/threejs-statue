@@ -46,7 +46,7 @@ try {
 	myScene.subscribe(({ modelLoadingProgress, modelAdded }) => {
 		if (modelLoadingProgress === 100 && modelAdded) {
 
-			myScene.setCameraPose({ from: 0, to: 1, rate: 4 }).then(() => {
+			myScene.setCameraPose({ from: 0, to: 1, }).then(() => {
 				myScene.unLockScroll()
 			})
 
