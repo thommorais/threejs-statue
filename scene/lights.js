@@ -28,14 +28,16 @@ const LIGHTS_CONFIG = [
 ];
 
 class Lights {
-	constructor(store, characterClass) {
+	constructor(store, scene, characterClass) {
 		this.intensityFactor = 1;
 		this.characterClass = characterClass;
 		this.lights = [];
 		this.initialized = false
 		this.store = store
+		this.scene = scene
 		this.init();
 	}
+
 	init() {
 		this.createLights();
 		this.initialized = true
@@ -53,6 +55,10 @@ class Lights {
 			light.penumbra = config.penumbra;
 			return light;
 		});
+
+		for (const light of this.lights) {
+			this.scene.add(light);
+		}
 	}
 
 

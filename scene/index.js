@@ -86,20 +86,30 @@ class Scene extends Stage {
 	init(options) {
 		this.validateInit({ characterClass: 'demon', ...options });
 
+		tasks.pushTask(() => { this.addTools(); });
+		tasks.pushTask(() => { this.setupBackground(); });
+		tasks.pushTask(() => { this.turnOnTheLights(); });
+		tasks.pushTask(() => { this.setTupScroll(); });
+		tasks.pushTask(() => { this.addModel(); });
+		tasks.pushTask(() => { this.setAnimation(); });
+		tasks.pushTask(() => { this.getGPUdata(); });
+
+		this.initialized = true;
+
+	}
+
+
+	addTools() {
+
 		if (this.devMode) {
 			this.dev = new Dev(this.store, { camera: this.camera, scene: this.scene }, options);
 			return null
 		}
 
-		tasks.pushTask(() => { this.addDebug(); });
-		tasks.pushTask(() => { this.initialize(); });
-		tasks.pushTask(() => { this.setAnimation(); });
-		tasks.pushTask(() => { this.getGPUdata(); });
+		if (this.showFPS) {
+			this.stats = new Stats();
+		}
 
-	}
-
-
-	addDebug() {
 		if (this.debug) {
 			this.mobileDebug = new MobileDebugOverlay(this.store);
 
@@ -118,36 +128,26 @@ class Scene extends Stage {
 		}
 	}
 
-	initialize() {
-
+	setTupScroll() {
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
+	}
 
+	setupBackground() {
 		this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
+	}
 
+	addModel() {
 		getModel(this.options.characterPath, this.store).then((model) => {
-			this.turnOnTheLights(this.options.characterClass);
-
-			tasks.pushTask(() => {
-				this.scene.add(model);
-				this.store.setState({ modelAdded: true });
-			});
+			this.scene.add(model);
+			this.store.setState({ modelAdded: true });
 		}).catch((error) => {
 			throw new Error(error);
 		})
-
-		if (this.showFPS) {
-			this.stats = new Stats();
-		}
-
-		this.initialized = true;
 	}
 
-	turnOnTheLights(characterClass) {
-		this.lights = new CreateLights(this.store, characterClass);
-		for (const light of this.lights.lights) {
-			this.scene.add(light);
-		}
+	turnOnTheLights() {
+		new CreateLights(this.store, this.scene, this.options.characterClass);
 	}
 
 	validateInit({ sectionSelectors, scrollSelector, characterPath, cameraPositionsPath, modelLoading, characterClass }) {
