@@ -127,7 +127,7 @@ class Scene extends Stage {
 		}).catch((error) => {
 			throw new Error(error);
 		}).finally(() => {
-			this.turnOnTheLights(this.options.characterClass);
+			tasks.pushTask(() => { this.turnOnTheLights(this.options.characterClass); });
 			this.store.setState({ modelAdded: true });
 		});
 
