@@ -2,12 +2,13 @@ import { debounce, rIC } from './utils';
 import ScrollSmoth from './scrollSmooth';
 
 class ScrollHandler extends ScrollSmoth {
-	constructor(store, camera, options) {
+	constructor(store, camera, options, gpuData) {
 		super(store, camera, options);
 		this.store = store;
 		this.options = options;
 		this.camera = camera;
 		this.initialized = false;
+		this.gpuData = gpuData;
 		rIC(this.init.bind(this), { timeout: 720 });
 	}
 

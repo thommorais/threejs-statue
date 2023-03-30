@@ -34,9 +34,12 @@ class SmoothScroller extends ScrollCamera {
 
   initScrollBody() {
     Scrollbar.use(LockPlugin)
+    const { locked, gpuData } = this.store.getState()
+
+    const damping = clamp(1 / gpuData.tier, [0.33, 1]).toPrecision(2)
 
     this.bodyScrollBar = Scrollbar.init(this.scroller, {
-      damping: 1,
+      damping,
       alwaysShowTracks: false,
       continuousScrolling: false,
       delegateTo: document.body,
@@ -50,7 +53,6 @@ class SmoothScroller extends ScrollCamera {
       },
     })
 
-    const { locked } = this.store.getState()
     this.bodyScrollBar.updatePluginOptions('lock', { locked });
 
     this.bodyScrollBar.addListener((status) => {
