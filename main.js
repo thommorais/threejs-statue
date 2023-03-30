@@ -26,11 +26,7 @@ if (['barbarian', 'demon', 'mage'].includes(characterClass)) {
 	characterClass = 'barbarian'
 }
 
-let characterPath = `${characterClass}/scene.glb`
-
-if (characterClass === 'barbarian') {
-	characterPath = `${characterClass}/scene1.glb`
-}
+const characterPath = `${characterClass}/scene.glb`
 
 try {
 	const myScene = new Scene();
