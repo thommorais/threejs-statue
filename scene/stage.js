@@ -25,7 +25,7 @@ class Stage {
 		this.store = store;
 
 		this.store.subscribe(({ gpuData }) => {
-			this.renderer.powerPreference = gpuData.tier > 2 ? 'high-performance' : 'low-power';
+			this.renderer.powerPreference = gpuData.tier > 1 ? 'high-performance' : 'low-power';
 			this.renderer.resetState();
 		}, ['gpuData'])
 	}
