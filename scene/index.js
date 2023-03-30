@@ -77,10 +77,11 @@ class Scene extends Stage {
 
 
 	init(options) {
-		this.validateInit(options);
+		this.validateInit({ characterClass: 'demon', ...options });
 		this.animation();
 
 		this.store.setState({ characterClass: options.characterClass })
+
 		if (this.devMode) {
 			this.dev = new Dev(this.store, { camera: this.camera, scene: this.scene }, options);
 			return null
@@ -110,19 +111,16 @@ class Scene extends Stage {
 
 		}
 
-		// eslint-disable-next-line max-len, no-new
-		const { characterClass = 'demon', characterPath } = this.options;
-
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
 
 		if (gpuData.tier > 1) {
 			this.background = new Background(this.scene, this.store, this.options, this.pixelRatio, this.loadingManager);
 		}
 
-		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, characterClass);
+		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
 
-		this.handleModel(characterPath).then(() => {
-			this.turnOnTheLights(characterClass);
+		this.handleModel(this.options.characterPath).then(() => {
+			this.turnOnTheLights(this.options.characterClass);
 		});
 
 		if (this.showFPS) {
@@ -133,7 +131,7 @@ class Scene extends Stage {
 	}
 
 	turnOnTheLights(characterClass) {
-		this.lights = new CreateLights(this.store, characterClass);
+		this.lights = new CreateLights(this.store, this.options.characterClass);
 		const sceneModel = this.scene.getObjectByName('character-model');
 		for (const light of this.lights.lights) {
 			light.target = sceneModel;
