@@ -96,8 +96,8 @@ class Scene extends Stage {
 
 	}
 
-	initialize(gpuData) {
 
+	addDebug(gpuData) {
 		if (this.debug) {
 			this.mobileDebug = new MobileDebugOverlay(this.store);
 			this.mobileDebug.addContent(`<div>GPU: ${JSON.stringify(gpuData)}</div>`);
@@ -110,6 +110,11 @@ class Scene extends Stage {
 			}, 'modelError')
 
 		}
+	}
+
+	initialize(gpuData) {
+
+		this.addDebug(gpuData);
 
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
 
@@ -126,6 +131,7 @@ class Scene extends Stage {
 		}).catch((error) => {
 			this.mobileDebug.clearAll();
 			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
+			throw new Error(error);
 		});
 
 		if (this.showFPS) {
