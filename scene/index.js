@@ -140,12 +140,8 @@ class Scene extends Stage {
 	turnOnTheLights(characterClass) {
 		try {
 			this.lights = new CreateLights(this.store, characterClass);
-			const sceneModel = this.scene.getObjectByName('character-model');
 			for (const light of this.lights.lights) {
-				light.target = sceneModel;
-				rIC(() => {
-					this.scene.add(light);
-				})
+				this.scene.add(light);
 			}
 		} catch (error) {
 			this.mobileDebug.addContent(`<div>turnOnTheLights, ${error}<div>`);

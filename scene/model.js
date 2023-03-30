@@ -17,11 +17,12 @@ function getModel(modelPath, store) {
                 reject(new Error('modelPath is required'));
             }
 
-            window.mobileDebug.addContent(`<div>trying to load model: ${modelPath}</div>`);
 
             loader.loadAsync(modelPath).then(({ scene }) => {
+
+                window.mobileDebug.addContent(`<div>model loaded: ${modelPath}</div>`);
+
                 const box = scene;
-                box.name = 'character-model';
 
                 const boxMaterial = new MeshStandardMaterial({
                     roughness: 0.455,
@@ -34,7 +35,6 @@ function getModel(modelPath, store) {
                         child.material = boxMaterial;
                     }
                 });
-
                 store.setState({ modelLoadingProgress: 100 });
                 resolve(box);
             }).catch((error) => {
