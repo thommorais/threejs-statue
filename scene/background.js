@@ -16,7 +16,7 @@ class Background {
 
 		this.cloudsCount = clamp(4 * this.gpuData.tier * pixelRatio, [4, 12])
 
-		rIC(this.init.bind(this), { timeout: 720 })
+		this.init()
 	}
 
 	init() {

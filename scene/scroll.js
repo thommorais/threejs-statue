@@ -1,4 +1,4 @@
-import { debounce, rIC } from './utils';
+import { debounce } from './utils';
 import ScrollSmoth from './scrollSmooth';
 import tasks from './globalTaskQueue';
 
