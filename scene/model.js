@@ -18,7 +18,18 @@ function getModel(modelPath, store) {
             }
 
 
-            loader.loadAsync(modelPath).then(({ scene }) => {
+            const onProgress = (xhr) => {
+                if (xhr.lengthComputable) {
+                    const percentComplete = xhr.loaded / xhr.total * 100;
+                    const roundedPercent = Math.round(percentComplete);
+                    if (roundedPercent % 10 === 0) {
+                        store.setState({ modelLoadingProgress: Number((roundedPercent).toFixed(2)) });
+                    }
+                }
+            }
+
+
+            loader.loadAsync(modelPath, onProgress).then(({ scene }) => {
 
                 window.mobileDebug.addContent(`<div>model loaded: ${modelPath}</div>`);
 
@@ -35,9 +46,15 @@ function getModel(modelPath, store) {
                         child.material = boxMaterial;
                     }
                 });
-                store.setState({ modelLoadingProgress: 100 });
+
+                const { modelLoadingProgress } = store.getState();
+
+                if (modelLoadingProgress < 100) {
+                    store.setState({ modelLoadingProgress: 100 });
+                }
                 resolve(box);
             }).catch((error) => {
+                window.mobileDebug.addContent(`<div>model error: ${error}</div>`);
                 store.setState({ modelLoadingProgress: 0, modelError: error });
                 reject(error);
             })

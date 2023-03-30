@@ -123,7 +123,7 @@ class Scene extends Stage {
 
 		getModel(this.options.characterPath, this.store).then((model) => {
 			this.scene.add(model);
-			this.store.setState({ modelAdded: true, scrollable: true });
+			this.store.setState({ modelAdded: true });
 			this.turnOnTheLights(this.options.characterClass);
 		}).catch((error) => {
 			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
