@@ -72,8 +72,13 @@ class Scene extends Stage {
 
 	getGPUdata() {
 		getGPUTier({ glContext: this.renderer.getContext() }).then((data) => {
-			this.store.setState({ gpuData: data });
+			setTimeout(() => {
+				this.store.setState({ gpuData: data });
+			}, 200)
 		});
+
+		this.renderer.forceContextRestore();
+		console.log(this.renderer)
 	}
 
 
@@ -86,9 +91,10 @@ class Scene extends Stage {
 		}
 
 		tasks.pushTask(() => { this.addDebug(); });
-		tasks.pushTask(() => { this.getGPUdata(); });
 		tasks.pushTask(() => { this.initialize(); });
 		tasks.pushTask(() => { this.animation(); });
+		tasks.pushTask(() => { this.getGPUdata(); });
+
 	}
 
 
