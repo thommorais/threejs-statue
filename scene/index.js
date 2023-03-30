@@ -91,7 +91,6 @@ class Scene extends Stage {
 			}, { timeout: 280 });
 		});
 
-
 	}
 
 
@@ -117,7 +116,7 @@ class Scene extends Stage {
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
 
 		if (gpuData.tier > 1) {
-			this.background = new Background(this.scene, this.store, this.options, this.pixelRatio, this.loadingManager);
+			// this.background = new Background(this.scene, this.store, this.options, this.pixelRatio, this.loadingManager);
 		}
 
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
