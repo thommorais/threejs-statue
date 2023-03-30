@@ -76,7 +76,7 @@ class Stage {
 	createPerspectiveCamera() {
 		const { width, height } = getDefaultSizes();
 		this.camera = new PerspectiveCamera(45, width / height, 1, 180);
-		this.camera.position.set(0, 0, 60);
+		this.camera.position.set(0, 0, 30);
 	}
 }
 

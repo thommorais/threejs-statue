@@ -2,7 +2,6 @@ import { TextureLoader, MeshLambertMaterial, Mesh, PlaneGeometry, PointLight, Gr
 
 import { randomIntFromInterval, clamp } from './utils'
 
-import tasks from './globalTaskQueue';
 
 class Background {
 	constructor(scene, store, options, pixelRatio) {
@@ -16,13 +15,9 @@ class Background {
 
 		this.initialized = false
 
-		this.store.subscribe(({ gpuData }) => {
-			this.gpuData = gpuData
-			this.cloudsCount = clamp(4 * this.gpuData.tier * pixelRatio, [4, 12])
-			tasks.pushTask(() => {
-				this.init()
-			});
-		}, ['gpuData'])
+		this.gpuData = this.store.getState().gpuData
+		this.cloudsCount = clamp(4 * this.gpuData.tier * pixelRatio, [4, 12])
+		this.init()
 
 	}
 

@@ -4,12 +4,11 @@ import { BufferGeometry, BufferAttribute, Points, ShaderMaterial, AdditiveBlendi
 import fragmentShader from './shaders/sparks.fragment.glsl'
 import vertexShader from './shaders/sparks.vertex.glsl'
 
-import { randomIntFromInterval, clamp, rIC } from './utils'
-import tasks from './globalTaskQueue';
+import { randomIntFromInterval, clamp } from './utils'
 
 const classIntervals = {
 	demon: [0.85, 2],
-	mage: [0.95, 3],
+	mage: [1.25, 3],
 	barbarian: [0.5, 2.5],
 }
 
@@ -25,12 +24,10 @@ class Sparks {
 		this.currentDrwaTimeout = 0
 		this.initialized = false
 
+		this.gpuData = this.store.getState().gpuData
+		this.count = 240 * this.gpuData.tier * clamp(pixelRatio, [1, 1.5])
+		this.init()
 
-		this.store.subscribe(({ gpuData }) => {
-			this.gpuData = gpuData
-			this.count = 240 * this.gpuData.tier * clamp(pixelRatio, [1, 1.5])
-			tasks.pushTask(() => { this.init() });
-		}, ['gpuData'])
 	}
 
 	init() {
@@ -56,9 +53,9 @@ class Sparks {
 		this.wWidth = window.innerWidth
 		this.wHeight = window.innerHeight
 		this.aspectRatio = clamp((this.wWidth / this.wHeight).toPrecision(2), [1, 5])
-		this.boxWidth = clamp(4 * this.aspectRatio, [0.5, 4])
+		this.boxWidth = clamp(3 * this.aspectRatio, [0.5, 4])
 		this.boxHeight = this.boxWidth
-		this.boxDepth = this.boxWidth * 4
+		this.boxDepth = this.boxWidth * 3
 
 		if (this.sparks) {
 			this.sparks.material.uniforms.u_screenHeight.value = this.wHeight
@@ -68,9 +65,6 @@ class Sparks {
 		this.createGeometry()
 		this.createMaterial()
 		this.sparks = new Points(this.geometry, this.material)
-		// const depth = clamp(8 * this.gpuData.tier, [8, 20])
-		// const count = clamp(this.count * 0.25, [60, 140])
-		// this.updateGeometryAttributes(depth, count)
 	}
 
 	createMaterial() {
@@ -82,8 +76,8 @@ class Sparks {
 			blending: AdditiveBlending,
 			uniforms: {
 				u_hardness: { value: 0.9 },
-				u_time: { value: 0 },
-				u_opacity: { value: 3 },
+				u_time: { value: 1.2 },
+				u_opacity: { value: 0.1 },
 				u_screenHeight: { value: this.wHeight },
 				u_pointSize: { value: 0.005 * this.pixelRatio },
 				u_tailLength: { value: 0.15 },
@@ -91,10 +85,10 @@ class Sparks {
 				u_amplitude: { value: 0.5 },
 				u_falloff: { value: 0.9 },
 				u_twist: { value: 0.35 },
-				u_spatialFrequency: { value: this.boxHeight * 0.5 },
+				u_spatialFrequency: { value: this.boxHeight * 0.25 },
 				u_temporalFrequency: { value: 0.15 },
 				u_blink: { value: 1.0 },
-				u_dof: { value: 1 },
+				u_dof: { value: 0.2 },
 				u_gradient: { value: 1 },
 				u_boxHeight: { value: this.boxHeight },
 				u_characterClass: { value: characterClassUniform[this.characterClass] || 0.0 },
@@ -115,14 +109,13 @@ class Sparks {
 		const base = 8 * this.gpuData.tier
 
 		if (this.characterClass === 'mage') {
-			const depth = clamp(base * this.gpuData.tier, [18, 72])
-			const count = clamp(this.count * 0.25, [60, 200])
+			const depth = clamp(base * this.gpuData.tier, [32, 112])
+			const count = clamp(this.count, [60, 400])
 			this.updateGeometryAttributes(depth, count)
-			this.sparks.material.uniforms.u_twist.value = 1.0
-			this.sparks.material.uniforms.u_falloff.value = 0.5
-			this.sparks.material.uniforms.u_windY.value = 0.7
-			this.sparks.material.uniforms.u_pointSize.value = 0.0015
-			this.sparks.material.uniforms.u_temporalFrequency.value = 0.0005
+
+			this.sparks.material.uniforms.u_twist.value = 1.0;
+			this.sparks.material.uniforms.u_falloff.value = 0.5;
+			this.sparks.material.uniforms.u_windY.value = 0.75;
 		}
 
 		if (this.characterClass === 'demon') {
@@ -136,8 +129,7 @@ class Sparks {
 
 		if (this.characterClass === 'barbarian') {
 			const depth = clamp(base * this.gpuData.tier, [12, 28])
-			// make sarks faster
-			this.sparks.material.uniforms.u_temporalFrequency.value = 0.5
+			this.sparks.material.uniforms.u_temporalFrequency.value = 0.65
 			this.updateGeometryAttributes(depth, this.count * 0.65)
 		}
 

@@ -72,28 +72,38 @@ class Scene extends Stage {
 
 
 	getGPUdata() {
-		const glContext = this.renderer.getContext();
-		getGPUTier({ glContext }).then((gpuData) => {
-			this.store.setState({ gpuData });
-			this.renderer.resetState()
-		});
+		return new Promise((resolve, reject) => {
+			const glContext = this.renderer.getContext();
+			getGPUTier({ glContext }).then((gpuData) => {
+				this.store.setState({ gpuData });
+				this.renderer.resetState()
+				resolve(gpuData)
+			}).catch((err) => {
+				reject(err)
+				this.store.setState({ gpuData: { tier: 2 } });
+			});
 
+		})
 	}
 
 
 	init(options) {
 		this.validateInit({ characterClass: 'demon', ...options });
 
-		tasks.pushTask(() => { this.addTools(); });
-		tasks.pushTask(() => { this.initStage(this.store) });
-		tasks.pushTask(() => { this.setTupScroll(); });
-		tasks.pushTask(() => { this.setupBackground(); });
-		tasks.pushTask(() => { this.turnOnTheLights(); });
-		tasks.pushTask(() => { this.addModel(); });
-		tasks.pushTask(() => { this.setAnimation(); });
-		tasks.pushTask(() => { this.getGPUdata(); });
+		this.initStage(this.store)
 
-		this.initialized = true;
+		tasks.pushTask(() => { this.addTools(); });
+
+		this.getGPUdata().finally(() => {
+
+			tasks.pushTask(() => { this.setAnimation(); });
+			tasks.pushTask(() => { this.setupBackground(); });
+			tasks.pushTask(() => { this.setTupScroll(); });
+			tasks.pushTask(() => { this.turnOnTheLights(); });
+			tasks.pushTask(() => { this.addModel(); });
+
+			this.initialized = true;
+		})
 
 	}
 
@@ -132,8 +142,8 @@ class Scene extends Stage {
 	}
 
 	setupBackground() {
-		this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
+		this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
 	}
 
 	addModel() {
@@ -182,7 +192,7 @@ class Scene extends Stage {
 			this.renderer.render(this.scene, this.camera);
 			this.sparks.update(time);
 			this.background.update(time);
-			if (this.initialized && this.showFPS) {
+			if (this.showFPS) {
 				this.stats.update();
 			}
 		});
