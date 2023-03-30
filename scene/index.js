@@ -127,7 +127,7 @@ class Scene extends Stage {
 		getModel(this.options.characterPath, this.store, this.loadingManager).then((model) => {
 			this.scene.add(model);
 			this.store.setState({ modelAdded: true, scrollable: true });
-			this.turnOnTheLights(model, this.options.characterClass);
+			this.turnOnTheLights(this.options.characterClass);
 		}).catch((error) => {
 			this.mobileDebug.clearAll();
 			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
@@ -142,11 +142,15 @@ class Scene extends Stage {
 	}
 
 	turnOnTheLights(characterClass) {
-		this.lights = new CreateLights(this.store, this.options.characterClass);
-		const sceneModel = this.scene.getObjectByName('character-model');
-		for (const light of this.lights.lights) {
-			light.target = sceneModel;
-			this.scene.add(light);
+		try {
+			this.lights = new CreateLights(this.store, characterClass);
+			const sceneModel = this.scene.getObjectByName('character-model');
+			for (const light of this.lights.lights) {
+				light.target = sceneModel;
+				this.scene.add(light);
+			}
+		} catch (error) {
+			this.mobileDebug.addContent(`<div>turnOnTheLights, ${error}<div>`);
 		}
 	}
 
