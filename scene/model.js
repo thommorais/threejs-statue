@@ -30,25 +30,21 @@ function getModel(modelPath, store, manager) {
                 modelPath,
                 ({ scene }) => {
 
-
-                    window.mobileDebug.addContent(`<div>'on loader.load'</div>`);
-
                     const box = scene;
 
-                    box.name = 'character-model';
+                    try {
 
-                    box.traverse((child) => {
-                        if (child.isMesh) {
-                            // eslint-disable-next-line no-param-reassign
-                            child.material = boxMaterial;
-                        }
-                        // eslint-disable-next-line no-param-reassign
-                        child.castShadow = true;
-                        // eslint-disable-next-line no-param-reassign
-                        child.receiveShadow = true;
+                        box.name = 'character-model';
 
-
-                    });
+                        box.traverse((child) => {
+                            if (child.isMesh) {
+                                // eslint-disable-next-line no-param-reassign
+                                child.material = boxMaterial;
+                            }
+                        });
+                    } catch (error) {
+                        reject(error);
+                    }
 
                     store.setState({ modelLoadingProgress: 100 });
                     resolve(box);
