@@ -80,6 +80,7 @@ class Scene extends Stage {
 		this.validateInit(options);
 		this.animation();
 
+		this.store.setState({ characterClass: options.characterClass })
 		if (this.devMode) {
 			this.dev = new Dev(this.store, { camera: this.camera, scene: this.scene }, options);
 			return null
@@ -122,7 +123,6 @@ class Scene extends Stage {
 
 		this.handleModel(characterPath).then(() => {
 			this.turnOnTheLights();
-			rIC(() => { this.store.setState({ characterClass }) }, { timeout: 240 })
 		});
 
 		if (this.showFPS) {

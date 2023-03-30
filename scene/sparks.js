@@ -13,7 +13,7 @@ const classIntervals = {
 }
 
 class Sparks {
-	constructor(scene, clock, store, pixelRatio, characterClass = 'barbarian') {
+	constructor(scene, clock, store, pixelRatio, characterClass) {
 		this.store = store
 		this.clock = clock
 		this.scene = scene

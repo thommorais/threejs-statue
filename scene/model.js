@@ -4,33 +4,33 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 function getModel(modelPath, store, manager) {
     return new Promise((resolve, reject) => {
-
-        const dracoLoader = new DRACOLoader();
-
         try {
+
+            const dracoLoader = new DRACOLoader();
+            const loader = new GLTFLoader(manager);
+
             dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
             dracoLoader.preload();
-        } catch (error) {
-            store.setState({ modelLoadingProgress: 0, modelError: error });
-            reject(error);
-        }
+            loader.setDRACOLoader(dracoLoader);
 
-        const loader = new GLTFLoader(manager);
-        loader.setDRACOLoader(dracoLoader);
+            if (!modelPath) {
+                reject(new Error('modelPath is required'));
+            }
 
-        if (!modelPath) {
-            reject(new Error('modelPath is required'));
-        }
+            const boxMaterial = new MeshStandardMaterial({
+                roughness: 0.455,
+                metalness: 0.475,
+            });
 
-        const boxMaterial = new MeshStandardMaterial({
-            roughness: 0.455,
-            metalness: 0.475,
-        });
 
-        try {
             loader.load(
                 modelPath,
                 ({ scene }) => {
+
+
+                    window.mobileDebug.addContent(`<div>'on loader.load'</div>`);
+
+
                     const box = scene;
 
                     box.name = 'character-model';
