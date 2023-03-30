@@ -97,7 +97,7 @@ class Scene extends Stage {
 	addDebug(gpuData) {
 		if (this.debug) {
 			this.mobileDebug = new MobileDebugOverlay(this.store);
-			this.mobileDebug.addContent(`<div>fps: ${gpuData.fps}</div>`);
+			this.mobileDebug.addContent(`<div>fps: ${gpuData.fps} - tier: ${gpuData.tier}</div>`);
 			window.mobileDebug = this.mobileDebug;
 
 			this.subscribe(({ modelError }) => {
@@ -118,6 +118,8 @@ class Scene extends Stage {
 		if (gpuData.tier > 1) {
 			this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
 		}
+
+
 
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
 
