@@ -127,7 +127,8 @@ class Scene extends Stage {
 
 		setTimeout(() => {
 			this.store.setState({ modelAdded: true, modelLoadingProgress: 100 });
-		}, 100)
+			this.mobileDebug.addContent(`<div>HELLo 0/<div>`);
+		}, 1000)
 
 
 		// getModel(this.options.characterPath, this.store).then((model) => {
