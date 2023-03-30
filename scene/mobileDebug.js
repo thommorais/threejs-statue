@@ -42,21 +42,24 @@ class MobileDebugOverlay {
         this.debug.innerHTML = '';
     }
 
+    updateContent(className, content) {
+        const element = document.querySelector(`.${className}`);
+        if (element) {
+            element.innerHTML = content;
+        }
+    }
+
     generateClassName() {
-        return `deb-${now()}-ug`.replace('.', '-')
+        return `deb-${now()}-ug-${Math.random()}`.replace('.', '-')
     }
 
     addContent(content) {
-        try {
-            const className = this.generateClassName();
-            const element = document.createElement('div');
-            element.classList.add(className);
-            element.innerHTML = content;
-            this.debug.insertAdjacentElement('beforeend', element);
-            return className;
-        } catch (error) {
-            console.error(error);
-        }
+        const className = this.generateClassName();
+        const element = document.createElement('div');
+        element.classList.add(className);
+        element.innerHTML = content;
+        this.debug.insertAdjacentElement('beforeend', element);
+        return className;
     }
 
     removeGivenElement(element) {

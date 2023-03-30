@@ -78,7 +78,6 @@ class Scene extends Stage {
 
 	init(options) {
 		this.validateInit({ characterClass: 'demon', ...options });
-		this.animation();
 
 		if (this.devMode) {
 			this.dev = new Dev(this.store, { camera: this.camera, scene: this.scene }, options);
@@ -88,6 +87,7 @@ class Scene extends Stage {
 		this.getGPUdata().then((gpuData) => {
 			rIC(() => {
 				this.initialize(gpuData);
+				this.animation();
 			}, { timeout: 280 });
 		});
 
@@ -98,13 +98,8 @@ class Scene extends Stage {
 		if (this.debug) {
 			this.mobileDebug = new MobileDebugOverlay(this.store);
 			this.mobileDebug.addContent(`<div>fps: ${gpuData.fps} - tier: ${gpuData.tier}</div>`);
-			console.log(this.renderer.info)
-			this.mobileDebug.addContent(`<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
-			this.mobileDebug.addContent(`<div>memory: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
 
 			window.mobileDebug = this.mobileDebug;
-
-			window.render = this.renderer.info
 
 			this.subscribe(({ modelError }) => {
 				if (modelError) {
@@ -116,6 +111,7 @@ class Scene extends Stage {
 	}
 
 	initialize(gpuData) {
+		this.addDebug(gpuData);
 
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions, gpuData);
 
@@ -131,7 +127,6 @@ class Scene extends Stage {
 			this.store.setState({ modelAdded: true });
 			this.scene.updateMatrix()
 			this.camera.updateProjectionMatrix();
-			this.addDebug(gpuData);
 		}).catch((error) => {
 			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
 			throw new Error(error);
@@ -142,6 +137,7 @@ class Scene extends Stage {
 		}
 
 		this.initialized = true;
+
 	}
 
 	turnOnTheLights(characterClass) {
@@ -183,13 +179,19 @@ class Scene extends Stage {
 	}
 
 	animation() {
+
+		const renderInfo = this.mobileDebug.addContent(`<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
+		const memoryInfo = this.mobileDebug.addContent(`<div>memory: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
+
 		this.renderer.setAnimationLoop((time) => {
 			this.renderer.render(this.scene, this.camera);
-
 			this.sparks.update(time);
 			this.background.update(time);
 			this.camera.updateProjectionMatrix();
 			this.camera.updateMatrixWorld(true);
+
+			this.mobileDebug.updateContent(renderInfo, `<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
+			this.mobileDebug.updateContent(memoryInfo, `<div>render: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
 
 			if (this.initialized && this.showFPS) {
 				this.stats.update();
@@ -197,6 +199,8 @@ class Scene extends Stage {
 
 
 		});
+
+
 	}
 
 	modelLoading(callback) {
