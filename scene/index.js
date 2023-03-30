@@ -123,13 +123,15 @@ class Scene extends Stage {
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
 
 		getModel(this.options.characterPath, this.store).then((model) => {
-			this.scene.add(model);
+			this.turnOnTheLights(this.options.characterClass);
+
+			tasks.pushTask(() => {
+				this.scene.add(model);
+				this.store.setState({ modelAdded: true });
+			});
 		}).catch((error) => {
 			throw new Error(error);
-		}).finally(() => {
-			tasks.pushTask(() => { this.turnOnTheLights(this.options.characterClass); });
-			this.store.setState({ modelAdded: true });
-		});
+		})
 
 		if (this.showFPS) {
 			this.stats = new Stats();
