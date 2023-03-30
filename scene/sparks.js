@@ -50,12 +50,24 @@ class Sparks {
 	}
 
 	updateWindowDimensions() {
+		const h = {
+			'mage': 1.5,
+			'demon': 2.25,
+			'barbarian': 2.5,
+		}[this.characterClass]
+
+		const a = {
+			'mage': 1,
+			'demon': 1,
+			'barbarian': 0.75,
+		}[this.characterClass]
+
 		this.wWidth = window.innerWidth
 		this.wHeight = window.innerHeight
-		this.aspectRatio = clamp((this.wWidth / this.wHeight).toPrecision(2), [1, 5])
-		this.boxWidth = clamp(3 * this.aspectRatio, [0.5, 4])
-		this.boxHeight = this.boxWidth
-		this.boxDepth = this.boxWidth * 3
+		this.aspectRatio = clamp((this.wWidth / this.wHeight).toPrecision(2), [1.8, 5])
+		this.boxWidth = clamp(4 * this.aspectRatio, [a, 4])
+		this.boxHeight = this.boxWidth * h
+		this.boxDepth = (this.boxWidth * 5.2)
 
 		if (this.sparks) {
 			this.sparks.material.uniforms.u_screenHeight.value = this.wHeight
