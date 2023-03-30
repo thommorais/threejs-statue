@@ -42,6 +42,7 @@ class Stage {
 			stencil: true,
 			depth: true,
 			antialias: true,
+			powerPreference: 'high-performance',
 		});
 
 		this.renderer.physicallyCorrectLights = true;
