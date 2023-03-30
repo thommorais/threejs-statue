@@ -13,7 +13,7 @@ const classIntervals = {
 }
 
 class Sparks {
-	constructor(scene, clock, store, pixelRatio, characterClass = 'demon') {
+	constructor(scene, clock, store, pixelRatio, characterClass = 'barbarian') {
 		this.store = store
 		this.clock = clock
 		this.scene = scene
@@ -234,6 +234,7 @@ class Sparks {
 	}
 
 	draw(deltaTime, classInterval) {
+		if (!this.initialized) return
 		const multiplyer = this.randomValueFromInterval(classInterval)
 		this.sparks.material.uniforms.u_opacity.value = multiplyer * deltaTime
 	}

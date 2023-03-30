@@ -46,9 +46,9 @@ try {
 	myScene.subscribe(({ modelLoadingProgress, scrollable, modelAdded }) => {
 		if (modelLoadingProgress === 100 && scrollable && modelAdded) {
 
-			myScene.setCameraPose({ from: 0, to: 1 }).then(() => {
+			// myScene.setCameraPose({ from: 0, to: 1 }).then(() => {
 
-			})
+			// })
 
 			// myScene.setScenePose({ from: 4, to: 0, duration: 500 }).then(({ cameraCurrentPose, sectionCurrent }) => {
 			// 	console.log(cameraCurrentPose, sectionCurrent)

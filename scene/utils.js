@@ -75,7 +75,7 @@ export function checkDirection(deltaY) {
     return { direction, goingDown };
 }
 
-const now = () => +new Date();
+export const now = () => +new Date();
 
 class IdleDeadline {
     constructor(initTime) {

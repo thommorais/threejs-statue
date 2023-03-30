@@ -1,3 +1,6 @@
+
+import { now } from './utils';
+
 class MobileDebugOverlay {
 
     constructor(store) {
@@ -23,14 +26,17 @@ class MobileDebugOverlay {
 
         document.body.appendChild(this.debug);
 
+        setTimeout(() => {
+            const modelLoading = this.addContent(`<div>model loading: ${0}</div>`)
+            const loader = document.body.querySelector(`.${modelLoading}`);
+            this.store.subscribe(({ modelLoadingProgress }) => {
+                if (loader) {
+                    loader.innerHTML = `<div>model loading: ${modelLoadingProgress}</div>`
+                }
+            }, 'modelLoadingProgress')
 
-        const modelLoading = this.addContent(`<div>model loading: ${0}</div>`)
-        const loader = document.body.querySelector(`.${modelLoading}`);
-        this.store.subscribe(({ modelLoadingProgress }) => {
-            if (loader) {
-                loader.innerHTML = `<div>model loading: ${modelLoadingProgress}</div>`
-            }
-        }, 'modelLoadingProgress')
+
+        }, 500)
 
     }
 
@@ -39,7 +45,7 @@ class MobileDebugOverlay {
     }
 
     generateClassName() {
-        return Math.random().toString(36).substr(2, 9);
+        return `deb-${now()}-ug`.replace('.', '-')
     }
 
     addContent(content) {
