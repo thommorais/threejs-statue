@@ -3,14 +3,12 @@ import { TextureLoader, MeshLambertMaterial, Mesh, PlaneGeometry, PointLight, Gr
 import { randomIntFromInterval, rIC, clamp } from './utils'
 
 class Background {
-	constructor(scene, store, options, pixelRatio, loadingManager) {
+	constructor(scene, store, options, pixelRatio) {
 		this.scene = scene
 		this.store = store
 		this.characterClass = options.characterClass
 		this.zRange = []
 		this.frequency = 0.87
-
-		this.loadingManager = loadingManager
 
 		this.initialized = false
 
@@ -31,7 +29,7 @@ class Background {
 
 	loadTexture() {
 		const { bgTexturePath } = this.store.getState()
-		const loader = new TextureLoader(this.loadingManager)
+		const loader = new TextureLoader()
 		return new Promise((resolve) => loader.load(bgTexturePath, (texture) => resolve(texture))).then(
 			this.createClouds.bind(this),
 		)

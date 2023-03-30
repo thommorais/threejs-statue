@@ -6,8 +6,7 @@ import {
 	Scene,
 	Color,
 	PerspectiveCamera,
-	Clock,
-	LoadingManager
+	Clock
 } from 'three';
 
 
@@ -20,12 +19,6 @@ class Stage {
 		this.controls = null // this.createOrbitControl(this.camera, this.renderer);
 		this.clock = new Clock();
 		this.clock.start();
-
-		this.loadingManager = new LoadingManager();
-
-		this.loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
-			console.log(`Loading file: ${url}. \nLoaded ${itemsLoaded} of ${itemsTotal} files.`);
-		};
 
 		this.addEventListener();
 	}
