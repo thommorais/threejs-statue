@@ -124,7 +124,7 @@ class Scene extends Stage {
 
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
 
-		getModel(this.options.characterPath + 1, this.store, this.loadingManager).then((model) => {
+		getModel(this.options.characterPath, this.store, this.loadingManager).then((model) => {
 			this.scene.add(model);
 			this.store.setState({ modelAdded: true, scrollable: true });
 			this.turnOnTheLights(model, this.options.characterClass);
