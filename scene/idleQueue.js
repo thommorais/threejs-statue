@@ -118,7 +118,7 @@ class IdleQueue {
     onVisibilityChange_() {
         if (document.visibilityState === 'hidden') {
             this.runTasks
-            Immediately();
+            this.runTasksImmediately();
         }
     }
 }
