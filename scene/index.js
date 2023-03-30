@@ -122,7 +122,7 @@ class Scene extends Stage {
 
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
 
-		getModel(this.options.characterPath, this.store, this.loadingManager).then((model) => {
+		getModel(this.options.characterPath, this.store).then((model) => {
 			this.scene.add(model);
 			this.store.setState({ modelAdded: true, scrollable: true });
 			this.turnOnTheLights(this.options.characterClass);
@@ -144,7 +144,9 @@ class Scene extends Stage {
 			const sceneModel = this.scene.getObjectByName('character-model');
 			for (const light of this.lights.lights) {
 				light.target = sceneModel;
-				this.scene.add(light);
+				rIC(() => {
+					this.scene.add(light);
+				})
 			}
 		} catch (error) {
 			this.mobileDebug.addContent(`<div>turnOnTheLights, ${error}<div>`);

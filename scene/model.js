@@ -9,14 +9,13 @@ function getModel(modelPath, store) {
             const dracoLoader = new DRACOLoader();
             const loader = new GLTFLoader();
 
-            dracoLoader.setDecoderPath('/draco/');
+            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
             dracoLoader.preload();
             loader.setDRACOLoader(dracoLoader);
 
             if (!modelPath) {
                 reject(new Error('modelPath is required'));
             }
-
 
             window.mobileDebug.addContent(`<div>trying to load model: ${modelPath}</div>`);
 
