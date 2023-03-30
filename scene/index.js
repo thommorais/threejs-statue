@@ -71,9 +71,10 @@ class Scene extends Stage {
 
 
 	getGPUdata() {
-		getGPUTier({ glContext: this.renderer.getContext() }).then((gpuData) => {
+		const glContext = this.renderer.getContext();
+		this.renderer.resetState()
+		getGPUTier({ glContext }).then((gpuData) => {
 			this.store.setState({ gpuData });
-			this.renderer.resetState()
 		});
 
 	}
@@ -89,8 +90,8 @@ class Scene extends Stage {
 
 		tasks.pushTask(() => { this.addDebug(); });
 		tasks.pushTask(() => { this.initialize(); });
-		tasks.pushTask(() => { this.animation(); });
 		tasks.pushTask(() => { this.getGPUdata(); });
+		tasks.pushTask(() => { this.setAnimation(); });
 
 	}
 
@@ -123,13 +124,9 @@ class Scene extends Stage {
 
 
 		getModel(this.options.characterPath, this.store).then((model) => {
-			this.renderer.resetState()
-			this.renderer.dispose();
-			this.scene.add(model);
 			this.turnOnTheLights(this.options.characterClass);
-			this.animation();
-			console.log('model loaded')
 			this.store.setState({ modelAdded: true });
+			this.scene.add(model);
 		}).catch((error) => {
 			throw new Error(error);
 		});
@@ -175,7 +172,7 @@ class Scene extends Stage {
 		}
 	}
 
-	animation() {
+	setAnimation() {
 
 		this.renderer.setAnimationLoop((time) => {
 			this.renderer.render(this.scene, this.camera);
