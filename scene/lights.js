@@ -38,17 +38,7 @@ class Lights {
 	}
 	init() {
 		this.createLights();
-		this.subscribeToCharacterUpdate();
 		this.initialized = true
-	}
-
-	subscribeToCharacterUpdate() {
-		this.store.subscribe(({ characterClass, classColors }) => {
-			const value = classColors[characterClass] || classColors['demon'];
-			this.lights.forEach((light, index) => {
-				light.color.setHex(value[index]);
-			})
-		}, ['characterClass', 'classColors'])
 	}
 
 	createLights() {
