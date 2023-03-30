@@ -138,6 +138,14 @@ class Scene extends Stage {
 
 		this.initialized = true;
 
+		const renderInfo = this.mobileDebug.addContent(`<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
+		const memoryInfo = this.mobileDebug.addContent(`<div>memory: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
+		setInterval(() => {
+			this.mobileDebug.updateContent(renderInfo, `<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
+			this.mobileDebug.updateContent(memoryInfo, `<div>render: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
+
+		}, 1000);
+
 	}
 
 	turnOnTheLights(characterClass) {
@@ -180,8 +188,6 @@ class Scene extends Stage {
 
 	animation() {
 
-		const renderInfo = this.mobileDebug.addContent(`<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
-		const memoryInfo = this.mobileDebug.addContent(`<div>memory: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
 
 		this.renderer.setAnimationLoop((time) => {
 			this.renderer.render(this.scene, this.camera);
@@ -190,8 +196,6 @@ class Scene extends Stage {
 			this.camera.updateProjectionMatrix();
 			this.camera.updateMatrixWorld(true);
 
-			this.mobileDebug.updateContent(renderInfo, `<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
-			this.mobileDebug.updateContent(memoryInfo, `<div>render: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
 
 			if (this.initialized && this.showFPS) {
 				this.stats.update();
