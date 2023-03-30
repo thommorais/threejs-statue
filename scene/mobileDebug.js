@@ -49,12 +49,16 @@ class MobileDebugOverlay {
     }
 
     addContent(content) {
-        const className = this.generateClassName();
-        const element = document.createElement('div');
-        element.classList.add(className);
-        element.innerHTML = content;
-        this.debug.insertAdjacentElement('beforeend', element);
-        return className;
+        try {
+            const className = this.generateClassName();
+            const element = document.createElement('div');
+            element.classList.add(className);
+            element.innerHTML = content;
+            this.debug.insertAdjacentElement('beforeend', element);
+            return className;
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     removeGivenElement(element) {
