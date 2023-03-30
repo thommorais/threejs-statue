@@ -42,7 +42,7 @@ class Stage {
 			stencil: true,
 			depth: true,
 			powerPreference: 'high-performance',
-			antialias: true, // Add this line
+			antialias: true,
 		});
 
 		renderer.physicallyCorrectLights = true;
@@ -50,7 +50,6 @@ class Stage {
 		renderer.toneMapping = ACESFilmicToneMapping;
 		renderer.toneMappingExposure = 1.25;
 		renderer.logarithmicDepthBuffer = true;
-
 
 		renderer.setSize(width, height);
 		renderer.setPixelRatio(pixelRatio);
@@ -64,7 +63,7 @@ class Stage {
 
 	createScene() {
 		const scene = new Scene();
-		scene.background = new Color('#100C0D');
+		scene.background = new Color('#ff0');
 		return scene;
 	}
 
