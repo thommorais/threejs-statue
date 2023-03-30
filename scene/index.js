@@ -119,8 +119,13 @@ class Scene extends Stage {
 
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
 
-		this.handleModel(this.options.characterPath).then(() => {
-			this.turnOnTheLights(this.options.characterClass);
+		getModel(this.options.characterPath, this.store, this.loadingManager).then((model) => {
+			this.scene.add(model);
+			this.store.setState({ modelAdded: true, scrollable: true });
+			this.turnOnTheLights(model, this.options.characterClass);
+		}).catch((error) => {
+			this.mobileDebug.clearAll();
+			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
 		});
 
 		if (this.showFPS) {
@@ -137,26 +142,6 @@ class Scene extends Stage {
 			light.target = sceneModel;
 			this.scene.add(light);
 		}
-	}
-
-	handleModel(characterPath) {
-		return new Promise((resolve) => {
-			if (this.debug) {
-				this.mobileDebug.addContent(`<div>handling model</div>`);
-			}
-
-			getModel(characterPath, this.store, this.loadingManager)
-				.then((model) => {
-					this.scene.add(model);
-					this.store.setState({ modelAdded: true, scrollable: true });
-					resolve(model);
-				})
-				.catch((error) => {
-					this.mobileDebug.clearAll();
-					this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
-					throw new Error('Error loading model:', error);
-				});
-		})
 	}
 
 	validateInit({ sectionSelectors, scrollSelector, characterPath, cameraPositionsPath, modelLoading, characterClass }) {

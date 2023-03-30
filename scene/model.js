@@ -6,6 +6,9 @@ function getModel(modelPath, store, manager) {
     return new Promise((resolve, reject) => {
         try {
 
+            window.mobileDebug.addContent(`<div>trying to load model</div>`);
+
+
             const dracoLoader = new DRACOLoader();
             const loader = new GLTFLoader(manager);
 
