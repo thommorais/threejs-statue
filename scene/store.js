@@ -167,7 +167,7 @@ class Store {
 			},
 			bgTexturePath: '/smoke-o.webp',
 			gpuData: {
-				tier: 1,
+				tier: 3,
 				isMobile: false
 			},
 		}

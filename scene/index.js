@@ -87,11 +87,14 @@ class Scene extends Stage {
 		}
 
 		// this.getGPUdata().then((gpuData) => {
-
+		// 	tasks.pushTask(() => {
+		// 		this.initialize(gpuData);
+		// 		this.animation();
+		// 	});
 		// });
 
 		tasks.pushTask(() => {
-			this.initialize({ tier: 2, fps: 30 });
+			this.initialize({ tier: 3, fps: 30 });
 			this.animation();
 		});
 
@@ -125,9 +128,8 @@ class Scene extends Stage {
 			}
 		})
 
-		tasks.pushTask(() => {
-			this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
-		})
+		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
+
 
 		getModel(this.options.characterPath, this.store).then((model) => {
 			this.scene.add(model);

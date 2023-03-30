@@ -26,6 +26,8 @@ class Sparks {
 
 		this.gpuData = this.store.getState().gpuData
 
+		console.log(this.gpuData)
+
 		this.count = 240 * this.gpuData.tier * clamp(pixelRatio, [1, 1.5])
 
 		window.mobileDebug.addContent(`<div>Sparks count: ${this.count}</div>`)
