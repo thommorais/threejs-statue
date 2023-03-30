@@ -98,8 +98,13 @@ class Scene extends Stage {
 		if (this.debug) {
 			this.mobileDebug = new MobileDebugOverlay(this.store);
 			this.mobileDebug.addContent(`<div>fps: ${gpuData.fps} - tier: ${gpuData.tier}</div>`);
-			this.mobileDebug.addContent(`<div>render: ${this.renderer.info}</div>`);
+			console.log(this.renderer.info)
+			this.mobileDebug.addContent(`<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
+			this.mobileDebug.addContent(`<div>memory: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
+
 			window.mobileDebug = this.mobileDebug;
+
+			window.render = this.renderer.info
 
 			this.subscribe(({ modelError }) => {
 				if (modelError) {
@@ -111,9 +116,6 @@ class Scene extends Stage {
 	}
 
 	initialize(gpuData) {
-
-
-
 
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions, gpuData);
 
@@ -182,15 +184,18 @@ class Scene extends Stage {
 
 	animation() {
 		this.renderer.setAnimationLoop((time) => {
+			this.renderer.render(this.scene, this.camera);
+
 			this.sparks.update(time);
 			this.background.update(time);
 			this.camera.updateProjectionMatrix();
 			this.camera.updateMatrixWorld(true);
-			this.renderer.render(this.scene, this.camera);
 
 			if (this.initialized && this.showFPS) {
 				this.stats.update();
 			}
+
+
 		});
 	}
 
