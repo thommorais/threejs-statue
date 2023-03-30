@@ -124,8 +124,11 @@ class Scene extends Stage {
 
 		getModel(this.options.characterPath, this.store).then((model) => {
 			this.renderer.resetState()
+			this.renderer.dispose();
 			this.scene.add(model);
 			this.turnOnTheLights(this.options.characterClass);
+			this.animation();
+			console.log('model loaded')
 			this.store.setState({ modelAdded: true });
 		}).catch((error) => {
 			throw new Error(error);
