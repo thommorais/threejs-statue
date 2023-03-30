@@ -16,6 +16,8 @@ import { getGPUTier } from 'detect-gpu';
 import Stats from './stats'
 import Dev from './dev';
 
+
+
 const classDefaults = {
 	update() { },
 	addContent() { },
@@ -84,10 +86,9 @@ class Scene extends Stage {
 		}
 
 		tasks.pushTask(() => { this.addDebug(); });
+		tasks.pushTask(() => { this.getGPUdata(); });
 		tasks.pushTask(() => { this.initialize(); });
 		tasks.pushTask(() => { this.animation(); });
-		tasks.pushTask(() => { this.getGPUdata() });
-
 	}
 
 

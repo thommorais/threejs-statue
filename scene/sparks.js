@@ -24,9 +24,15 @@ class Sparks {
 		this.minimalDrawTimeout = 2000
 		this.currentDrwaTimeout = 0
 		this.initialized = false
-		this.gpuData = this.store.getState().gpuData
-		this.count = 240 * this.gpuData.tier * clamp(pixelRatio, [1, 1.5])
-		tasks.pushTask(this.init.bind(this));
+
+
+		this.store.subscribe(({ gpuData }) => {
+			this.gpuData = gpuData
+			this.count = 240 * this.gpuData.tier * clamp(pixelRatio, [1, 1.5])
+			tasks.pushTask(() => {
+				this.init()
+			});
+		}, ['gpuData'])
 	}
 
 	init() {

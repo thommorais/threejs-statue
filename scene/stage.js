@@ -6,7 +6,7 @@ import {
 	Scene,
 	Color,
 	PerspectiveCamera,
-	Clock
+	Clock,
 } from 'three';
 
 
@@ -41,7 +41,7 @@ class Stage {
 			canvas,
 			stencil: true,
 			depth: true,
-			powerPreference: 'low-power',
+			powerPreference: 'high-performance',
 			antialias: true,
 		});
 
@@ -70,6 +70,7 @@ class Stage {
 		const { width, height } = getDefaultSizes();
 		const camera = new PerspectiveCamera(45, width / height, 1, 180);
 		camera.position.set(0, 0, 50);
+		camera.focus = 0;
 		return camera;
 	}
 }
