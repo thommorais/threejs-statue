@@ -56,8 +56,6 @@ class Stage {
 		this.renderer.outputEncoding = sRGBEncoding;
 		this.renderer.toneMapping = ACESFilmicToneMapping;
 		this.renderer.toneMappingExposure = 1.25;
-		this.renderer.logarithmicDepthBuffer = false;
-		this.renderer.failIfMajorPerformanceCaveat = true
 
 		this.renderer.setSize(width, height);
 		this.renderer.setPixelRatio(pixelRatio);
