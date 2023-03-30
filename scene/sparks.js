@@ -127,7 +127,7 @@ class Sparks {
 
 		if (this.characterClass === 'demon') {
 			const depth = clamp(base * 2, [12, 16])
-			this.updateGeometryAttributes(depth, this.count * 0.95)
+			this.updateGeometryAttributes(depth, this.count * 1.25)
 			this.sparks.material.uniforms.u_windY.value = -0.75
 			this.sparks.material.uniforms.u_temporalFrequency.value = 0.0005
 			this.sparks.material.uniforms.u_tailLength.value = 0.025

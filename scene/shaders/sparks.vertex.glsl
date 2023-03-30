@@ -67,16 +67,21 @@ float getCoc(vec3 p) {
 void main() {
   float t = u_time + aDelay * u_tailLength;
 
+  float cc = u_characterClass;
+  bool mage = cc == 1.0;
+  bool barbarian = cc == 2.0;
+  bool demon = cc == 0.0;
+
+  float cy = barbarian ? 1.5 : mage ? 1.0 : 3.0;
+
   vec3 p = aPos;
   p.y += t * u_windY;
   p.y = mod(p.y + 0.5, u_boxHeight) - 1.5;
-  // p.y = fract(p.y  + 0.5) - 0.5;
   p += turbulence(p, t);
 
   vec4 modelPosition = modelMatrix * vec4(p, .065);
   vec4 viewPosition = viewMatrix * modelPosition;
-  vec4 projectedPosition = projectionMatrix * viewPosition;
-  gl_Position = projectedPosition;
+  gl_Position = projectionMatrix * viewPosition;
 
   float coc = getCoc(p);
   float size = u_pointSize * (aRandom1 + 0.5);
@@ -90,10 +95,11 @@ void main() {
   alpha *= 0.5 - p.y * 0.005;
   alpha /= 1. + coc;
 
-  float gradient = 1. - ((gl_Position.y / gl_Position.w) * .5 + .5) * u_gradient;
+  float gradient = 1. - (((gl_Position.y * cy) / gl_Position.w) * .5 + .5) * u_gradient;
   alpha *= gradient * gradient;
 
-  vec3 c = spectrum(0.1 + aRandom3 * 0.8, u_characterClass);
+
+  vec3 c = spectrum(0.1 + aRandom3 * 0.8, cc);
   vColor = vec4(c, alpha);
 
   vUv = uv;
