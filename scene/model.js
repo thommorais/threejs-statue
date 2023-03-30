@@ -30,7 +30,6 @@ function getModel(modelPath, store, manager) {
 
                     window.mobileDebug.addContent(`<div>'on loader.load'</div>`);
 
-
                     const box = scene;
 
                     box.name = 'character-model';

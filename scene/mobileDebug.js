@@ -26,17 +26,15 @@ class MobileDebugOverlay {
 
         document.body.appendChild(this.debug);
 
-        setTimeout(() => {
-            const modelLoading = this.addContent(`<div>model loading: ${0}</div>`)
-            const loader = document.body.querySelector(`.${modelLoading}`);
-            this.store.subscribe(({ modelLoadingProgress }) => {
-                if (loader) {
-                    loader.innerHTML = `<div>model loading: ${modelLoadingProgress}</div>`
-                }
-            }, 'modelLoadingProgress')
+        const modelLoading = this.addContent(`<div>model loading: ${0}</div>`)
+        const loader = document.body.querySelector(`.${modelLoading}`);
+        this.store.subscribe(({ modelLoadingProgress }) => {
+            if (loader) {
+                loader.innerHTML = `<div>model loading: ${modelLoadingProgress}</div>`
+            }
+        }, 'modelLoadingProgress')
 
 
-        }, 500)
 
     }
 

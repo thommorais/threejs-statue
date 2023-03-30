@@ -23,8 +23,8 @@ class Stage {
 
 		this.loadingManager = new LoadingManager();
 
-		this.loadingManager.onProgress =  (url, itemsLoaded, itemsTotal) => {
-			this.mobileDebug.addContent(`<div>Loading file: ${url}.\nLoaded ${itemsLoaded} of ${itemsTotal} files.</div>`);
+		this.loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+			console.log(`Loading file: ${url}. \nLoaded ${itemsLoaded} of ${itemsTotal} files.`);
 		};
 
 		this.addEventListener();
