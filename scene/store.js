@@ -166,7 +166,10 @@ class Store {
 				enabled: false,
 			},
 			bgTexturePath: '/smoke-o.webp',
-			gpuData: {},
+			gpuData: {
+				tier: 1,
+				isMobile: false
+			},
 		}
 
 		this.storeKeys = new Map(

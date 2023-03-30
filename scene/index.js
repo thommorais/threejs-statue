@@ -11,12 +11,10 @@ import MobileDebugOverlay from './mobileDebug';
 
 import IdleQueue from './idleQueue';
 
-import { getGPUTier } from 'detect-gpu';
+// import { getGPUTier } from 'detect-gpu';
 
 import Stats from './stats'
 import Dev from './dev';
-
-import { rIC } from './utils';
 
 const classDefaults = {
 	update() { },
@@ -73,14 +71,14 @@ class Scene extends Stage {
 	}
 
 
-	getGPUdata() {
-		return new Promise((resolve) => {
-			getGPUTier({ glContext: this.renderer.getContext() }).then((data) => {
-				this.store.setState({ gpuData: data });
-				resolve(data);
-			});
-		});
-	}
+	// getGPUdata() {
+	// 	return new Promise((resolve) => {
+	// 		getGPUTier({ glContext: this.renderer.getContext() }).then((data) => {
+	// 			this.store.setState({ gpuData: data });
+	// 			resolve(data);
+	// 		});
+	// 	});
+	// }
 
 
 	init(options) {
@@ -91,11 +89,17 @@ class Scene extends Stage {
 			return null
 		}
 
-		this.getGPUdata().then((gpuData) => {
-			this.tasks.pushTask(() => {
-				this.initialize(gpuData);
-				this.animation();
-			});
+		// this.getGPUdata().then((gpuData) => {
+
+		// this.tasks.pushTask(() => {
+		// 	this.initialize(gpuData);
+		// 	this.animation();
+		// });
+		// });
+
+		this.tasks.pushTask(() => {
+			this.initialize({ tier: 2, fps: 60 });
+			this.animation();
 		});
 
 	}
