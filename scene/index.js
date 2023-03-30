@@ -18,7 +18,8 @@ import { rIC } from './utils';
 
 const classDefaults = {
 	update() { },
-	addContent() { }
+	addContent() { },
+	updateContent() { },
 }
 
 window.mobileDebug = classDefaults;
@@ -143,7 +144,6 @@ class Scene extends Stage {
 		setInterval(() => {
 			this.mobileDebug.updateContent(renderInfo, `<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
 			this.mobileDebug.updateContent(memoryInfo, `<div>render: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
-
 		}, 1000);
 
 	}
@@ -187,7 +187,6 @@ class Scene extends Stage {
 	}
 
 	animation() {
-
 
 		this.renderer.setAnimationLoop((time) => {
 			this.renderer.render(this.scene, this.camera);
