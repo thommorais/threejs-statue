@@ -39,17 +39,17 @@ class Stage {
 
 		const renderer = new WebGLRenderer({
 			canvas,
-			// stencil: true,
-			// depth: true,
-			// powerPreference: 'high-performance',
-			// antialias: true,
+			stencil: true,
+			depth: true,
+			powerPreference: 'high-performance',
+			antialias: true,
 		});
 
-		// renderer.physicallyCorrectLights = true;
-		// renderer.outputEncoding = sRGBEncoding;
-		// renderer.toneMapping = ACESFilmicToneMapping;
-		// renderer.toneMappingExposure = 1.25;
-		// renderer.logarithmicDepthBuffer = true;
+		renderer.physicallyCorrectLights = true;
+		renderer.outputEncoding = sRGBEncoding;
+		renderer.toneMapping = ACESFilmicToneMapping;
+		renderer.toneMappingExposure = 1.25;
+		renderer.logarithmicDepthBuffer = true;
 
 		renderer.setSize(width, height);
 		renderer.setPixelRatio(pixelRatio);

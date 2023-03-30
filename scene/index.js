@@ -123,22 +123,18 @@ class Scene extends Stage {
 
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
 
-		this.turnOnTheLights(this.options.characterClass);
-
-		setTimeout(() => {
-			this.store.setState({ modelAdded: true, modelLoadingProgress: 100 });
-			this.mobileDebug.addContent(`<div>HELLo 0/<div>`);
-		}, 1000)
 
 
-		// getModel(this.options.characterPath, this.store).then((model) => {
-		// 	this.scene.add(model);
-		// 	this.store.setState({ modelAdded: true });
-		// 	this.scene.updateMatrix()
-		// }).catch((error) => {
-		// 	this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
-		// 	throw new Error(error);
-		// });
+		getModel(this.options.characterPath, this.store).then((model) => {
+			this.scene.add(model);
+			this.turnOnTheLights(this.options.characterClass);
+			this.store.setState({ modelAdded: true });
+			this.scene.updateMatrix()
+			this.camera.updateProjectionMatrix();
+		}).catch((error) => {
+			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
+			throw new Error(error);
+		});
 
 		if (this.showFPS) {
 			this.stats = new Stats();
