@@ -26,14 +26,18 @@ if (['barbarian', 'demon', 'mage'].includes(characterClass)) {
 	characterClass = 'barbarian'
 }
 
+let characterPath = `${characterClass}/scene.glb`
 
+if (characterClass === 'barbarian') {
+	characterPath = `${characterClass}/scene1.glb`
+}
 
 try {
 	const myScene = new Scene();
 
 	myScene.init({
 		characterClass,
-		characterPath: `${characterClass}/scene.glb`,
+		characterPath,
 		cameraPositionsPath: `${characterClass}/camera.json`,
 		sectionSelectors: '.chapter',
 		scrollSelector: '.container-3d'
