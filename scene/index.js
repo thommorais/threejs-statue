@@ -96,11 +96,6 @@ class Scene extends Stage {
 			});
 		});
 
-		this.tasks.pushTask(() => {
-			this.initialize({ tier: 2, fps: 60 });
-			this.animation();
-		});
-
 	}
 
 
