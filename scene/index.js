@@ -75,10 +75,10 @@ class Scene extends Stage {
 			setTimeout(() => {
 				this.store.setState({ gpuData: data });
 			}, 200)
+			this.renderer.resetState()
+
 		});
 
-		this.renderer.forceContextRestore();
-		console.log(this.renderer)
 	}
 
 
