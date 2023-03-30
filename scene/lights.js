@@ -28,8 +28,9 @@ const LIGHTS_CONFIG = [
 ];
 
 class Lights {
-	constructor(store) {
+	constructor(store, characterClass) {
 		this.intensityFactor = 1;
+		this.characterClass = characterClass;
 		this.lights = [];
 		this.initialized = false
 		this.store = store
@@ -54,7 +55,7 @@ class Lights {
 		const { classColors } = this.store.getState();
 
 		this.lights = LIGHTS_CONFIG.map((config, index) => {
-			const color = classColors['demon'][index];
+			const color = classColors[this.characterClass][index];
 			const light = new SpotLight(color, 1);
 			light.distance = config.distance;
 			light.position.set(...config.position);

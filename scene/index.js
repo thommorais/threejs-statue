@@ -111,7 +111,7 @@ class Scene extends Stage {
 		}
 
 		// eslint-disable-next-line max-len, no-new
-		const { characterClass, characterPath } = this.options;
+		const { characterClass = 'demon', characterPath } = this.options;
 
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
 
@@ -122,7 +122,7 @@ class Scene extends Stage {
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, characterClass);
 
 		this.handleModel(characterPath).then(() => {
-			this.turnOnTheLights();
+			this.turnOnTheLights(characterClass);
 		});
 
 		if (this.showFPS) {
@@ -132,8 +132,8 @@ class Scene extends Stage {
 		this.initialized = true;
 	}
 
-	turnOnTheLights() {
-		this.lights = new CreateLights(this.store);
+	turnOnTheLights(characterClass) {
+		this.lights = new CreateLights(this.store, characterClass);
 		const sceneModel = this.scene.getObjectByName('character-model');
 		for (const light of this.lights.lights) {
 			light.target = sceneModel;
