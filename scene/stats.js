@@ -23,8 +23,8 @@ class StatsMonitor {
 
 		document.body.appendChild(this.panel);
 
-		// this.createPanel(0)
-		// this.createPanel(1)
+		this.createPanel(0)
+		this.createPanel(1)
 		this.createPanel(2)
 
 	}
