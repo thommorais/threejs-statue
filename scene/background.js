@@ -1,6 +1,8 @@
 import { TextureLoader, MeshLambertMaterial, Mesh, PlaneGeometry, PointLight, Group } from 'three'
 
-import { randomIntFromInterval, rIC, clamp } from './utils'
+import { randomIntFromInterval, clamp } from './utils'
+
+import tasks from './globalTaskQueue';
 
 class Background {
 	constructor(scene, store, options, pixelRatio) {
@@ -10,19 +12,24 @@ class Background {
 		this.zRange = []
 		this.frequency = 0.87
 
+		this.lastRAF = 0
+
 		this.initialized = false
 
-		this.gpuData = this.store.getState().gpuData
+		this.store.subscribe(({ gpuData }) => {
+			this.gpuData = gpuData
+			this.cloudsCount = clamp(4 * this.gpuData.tier * pixelRatio, [4, 12])
+			tasks.pushTask(() => {
+				this.init()
+			});
+		}, ['gpuData'])
 
-		this.cloudsCount = clamp(4 * this.gpuData.tier * pixelRatio, [4, 12])
-
-		this.init()
 	}
+
 
 	init() {
 		this.loadTexture().then(() => {
 			this.createThunder()
-			this.subscribeToCharacterClassChange()
 			this.initialized = true
 		})
 	}
@@ -73,16 +80,6 @@ class Background {
 		this.scene.add(this.flash)
 	}
 
-	subscribeToCharacterClassChange() {
-		this.store.subscribe(
-			({ characterClass, backgroundColors }) => {
-				if (this.characterClass === characterClass) return
-				const value = backgroundColors[characterClass] || backgroundColors[0]
-				this.flash.color.setHex(value)
-			},
-			['backgroundColors', 'characterClass'],
-		)
-	}
 
 	animateThumder() {
 		if (this.gpuData.tier === 1) {
@@ -111,7 +108,8 @@ class Background {
 
 	update() {
 		if (!this.initialized) return
-		requestAnimationFrame(() => {
+		cancelAnimationFrame(this.lastRAF)
+		this.lastRAF = requestAnimationFrame(() => {
 			this.animateThumder()
 			this.rotateClouds()
 		})
