@@ -80,8 +80,6 @@ class Scene extends Stage {
 		this.validateInit({ characterClass: 'demon', ...options });
 		this.animation();
 
-		this.store.setState({ characterClass: options.characterClass })
-
 		if (this.devMode) {
 			this.dev = new Dev(this.store, { camera: this.camera, scene: this.scene }, options);
 			return null
@@ -175,6 +173,7 @@ class Scene extends Stage {
 			this.modelLoading(modelLoading);
 			this.options = { sectionSelectors, scrollSelector, characterPath, cameraPositionsPath, modelLoading, characterClass };
 			this.scrollOptions = { sectionSelectors, scrollSelector, cameraPositionsPath, characterPath };
+			this.store.setState({ characterClass: this.options.characterClass })
 		} catch (error) {
 			throw new Error(error);
 		}

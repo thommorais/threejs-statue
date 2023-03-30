@@ -6,9 +6,6 @@ function getModel(modelPath, store, manager) {
     return new Promise((resolve, reject) => {
         try {
 
-            window.mobileDebug.addContent(`<div>trying to load model</div>`);
-
-
             const dracoLoader = new DRACOLoader();
             const loader = new GLTFLoader(manager);
 
@@ -20,19 +17,20 @@ function getModel(modelPath, store, manager) {
                 reject(new Error('modelPath is required'));
             }
 
-            const boxMaterial = new MeshStandardMaterial({
-                roughness: 0.455,
-                metalness: 0.475,
-            });
 
+            window.mobileDebug.addContent(`<div>trying to load model: ${modelPath}</div>`);
 
             loader.load(
                 modelPath,
                 ({ scene }) => {
 
                     const box = scene;
-
                     try {
+
+                        const boxMaterial = new MeshStandardMaterial({
+                            roughness: 0.455,
+                            metalness: 0.475,
+                        });
 
                         box.name = 'character-model';
 
