@@ -129,7 +129,7 @@ export default class DevMode {
 				.then((response) => response.json())
 				.then(async (cameraPositions) => {
 					store.setState({ cameraPositions })
-					const lights = new CreateLights(store);
+					const lights = new CreateLights(store, characterClass);
 					await theatre(lights.lights, model, camera, store)
 
 					// lights.forEach((light) => {
@@ -146,7 +146,6 @@ export default class DevMode {
 					scene.add(model)
 
 					for (const light of lights.lights) {
-						light.target = model
 						scene.add(light)
 					}
 					scene.add(model)
