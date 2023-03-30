@@ -72,9 +72,9 @@ class Scene extends Stage {
 
 	getGPUdata() {
 		const glContext = this.renderer.getContext();
-		this.renderer.resetState()
 		getGPUTier({ glContext }).then((gpuData) => {
 			this.store.setState({ gpuData });
+			this.renderer.resetState()
 		});
 
 	}
