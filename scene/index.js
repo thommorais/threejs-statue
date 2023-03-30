@@ -69,11 +69,8 @@ class Scene extends Stage {
 
 
 	getGPUdata() {
-		return new Promise((resolve) => {
-			getGPUTier({ glContext: this.renderer.getContext() }).then((data) => {
-				this.store.setState({ gpuData: data });
-				resolve(data);
-			});
+		getGPUTier({ glContext: this.renderer.getContext() }).then((data) => {
+			this.store.setState({ gpuData: data });
 		});
 	}
 
@@ -86,26 +83,21 @@ class Scene extends Stage {
 			return null
 		}
 
-
-		// tasks.pushTask(() => {
-		// 	this.getGPUdata().then((gpuData) => {
-		// 		this.initialize(gpuData);
-		// 		this.animation();
-		// 	});
-
-
-		// });
-
-		this.initialize({ tier: 2 });
-		this.animation();
+		tasks.pushTask(() => { this.addDebug(); });
+		tasks.pushTask(() => { this.getGPUdata() });
+		tasks.pushTask(() => { this.initialize(); });
+		tasks.pushTask(() => { this.animation(); });
 
 	}
 
 
-	addDebug(gpuData) {
+	addDebug() {
 		if (this.debug) {
 			this.mobileDebug = new MobileDebugOverlay(this.store);
-			this.mobileDebug.addContent(`<div>fps: ${gpuData.fps} - tier: ${gpuData.tier}</div>`);
+
+			this.store.subscribe(({ gpuData }) => {
+				this.mobileDebug.addContent(`<div>fps: ${gpuData.fps} - tier: ${gpuData.tier}</div>`);
+			}, ['gpuData'])
 
 			window.mobileDebug = this.mobileDebug;
 
@@ -118,17 +110,11 @@ class Scene extends Stage {
 		}
 	}
 
-	initialize(gpuData) {
-		this.addDebug(gpuData);
+	initialize() {
 
-		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions, gpuData);
+		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
 
-		tasks.pushTask(() => {
-			if (gpuData.tier > 1) {
-				this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
-			}
-		})
-
+		this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
 
 
@@ -137,7 +123,6 @@ class Scene extends Stage {
 			this.turnOnTheLights(this.options.characterClass);
 			this.store.setState({ modelAdded: true });
 		}).catch((error) => {
-			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
 			throw new Error(error);
 		});
 
@@ -146,26 +131,12 @@ class Scene extends Stage {
 		}
 
 		this.initialized = true;
-
-		if (this.debug) {
-			const renderInfo = this.mobileDebug.addContent(`<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
-			const memoryInfo = this.mobileDebug.addContent(`<div>memory: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
-			setInterval(() => {
-				this.mobileDebug.updateContent(renderInfo, `<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
-				this.mobileDebug.updateContent(memoryInfo, `<div>render: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
-			}, 1000);
-		}
-
 	}
 
 	turnOnTheLights(characterClass) {
-		try {
-			this.lights = new CreateLights(this.store, characterClass);
-			for (const light of this.lights.lights) {
-				this.scene.add(light);
-			}
-		} catch (error) {
-			this.mobileDebug.addContent(`<div>turnOnTheLights, ${error}<div>`);
+		this.lights = new CreateLights(this.store, characterClass);
+		for (const light of this.lights.lights) {
+			this.scene.add(light);
 		}
 	}
 

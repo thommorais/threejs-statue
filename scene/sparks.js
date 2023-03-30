@@ -5,6 +5,7 @@ import fragmentShader from './shaders/sparks.fragment.glsl'
 import vertexShader from './shaders/sparks.vertex.glsl'
 
 import { randomIntFromInterval, clamp, rIC } from './utils'
+import tasks from './globalTaskQueue';
 
 const classIntervals = {
 	demon: [0.85, 2],
@@ -23,15 +24,9 @@ class Sparks {
 		this.minimalDrawTimeout = 2000
 		this.currentDrwaTimeout = 0
 		this.initialized = false
-
 		this.gpuData = this.store.getState().gpuData
-
 		this.count = 240 * this.gpuData.tier * clamp(pixelRatio, [1, 1.5])
-
-		window.mobileDebug.addContent(`<div>Sparks count: ${this.count}</div>`)
-		window.mobileDebug.addContent(`<div>Pixel Ratio: ${this.pixelRatio}</div>`)
-
-		this.init()
+		tasks.pushTask(this.init.bind(this));
 	}
 
 	init() {

@@ -31,8 +31,6 @@ function getModel(modelPath, store) {
 
             loader.loadAsync(modelPath, onProgress).then(({ scene }) => {
 
-                window.mobileDebug.addContent(`<div>model loaded: ${modelPath}</div>`);
-
                 const box = scene;
 
                 const boxMaterial = new MeshStandardMaterial({
@@ -54,7 +52,6 @@ function getModel(modelPath, store) {
                 }
                 resolve(box);
             }).catch((error) => {
-                window.mobileDebug.addContent(`<div>model error: ${error}</div>`);
                 store.setState({ modelLoadingProgress: 0, modelError: error });
                 reject(error);
             })
