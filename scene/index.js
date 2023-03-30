@@ -71,12 +71,9 @@ class Scene extends Stage {
 
 
 	getGPUdata() {
-		getGPUTier({ glContext: this.renderer.getContext() }).then((data) => {
-			setTimeout(() => {
-				this.store.setState({ gpuData: data });
-			}, 200)
+		getGPUTier({ glContext: this.renderer.getContext() }).then((gpuData) => {
+			this.store.setState({ gpuData });
 			this.renderer.resetState()
-
 		});
 
 	}
@@ -126,6 +123,7 @@ class Scene extends Stage {
 
 
 		getModel(this.options.characterPath, this.store).then((model) => {
+			this.renderer.resetState()
 			this.scene.add(model);
 			this.turnOnTheLights(this.options.characterClass);
 			this.store.setState({ modelAdded: true });
