@@ -11,7 +11,7 @@ import MobileDebugOverlay from './mobileDebug';
 
 import IdleQueue from './idleQueue';
 
-import { getGPUTier } from 'detect-gpu';
+// import { getGPUTier } from 'detect-gpu';
 
 import Stats from './stats'
 import Dev from './dev';
@@ -71,14 +71,14 @@ class Scene extends Stage {
 	}
 
 
-	getGPUdata() {
-		return new Promise((resolve) => {
-			getGPUTier({ glContext: this.renderer.getContext() }).then((data) => {
-				this.store.setState({ gpuData: data });
-				resolve(data);
-			});
-		});
-	}
+	// getGPUdata() {
+	// 	return new Promise((resolve) => {
+	// 		getGPUTier({ glContext: this.renderer.getContext() }).then((data) => {
+	// 			this.store.setState({ gpuData: data });
+	// 			resolve(data);
+	// 		});
+	// 	});
+	// }
 
 
 	init(options) {
@@ -89,11 +89,13 @@ class Scene extends Stage {
 			return null
 		}
 
-		this.getGPUdata().then((gpuData) => {
-			this.tasks.pushTask(() => {
-				this.initialize(gpuData);
-				this.animation();
-			});
+		// this.getGPUdata().then((gpuData) => {
+
+		// });
+
+		this.tasks.pushTask(() => {
+			this.initialize({ tier: 2, fps: 30 });
+			this.animation();
 		});
 
 	}
@@ -117,8 +119,8 @@ class Scene extends Stage {
 
 	initialize(gpuData) {
 		this.addDebug(gpuData);
-
-		// this.scroll = new Scroll(this.store, this.camera, this.scrollOptions, gpuData);
+		//
+		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions, gpuData);
 
 		if (gpuData.tier > 1) {
 			this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
