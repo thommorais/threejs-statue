@@ -136,7 +136,9 @@ class Sparks {
 
 		if (this.characterClass === 'barbarian') {
 			const depth = clamp(base * this.gpuData.tier, [12, 28])
-			this.updateGeometryAttributes(depth, this.count * 0.45)
+			// make sarks faster
+			this.sparks.material.uniforms.u_temporalFrequency.value = 0.5
+			this.updateGeometryAttributes(depth, this.count * 0.65)
 		}
 
 		this.sparks.material.needsUpdate = true

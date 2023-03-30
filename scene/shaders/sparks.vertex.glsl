@@ -33,6 +33,7 @@ varying vec4 vColor;
 
 #define m3 mat3(-0.73736, 0.45628, 0.49808, 0, -0.73736, 0.67549, 0.67549, 0.49808, 0.54371)
 
+
 vec3 sineNoise(in vec3 p) {
   vec3 q = p;
   vec3 c = vec3(0);
@@ -54,8 +55,14 @@ vec3 turbulence(vec3 p, float t) {
 }
 
 vec3 spectrum(float b, float c) {
-    return (c == 1.0) ? vec3(b * 2.0, b * 1.5, b * 0.5) :
-           (c == 2.0) ? vec3(b, 0.2 * b * b, b * b) :
+
+  bool mage = c == 1.0;
+  bool barbarian = c == 2.0;
+  // bool demon = c == 0.0;
+
+
+    return mage ? vec3(b * 2.0, b * 1.5, b * 0.5) :
+           barbarian ? vec3(b, 0.2 * b * b, b * b) :
                                        vec3(b, b * b, b * b * b * b);
 }
 
@@ -68,20 +75,25 @@ void main() {
   float t = u_time + aDelay * u_tailLength;
 
   float cc = u_characterClass;
-  bool mage = cc == 1.0;
+  // bool mage = cc == 1.0;
   bool barbarian = cc == 2.0;
   bool demon = cc == 0.0;
 
-  float cy = barbarian ? 1.5 : mage ? 1.0 : 3.0;
+  float cy = 1.0;
+  cy = barbarian ? 1.05 : cy;
+  cy = demon ? 1.2 : cy;
+  // cy = mage ? 1.0 : cy;
 
   vec3 p = aPos;
   p.y += t * u_windY;
   p.y = mod(p.y + 0.5, u_boxHeight) - 1.5;
+  // p.y = fract(p.y  + 0.5) - 0.5;
   p += turbulence(p, t);
 
   vec4 modelPosition = modelMatrix * vec4(p, .065);
   vec4 viewPosition = viewMatrix * modelPosition;
-  gl_Position = projectionMatrix * viewPosition;
+  vec4 projectedPosition = projectionMatrix * viewPosition;
+  gl_Position = projectedPosition;
 
   float coc = getCoc(p);
   float size = u_pointSize * (aRandom1 + 0.5);
@@ -95,11 +107,10 @@ void main() {
   alpha *= 0.5 - p.y * 0.005;
   alpha /= 1. + coc;
 
-  float gradient = 1. - (((gl_Position.y * cy) / gl_Position.w) * .5 + .5) * u_gradient;
+  float gradient = 1. - (((gl_Position.y)/( gl_Position.w)) * .5 + .5) * u_gradient;
   alpha *= gradient * gradient;
 
-
-  vec3 c = spectrum(0.1 + aRandom3 * 0.8, cc);
+  vec3 c = spectrum(0.1 + aRandom3 * 0.8, u_characterClass);
   vColor = vec4(c, alpha);
 
   vUv = uv;
