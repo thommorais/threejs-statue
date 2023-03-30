@@ -9,6 +9,8 @@ import Sparks from './sparks';
 
 import MobileDebugOverlay from './mobileDebug';
 
+import IdleQueue from './idleQueue';
+
 import { getGPUTier } from 'detect-gpu';
 
 import Stats from './stats'
@@ -37,6 +39,10 @@ class Scene extends Stage {
 			sectionSelectors: '',
 			scrollSelector: ''
 		}
+
+		this.tasks = new IdleQueue({
+			ensureTasksRun: true,
+		})
 
 		this.scrollOptions = {}
 		this.initialized = false;
@@ -86,10 +92,10 @@ class Scene extends Stage {
 		}
 
 		this.getGPUdata().then((gpuData) => {
-			rIC(() => {
+			this.tasks.pushTask(() => {
 				this.initialize(gpuData);
 				this.animation();
-			}, { timeout: 280 });
+			});
 		});
 
 	}
@@ -116,22 +122,28 @@ class Scene extends Stage {
 
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions, gpuData);
 
-		if (gpuData.tier > 1 || !gpuData.isMobile) {
+		if (gpuData.tier > 1) {
 			this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
 		}
 
-		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
+		this.tasks.pushTask(() => {
+			this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
+		})
 
-		getModel(this.options.characterPath, this.store).then((model) => {
-			this.scene.add(model);
-			this.turnOnTheLights(this.options.characterClass);
-			this.store.setState({ modelAdded: true });
-			this.scene.updateMatrix()
-			this.camera.updateProjectionMatrix();
-		}).catch((error) => {
-			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
-			throw new Error(error);
-		});
+		this.tasks.pushTask(() => {
+			getModel(this.options.characterPath, this.store).then((model) => {
+				this.scene.add(model);
+				this.tasks.pushTask(() => {
+					this.turnOnTheLights(this.options.characterClass);
+					this.store.setState({ modelAdded: true });
+					this.camera.updateProjectionMatrix();
+				})
+
+			}).catch((error) => {
+				this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
+				throw new Error(error);
+			});
+		})
 
 		if (this.showFPS) {
 			this.stats = new Stats();
@@ -139,12 +151,14 @@ class Scene extends Stage {
 
 		this.initialized = true;
 
-		const renderInfo = this.mobileDebug.addContent(`<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
-		const memoryInfo = this.mobileDebug.addContent(`<div>memory: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
-		setInterval(() => {
-			this.mobileDebug.updateContent(renderInfo, `<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
-			this.mobileDebug.updateContent(memoryInfo, `<div>render: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
-		}, 1000);
+		if (this.debug) {
+			const renderInfo = this.mobileDebug.addContent(`<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
+			const memoryInfo = this.mobileDebug.addContent(`<div>memory: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
+			setInterval(() => {
+				this.mobileDebug.updateContent(renderInfo, `<div>render: ${JSON.stringify(this.renderer.info.render, null, 2)}</div>`);
+				this.mobileDebug.updateContent(memoryInfo, `<div>render: ${JSON.stringify(this.renderer.info.memory, null, 2)}</div>`);
+			}, 1000);
+		}
 
 	}
 
