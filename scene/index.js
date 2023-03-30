@@ -98,7 +98,7 @@ class Scene extends Stage {
 	addDebug(gpuData) {
 		if (this.debug) {
 			this.mobileDebug = new MobileDebugOverlay(this.store);
-			this.mobileDebug.addContent(`<div>GPU: ${JSON.stringify(gpuData)}</div>`);
+			this.mobileDebug.addContent(`<div>fps: ${gpuData.fps}</div>`);
 			window.mobileDebug = this.mobileDebug;
 
 			this.subscribe(({ modelError }) => {
