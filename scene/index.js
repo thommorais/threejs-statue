@@ -87,14 +87,17 @@ class Scene extends Stage {
 		}
 
 
-		tasks.pushTask(() => {
-			this.getGPUdata().then((gpuData) => {
-				this.initialize(gpuData);
-				this.animation();
-			});
+		// tasks.pushTask(() => {
+		// 	this.getGPUdata().then((gpuData) => {
+		// 		this.initialize(gpuData);
+		// 		this.animation();
+		// 	});
 
 
-		});
+		// });
+
+		this.initialize({ tier: 2 });
+		this.animation();
 
 	}
 
