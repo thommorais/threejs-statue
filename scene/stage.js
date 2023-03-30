@@ -12,15 +12,22 @@ import {
 
 
 class Stage {
-	constructor() {
+
+	initStage(store) {
 		this.createScene();
 		this.createPerspectiveCamera();
-		this.controls = null // this.createOrbitControl(this.camera, this.renderer);
 		this.clock = new Clock();
 		this.clock.start();
 		this.createRenderer();
 
 		this.addEventListener();
+
+		this.store = store;
+
+		this.store.subscribe(({ gpuData }) => {
+			this.renderer.powerPreference = gpuData.tier > 1 ? 'high-performance' : 'low-power';
+			this.renderer.resetState();
+		}, ['gpuData'])
 	}
 
 	addEventListener() {

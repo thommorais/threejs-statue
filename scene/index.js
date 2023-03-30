@@ -30,7 +30,10 @@ class Scene extends Stage {
 	constructor() {
 		super();
 
+
+
 		this.store = new Store();
+		this.initStage(this.store)
 
 		this.options = {
 			characterPath: '',
