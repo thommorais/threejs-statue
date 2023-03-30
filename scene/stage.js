@@ -41,7 +41,7 @@ class Stage {
 			canvas,
 			stencil: true,
 			depth: true,
-			powerPreference: 'high-performance',
+			powerPreference: 'low-power',
 			// antialias: true,
 		});
 
