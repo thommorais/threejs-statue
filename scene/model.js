@@ -9,7 +9,7 @@ function getModel(modelPath, store, manager) {
             const dracoLoader = new DRACOLoader();
             const loader = new GLTFLoader(manager);
 
-            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+            dracoLoader.setDecoderPath('/draco/');
             dracoLoader.preload();
             loader.setDRACOLoader(dracoLoader);
 
