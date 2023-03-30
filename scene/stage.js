@@ -63,7 +63,7 @@ class Stage {
 
 	createScene() {
 		const scene = new Scene();
-		scene.background = new Color('#ff0');
+		scene.background = new Color('#100C0D');
 		return scene;
 	}
 
