@@ -42,14 +42,14 @@ class Stage {
 			stencil: true,
 			depth: true,
 			powerPreference: 'low-power',
-			// antialias: true,
+			antialias: true,
 		});
 
 		renderer.physicallyCorrectLights = true;
 		renderer.outputEncoding = sRGBEncoding;
 		renderer.toneMapping = ACESFilmicToneMapping;
 		renderer.toneMappingExposure = 1.25;
-		renderer.logarithmicDepthBuffer = true;
+		renderer.logarithmicDepthBuffer = false;
 
 		renderer.setSize(width, height);
 		renderer.setPixelRatio(pixelRatio);
