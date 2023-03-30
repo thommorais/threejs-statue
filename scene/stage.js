@@ -10,6 +10,7 @@ import {
 } from 'three';
 
 
+import * as THREE from 'three'
 
 class Stage {
 
@@ -60,6 +61,8 @@ class Stage {
 		this.renderer.setSize(width, height);
 		this.renderer.setPixelRatio(pixelRatio);
 
+		this.renderer.setClearColor('#100C0D', 1)
+
 		this.pixelRatio = this.renderer.getPixelRatio()
 
 		this.renderer.render(this.scene, this.camera)
@@ -68,7 +71,6 @@ class Stage {
 
 	createScene() {
 		this.scene = new Scene();
-		this.scene.background = new Color('#100C0D');
 	}
 
 	createPerspectiveCamera() {

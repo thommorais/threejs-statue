@@ -113,21 +113,6 @@ meter {
 	/* pointer-events: none; */
 }
 
-.delta {
-	position: fixed;
-	left: 2vw;
-	top: 90px;
-	z-index: 10;
-	pointer-events: none;
-	background: linear-gradient(180deg, #101010 0%, #202020 100%);
-	--size: clamp(120px, 50vw, 240px);
-	width: clamp(120px, 30vw, 240px);
-	height: var(--size);
-	padding: 1vw;
-	border-radius: 4px;
-	font-size: 0.8rem;
-}
-
 #app {
 	position: absolute;
 	top: 0;
