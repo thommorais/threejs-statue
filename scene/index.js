@@ -193,15 +193,9 @@ class Scene extends Stage {
 			this.renderer.render(this.scene, this.camera);
 			this.sparks.update(time);
 			this.background.update(time);
-			this.camera.updateProjectionMatrix();
-			this.camera.updateMatrixWorld(true);
-
-
 			if (this.initialized && this.showFPS) {
 				this.stats.update();
 			}
-
-
 		});
 
 
