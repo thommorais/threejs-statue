@@ -115,15 +115,11 @@ class Scene extends Stage {
 
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions, gpuData);
 
-		if (gpuData.tier > 1) {
+		if (gpuData.tier > 1 || !gpuData.isMobile) {
 			this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
 		}
 
-
-
 		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
-
-
 
 		getModel(this.options.characterPath, this.store).then((model) => {
 			this.scene.add(model);
