@@ -123,14 +123,19 @@ class Scene extends Stage {
 
 		this.turnOnTheLights(this.options.characterClass);
 
-		getModel(this.options.characterPath, this.store).then((model) => {
-			this.scene.add(model);
-			this.store.setState({ modelAdded: true });
-			this.scene.updateMatrix()
-		}).catch((error) => {
-			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
-			throw new Error(error);
-		});
+		setTimeout(() => {
+			this.store.setState({ modelAdded: true, modelLoadingProgress: 100 });
+		}, 100)
+
+
+		// getModel(this.options.characterPath, this.store).then((model) => {
+		// 	this.scene.add(model);
+		// 	this.store.setState({ modelAdded: true });
+		// 	this.scene.updateMatrix()
+		// }).catch((error) => {
+		// 	this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
+		// 	throw new Error(error);
+		// });
 
 		if (this.showFPS) {
 			this.stats = new Stats();

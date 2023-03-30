@@ -316,8 +316,7 @@ class Store {
 
 	}
 
-	cameraPose({ to, from, rate = 0.33, keepScrollLocked }) {
-
+	cameraPose({ to, from, rate = 0.33, keepScrollLocked = false }) {
 		if (!isNumber(to)) {
 			throw new Error(`to must be a number, got ${to}`)
 		}
@@ -333,6 +332,7 @@ class Store {
 		}
 
 		if (to === from) return;
+
 
 		this.setState({
 			cameraPose: {
