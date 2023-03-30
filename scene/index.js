@@ -30,10 +30,8 @@ class Scene extends Stage {
 	constructor() {
 		super();
 
-
-
 		this.store = new Store();
-		this.initStage(this.store)
+
 
 		this.options = {
 			characterPath: '',
@@ -87,6 +85,7 @@ class Scene extends Stage {
 		this.validateInit({ characterClass: 'demon', ...options });
 
 		tasks.pushTask(() => { this.addTools(); });
+		tasks.pushTask(() => { this.initStage(this.store) });
 		tasks.pushTask(() => { this.setupBackground(); });
 		tasks.pushTask(() => { this.turnOnTheLights(); });
 		tasks.pushTask(() => { this.setTupScroll(); });
