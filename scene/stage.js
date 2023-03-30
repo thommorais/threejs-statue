@@ -50,8 +50,6 @@ class Stage {
 			depth: true,
 			antialias: true,
 			alpha: false,
-
-			// powerPreference: 'high-performance',
 		});
 
 		this.renderer.physicallyCorrectLights = true;
