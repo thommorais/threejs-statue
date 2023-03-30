@@ -84,9 +84,9 @@ class Scene extends Stage {
 		}
 
 		tasks.pushTask(() => { this.addDebug(); });
-		tasks.pushTask(() => { this.getGPUdata() });
 		tasks.pushTask(() => { this.initialize(); });
 		tasks.pushTask(() => { this.animation(); });
+		tasks.pushTask(() => { this.getGPUdata() });
 
 	}
 
