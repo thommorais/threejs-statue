@@ -94,7 +94,7 @@ class Store {
 			cameraTransitionDuration: 0.33,
 			cameraTransitionComplete: false,
 			cameraTransitionFailedToComplete: false,
-			cameraPositions: {},
+			cameraPositions: null,
 			cameraScenesCount: 0,
 			cameraCurrentPose: 0,
 			cameraPose: {

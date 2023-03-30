@@ -63,8 +63,6 @@ class Stage {
 	createScene() {
 		const scene = new Scene();
 		scene.background = new Color('#100C0D');
-
-
 		return scene;
 	}
 
@@ -72,7 +70,6 @@ class Stage {
 		const { width, height } = getDefaultSizes();
 		const camera = new PerspectiveCamera(45, width / height, 1, 180);
 		camera.position.set(0, 0, 50);
-		camera.focus = 0;
 		return camera;
 	}
 }

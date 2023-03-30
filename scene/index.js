@@ -9,7 +9,7 @@ import Sparks from './sparks';
 
 import MobileDebugOverlay from './mobileDebug';
 
-import IdleQueue from './idleQueue';
+import tasks from './globalTaskQueue';
 
 // import { getGPUTier } from 'detect-gpu';
 
@@ -38,9 +38,6 @@ class Scene extends Stage {
 			scrollSelector: ''
 		}
 
-		this.tasks = new IdleQueue({
-			ensureTasksRun: true,
-		})
 
 		this.scrollOptions = {}
 		this.initialized = false;
@@ -93,7 +90,7 @@ class Scene extends Stage {
 
 		// });
 
-		this.tasks.pushTask(() => {
+		tasks.pushTask(() => {
 			this.initialize({ tier: 2, fps: 30 });
 			this.animation();
 		});
@@ -119,31 +116,27 @@ class Scene extends Stage {
 
 	initialize(gpuData) {
 		this.addDebug(gpuData);
-		//
+
 		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions, gpuData);
 
-		if (gpuData.tier > 1) {
-			this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
-		}
+		tasks.pushTask(() => {
+			if (gpuData.tier > 1) {
+				this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
+			}
+		})
 
-		this.tasks.pushTask(() => {
+		tasks.pushTask(() => {
 			this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
 		})
 
-		this.tasks.pushTask(() => {
-			getModel(this.options.characterPath, this.store).then((model) => {
-				this.scene.add(model);
-				this.tasks.pushTask(() => {
-					this.turnOnTheLights(this.options.characterClass);
-					this.store.setState({ modelAdded: true });
-					this.camera.updateProjectionMatrix();
-				})
-
-			}).catch((error) => {
-				this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
-				throw new Error(error);
-			});
-		})
+		getModel(this.options.characterPath, this.store).then((model) => {
+			this.scene.add(model);
+			this.turnOnTheLights(this.options.characterClass);
+			this.store.setState({ modelAdded: true });
+		}).catch((error) => {
+			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
+			throw new Error(error);
+		});
 
 		if (this.showFPS) {
 			this.stats = new Stats();

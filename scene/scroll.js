@@ -1,15 +1,17 @@
 import { debounce, rIC } from './utils';
 import ScrollSmoth from './scrollSmooth';
+import tasks from './globalTaskQueue';
 
 class ScrollHandler extends ScrollSmoth {
-	constructor(store, camera, options, gpuData) {
+	constructor(store, camera, options) {
 		super(store, camera, options);
 		this.store = store;
 		this.options = options;
 		this.camera = camera;
 		this.initialized = false;
-		this.gpuData = gpuData;
-		rIC(this.init.bind(this), { timeout: 720 });
+
+
+		tasks.pushTask(this.init.bind(this));
 	}
 
 	init() {
