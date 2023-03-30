@@ -13,12 +13,12 @@ import {
 
 class Stage {
 	constructor() {
-		this.renderer = this.createRenderer();
-		this.scene = this.createScene();
-		this.camera = this.createPerspectiveCamera();
+		this.createScene();
+		this.createPerspectiveCamera();
 		this.controls = null // this.createOrbitControl(this.camera, this.renderer);
 		this.clock = new Clock();
 		this.clock.start();
+		this.createRenderer();
 
 		this.addEventListener();
 	}
@@ -37,41 +37,39 @@ class Stage {
 		const { width, height, pixelRatio } = getDefaultSizes();
 		const canvas = document.querySelector('.webgl');
 
-		const renderer = new WebGLRenderer({
+		this.renderer = new WebGLRenderer({
 			canvas,
 			stencil: true,
 			depth: true,
-			powerPreference: 'high-performance',
 			antialias: true,
 		});
 
-		renderer.physicallyCorrectLights = true;
-		renderer.outputEncoding = sRGBEncoding;
-		renderer.toneMapping = ACESFilmicToneMapping;
-		renderer.toneMappingExposure = 1.25;
-		renderer.logarithmicDepthBuffer = false;
+		this.renderer.physicallyCorrectLights = true;
+		this.renderer.outputEncoding = sRGBEncoding;
+		this.renderer.toneMapping = ACESFilmicToneMapping;
+		this.renderer.toneMappingExposure = 1.25;
+		this.renderer.logarithmicDepthBuffer = false;
+		this.renderer.failIfMajorPerformanceCaveat = true
 
-		renderer.setSize(width, height);
-		renderer.setPixelRatio(pixelRatio);
+		this.renderer.setSize(width, height);
+		this.renderer.setPixelRatio(pixelRatio);
 
-		this.pixelRatio = renderer.getPixelRatio()
+		this.pixelRatio = this.renderer.getPixelRatio()
 
-		return renderer;
+		this.renderer.render(this.scene, this.camera)
 	}
 
 
 	createScene() {
-		const scene = new Scene();
-		scene.background = new Color('#100C0D');
-		return scene;
+		this.scene = new Scene();
+		this.scene.background = new Color('#100C0D');
 	}
 
 	createPerspectiveCamera() {
 		const { width, height } = getDefaultSizes();
-		const camera = new PerspectiveCamera(45, width / height, 1, 180);
-		camera.position.set(0, 0, 50);
-		camera.focus = 0;
-		return camera;
+		this.camera = new PerspectiveCamera(45, width / height, 1, 180);
+		this.camera.position.set(0, 0, 50);
+		this.camera.focus = 0;
 	}
 }
 
