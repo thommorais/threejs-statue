@@ -2,12 +2,12 @@ import { MeshStandardMaterial } from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-function getModel(modelPath, store, manager) {
+function getModel(modelPath, store) {
     return new Promise((resolve, reject) => {
         try {
 
             const dracoLoader = new DRACOLoader();
-            const loader = new GLTFLoader(manager);
+            const loader = new GLTFLoader();
 
             dracoLoader.setDecoderPath('/draco/');
             dracoLoader.preload();
@@ -20,44 +20,29 @@ function getModel(modelPath, store, manager) {
 
             window.mobileDebug.addContent(`<div>trying to load model: ${modelPath}</div>`);
 
-            loader.load(
-                modelPath,
-                ({ scene }) => {
+            loader.loadAsync(modelPath).then(({ scene }) => {
+                const box = scene;
+                box.name = 'character-model';
 
-                    const box = scene;
-                    try {
+                const boxMaterial = new MeshStandardMaterial({
+                    roughness: 0.455,
+                    metalness: 0.475,
+                });
 
-                        const boxMaterial = new MeshStandardMaterial({
-                            roughness: 0.455,
-                            metalness: 0.475,
-                        });
-
-                        box.name = 'character-model';
-
-                        box.traverse((child) => {
-                            if (child.isMesh) {
-                                // eslint-disable-next-line no-param-reassign
-                                child.material = boxMaterial;
-                            }
-                        });
-                    } catch (error) {
-                        reject(error);
+                box.traverse((child) => {
+                    if (child.isMesh) {
+                        // eslint-disable-next-line no-param-reassign
+                        child.material = boxMaterial;
                     }
+                });
 
-                    store.setState({ modelLoadingProgress: 100 });
-                    resolve(box);
-                },
-                // called while loading is progressing
-                ({ total, loaded }) => {
-                    if (total > 0) {
-                        store.setState({ modelLoadingProgress: Math.round((loaded / total) * 100) });
-                    }
-                },
-                (error) => {
-                    store.setState({ modelLoadingProgress: 0, modelError: error });
-                    reject(error);
-                },
-            );
+                store.setState({ modelLoadingProgress: 100 });
+                resolve(box);
+            }).catch((error) => {
+                store.setState({ modelLoadingProgress: 0, modelError: error });
+                reject(error);
+            })
+
         } catch (error) {
             reject(error);
         }

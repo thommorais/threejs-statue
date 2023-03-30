@@ -127,7 +127,6 @@ class Scene extends Stage {
 			this.store.setState({ modelAdded: true, scrollable: true });
 			this.turnOnTheLights(this.options.characterClass);
 		}).catch((error) => {
-			this.mobileDebug.clearAll();
 			this.mobileDebug.addContent(`<div>Error loading model, ${error}<div>`);
 			throw new Error(error);
 		});
