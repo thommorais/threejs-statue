@@ -120,7 +120,7 @@ class Scene extends Stage {
 	initialize(gpuData) {
 		this.addDebug(gpuData);
 
-		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions, gpuData);
+		// this.scroll = new Scroll(this.store, this.camera, this.scrollOptions, gpuData);
 
 		if (gpuData.tier > 1) {
 			this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
