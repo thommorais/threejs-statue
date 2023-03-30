@@ -60,11 +60,11 @@ function getModel(modelPath, store, manager) {
                     }
                 },
                 (error) => {
-                    throw new Error('Error loading model:', error);
+                    store.setState({ modelLoadingProgress: 0, modelError: error });
+                    reject(error);
                 },
             );
         } catch (error) {
-            store.setState({ modelLoadingProgress: 0, modelError: error });
             reject(error);
         }
 
