@@ -46,7 +46,6 @@ try {
 
 	myScene.subscribe(
 		({ modelLoadingProgress }) => {
-			console.log('modelLoadingProgress', modelLoadingProgress)
 			if (modelLoadingProgress === 100) {
 
 				myScene
@@ -67,7 +66,11 @@ try {
 
     myScene.subscribe(({
 		sections, sectionCurrent, cameraTransitionComplete, scrollingStarted,
-	  }) => {
+	}) => {
+
+		console.log({cameraTransitionComplete, scrollingStarted})
+
+
 		if (sections) {
 
 		  if (scrollingStarted) {

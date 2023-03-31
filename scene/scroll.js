@@ -1,6 +1,5 @@
-import { debounce } from './utils';
+import { debounce, clamp } from './utils';
 import ScrollSmoth from './scrollSmooth';
-import tasks from './globalTaskQueue';
 
 class ScrollHandler extends ScrollSmoth {
 	constructor(store, camera, options) {
@@ -61,7 +60,7 @@ class ScrollHandler extends ScrollSmoth {
 		});
 
 		const viewportHeight = window.innerHeight;
-		const scrollMarginVP = Math.abs(Math.floor(viewportHeight * 0.05));
+		const scrollMarginVP = clamp( Math.abs(Math.floor(viewportHeight * 0.05)), [10, 40])
 		this.store.setState({ sectionsRect, viewportHeight, scrollMarginVP });
 	}
 }
