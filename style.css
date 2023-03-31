@@ -113,6 +113,18 @@ meter {
 	/* pointer-events: none; */
 }
 
+.container-3d:after{
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 50%;
+	height: 100svh;
+	width: 1px;
+	translate: -50% 0;
+	background: red;
+	z-index: 100;
+}
+
 #app {
 	position: absolute;
 	top: 0;

@@ -61,18 +61,6 @@
                     "value": -1
                   },
                   {
-                    "id": "luxImIrBeK",
-                    "position": 3.7,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "value": 17.381642464990275
-                  },
-                  {
                     "id": "dsXrrDYPYT",
                     "position": 4,
                     "connectedRight": true,
@@ -238,7 +226,7 @@
                       0.5,
                       0
                     ],
-                    "value": -4.25
+                    "value": -3.85
                   },
                   {
                     "id": "Eja_LBrLDh",
@@ -472,7 +460,7 @@
                       0.5,
                       0
                     ],
-                    "value": -1.8
+                    "value": -1.7
                   },
                   {
                     "id": "MTmF6ZUcFv",
@@ -541,6 +529,18 @@
                     "value": 0
                   },
                   {
+                    "id": "HUQDEDYtr7",
+                    "position": 2.5,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 0
+                  },
+                  {
                     "id": "ZCLJCb91py",
                     "position": 3,
                     "connectedRight": true,
@@ -551,6 +551,18 @@
                       0
                     ],
                     "value": -2.29
+                  },
+                  {
+                    "id": "6PetjmVI-Z",
+                    "position": 3.5,
+                    "connectedRight": true,
+                    "handles": [
+                      0.5,
+                      1,
+                      0.5,
+                      0
+                    ],
+                    "value": 0
                   },
                   {
                     "id": "JoTNNCEwYE",
@@ -595,6 +607,8 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "Ne8Dwov4RJ5COrUW",
+    "3qoXNl1t7oArqsJJ",
     "FJT82IpEtFbDqx6D",
     "43sn1o5xsI_LJoZx",
     "HF5GDF4mVOS1KI-F",
