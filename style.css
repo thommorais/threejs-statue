@@ -107,7 +107,7 @@ meter {
 
 .container-3d {
 	position: relative;
-	height: 100dvh;
+	height: 100svh;
 	overflow: hidden;
 	z-index: 4;
 	/* pointer-events: none; */
@@ -120,12 +120,13 @@ meter {
 	bottom: 0;
 	left: 0;
 	z-index: 3;
+	height: 100svh;
 }
 
 .chapter {
 	position: relative;
 	z-index: 4;
-	height: 100dvh;
+	height: 100svh;
 	width: 100vw;
 	display: grid;
 	--opacity: 0;
