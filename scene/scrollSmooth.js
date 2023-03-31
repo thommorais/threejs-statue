@@ -302,7 +302,7 @@ class SmoothScroller extends ScrollCamera {
 
       const enough = isNumberInRange(scrollTop, [(bottom - scrollMarginVP), (bottom + scrollMarginVP)])
 
-      console.log({enough})
+      console.log(JSON.stringify({enough}, null, 2))
 
       if (scrollTop > (bottom - scrollMarginVP)) {
         const from = currentIndex + 1;
