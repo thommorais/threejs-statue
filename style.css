@@ -170,7 +170,7 @@ meter {
 
 .scrollToTop{
 	position: absolute;
-	bottom: env(safe-area-inset-bottom, 10vh);
+	bottom: calc( env(safe-area-inset-bottom, 10vh) + 5vh);
 	left: 50%;
 	transform: translateX(-50%);
 	background: rgba(10,10,10,0.9);

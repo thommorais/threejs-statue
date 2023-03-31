@@ -42,6 +42,8 @@ class SmoothScroller extends ScrollCamera {
 
     const damping = clamp(1 / gpuData.tier, [0.33, 1]).toPrecision(2);
 
+    console.log({damping})
+
     this.bodyScrollBar = Scrollbar.init(this.scroller, {
       damping,
       alwaysShowTracks: false,
@@ -297,6 +299,11 @@ class SmoothScroller extends ScrollCamera {
 
     if (!goingDown) {
       const bottom = this.getCurrentSceneBottom(currentIndex);
+
+      const enough = isNumberInRange(scrollTop, [(bottom - scrollMarginVP), (bottom + scrollMarginVP)])
+
+      console.log({enough})
+
       if (scrollTop > (bottom - scrollMarginVP)) {
         const from = currentIndex + 1;
         const to = currentIndex;
