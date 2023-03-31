@@ -68,7 +68,7 @@ try {
 		sections, sectionCurrent, cameraTransitionComplete, scrollingStarted,
 	}) => {
 
-		console.log({cameraTransitionComplete, scrollingStarted})
+		console.log(JSON.stringify({cameraTransitionComplete, scrollingStarted}, null, 2))
 
 
 		if (sections) {
