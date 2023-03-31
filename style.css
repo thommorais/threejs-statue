@@ -105,6 +105,15 @@ meter {
 	-webkit-user-drag: element;
 }
 
+.webgl2{
+	width: 100vw;
+	height: 100vh;
+}
+
+.webgl{
+	display: none;
+}
+
 .container-3d {
 	position: relative;
 	height: 100svh;

@@ -4,7 +4,7 @@ import { BufferGeometry, BufferAttribute, Points, ShaderMaterial, AdditiveBlendi
 import fragmentShader from './shaders/sparks.fragment.glsl'
 import vertexShader from './shaders/sparks.vertex.glsl'
 
-import { randomIntFromInterval, clamp } from './utils'
+import { randomIntFromInterval, clamp } from '../utils'
 
 const classIntervals = {
 	demon: [0.85, 2],
@@ -13,8 +13,7 @@ const classIntervals = {
 }
 
 class Sparks {
-	constructor(scene, clock, store, pixelRatio, characterClass) {
-		this.store = store
+	constructor(scene, clock, state, pixelRatio, characterClass, dimensions) {
 		this.clock = clock
 		this.scene = scene
 		this.pixelRatio = pixelRatio
@@ -22,16 +21,26 @@ class Sparks {
 		this.characterClass = characterClass
 		this.minimalDrawTimeout = 2000
 		this.currentDrwaTimeout = 0
-		this.initialized = false
+        this.initialized = false
 
-		this.gpuData = this.store.getState().gpuData
-		this.count = 360 * this.gpuData.tier * clamp(pixelRatio, [1, 1.8])
+        this.width = dimensions.width
+        this.height = dimensions.height
+        this.pixelRatio = dimensions.pixelRatio
+
+        this.state = state
+
+        this.gpuData = this.state.gpuData
+
+
+
+        this.count = 360 * this.gpuData.tier * clamp(pixelRatio, [1, 1.8])
+
+
 		this.init()
 
 	}
 
 	init() {
-		this.addEventListener()
 		this.updateWindowDimensions()
 		this.createParticles()
 		this.updateSparksByCharacterClass().then((sparks) => {
@@ -43,11 +52,6 @@ class Sparks {
 
 	}
 
-	addEventListener() {
-		window.addEventListener('resize', () => {
-			this.updateWindowDimensions()
-		})
-	}
 
 	updateWindowDimensions() {
 		const h = {
@@ -62,8 +66,8 @@ class Sparks {
 			'barbarian': 1.5,
 		}[this.characterClass]
 
-		this.wWidth = window.innerWidth
-		this.wHeight = window.innerHeight
+		this.wWidth = this.width
+		this.wHeight = this.height
 		this.aspectRatio = clamp((this.wWidth / this.wHeight).toPrecision(2), [1.8, 5])
 		this.boxWidth = clamp(4 * this.aspectRatio, [a, 4])
 		this.boxHeight = this.boxWidth * h
@@ -80,7 +84,7 @@ class Sparks {
 	}
 
 	createMaterial() {
-		const { characterClassUniform } = this.store.getState()
+		const { characterClassUniform } = this.state
 		this.material = new ShaderMaterial({
 			transparent: true,
 			depthTest: true,

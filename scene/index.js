@@ -3,7 +3,7 @@ import Stage from './stage';
 import Scroll from './scroll';
 import CreateLights from './lights';
 import getModel from './model';
-import Store from './store';
+import { store } from './store';
 import Background from './background';
 import Sparks from './sparks';
 
@@ -17,6 +17,7 @@ import Stats from './stats'
 import Dev from './dev';
 
 
+import * as Comlink from 'comlink';
 
 const classDefaults = {
 	update() { },
@@ -30,7 +31,7 @@ class Scene extends Stage {
 	constructor() {
 		super();
 
-		this.store = new Store();
+		this.store = store;
 
 
 		this.options = {
@@ -68,6 +69,42 @@ class Scene extends Stage {
 		this.showFPS = !!fps;
 		this.debug = !!debug;
 
+
+	}
+
+
+	async testOffScreen() {
+
+		const instance = new ComlinkWorker(new URL('./offscreen.js', import.meta.url))
+
+
+		const width = window.innerWidth;
+		const height = window.innerHeight;
+		const pixelRatio = Math.min(window.devicePixelRatio, 2);
+		const canvas2 = document.querySelector('.webgl2')
+
+		const state = this.store.getState()
+
+		if ('transferControlToOffscreen' in canvas2) {
+			const offscreen = canvas2.transferControlToOffscreen();
+
+			const transfer = {
+				offscreen,
+				width,
+				height,
+				state,
+				pixelRatio,
+				options: this.options
+			}
+
+			instance.offScreen(Comlink.transfer(transfer, [offscreen])).then(res => {
+				console.log(res)
+			}).catch(err => {
+				console.log(err)
+			})
+		}
+
+
 	}
 
 
@@ -104,8 +141,10 @@ class Scene extends Stage {
 			}
 			tasks.pushTask(() => { this.setAnimation(); });
 
-
 			this.initialized = true;
+
+			this.testOffScreen()
+
 		})
 
 	}

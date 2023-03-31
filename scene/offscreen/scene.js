@@ -1,86 +1,246 @@
-import * as THREE from '../../../build/three.module.js';
+import {
+	WebGLRenderer,
+	sRGBEncoding,
+	ACESFilmicToneMapping,
+	Scene,
+	PerspectiveCamera,
+	BoxGeometry,
+	MeshStandardMaterial,
+	MeshLambertMaterial,
+	Mesh,
+	PlaneGeometry,
+	Group,
+	PointLight,
+	ImageBitmapLoader,
+	CanvasTexture,
+	Clock,
+} from 'three';
 
-let camera, scene, renderer, group;
+import { clamp, randomIntFromInterval } from '../utils'
 
-function init( canvas, width, height, pixelRatio, path ) {
+import Sparks from './sparks';
 
-	camera = new THREE.PerspectiveCamera( 40, width / height, 1, 1000 );
-	camera.position.z = 200;
+class Stage {
 
-	scene = new THREE.Scene();
-	scene.fog = new THREE.Fog( 0x444466, 100, 400 );
-	scene.background = new THREE.Color( 0x444466 );
+	constructor(width, height, pixelRatio, offscreen) {
 
-	group = new THREE.Group();
-	scene.add( group );
+		this.width = width;
+		this.height = height;
+		this.pixelRatio = pixelRatio;
+		this.canvas = offscreen;
+		this.clock = new Clock();
+		this.clock.start();
 
-	// we don't use ImageLoader since it has a DOM dependency (HTML5 image element)
+		this.createScene();
+		this.createPerspectiveCamera();
+		this.createRenderer();
+	}
 
-	const loader = new THREE.ImageBitmapLoader().setPath( path );
-	loader.setOptions( { imageOrientation: 'flipY' } );
-	loader.load( 'textures/matcaps/matcap-porcelain-white.jpg', function ( imageBitmap ) {
+	createRenderer() {
 
-		const texture = new THREE.CanvasTexture( imageBitmap );
+		this.renderer = new WebGLRenderer({
+			canvas: this.canvas,
+			stencil: true,
+			depth: true,
+			antialias: true,
+			alpha: false,
+		});
 
-		const geometry = new THREE.IcosahedronGeometry( 5, 8 );
-		const materials = [
-			new THREE.MeshMatcapMaterial( { color: 0xaa24df, matcap: texture } ),
-			new THREE.MeshMatcapMaterial( { color: 0x605d90, matcap: texture } ),
-			new THREE.MeshMatcapMaterial( { color: 0xe04a3f, matcap: texture } ),
-			new THREE.MeshMatcapMaterial( { color: 0xe30456, matcap: texture } )
-		];
+		this.renderer.physicallyCorrectLights = true;
+		this.renderer.outputEncoding = sRGBEncoding;
+		this.renderer.toneMapping = ACESFilmicToneMapping;
+		this.renderer.toneMappingExposure = 1.25;
+		this.renderer.setSize(this.width, this.height, false);
+		this.renderer.setPixelRatio(this.pixelRatio);
+		this.renderer.setClearColor('#100C0D', 1)
 
-		for ( let i = 0; i < 100; i ++ ) {
 
-			const material = materials[ i % materials.length ];
-			const mesh = new THREE.Mesh( geometry, material );
-			mesh.position.x = random() * 200 - 100;
-			mesh.position.y = random() * 200 - 100;
-			mesh.position.z = random() * 200 - 100;
-			mesh.scale.setScalar( random() + 1 );
-			group.add( mesh );
+		this.renderer.render(this.scene, this.camera)
+	}
 
-		}
+	createScene() {
+		this.scene = new Scene();
+	}
 
-		renderer = new THREE.WebGLRenderer( { antialias: true, canvas: canvas } );
-		renderer.setPixelRatio( pixelRatio );
-		renderer.setSize( width, height, false );
-
-		animate();
-
-	} );
-
+	createPerspectiveCamera() {
+		this.camera = new PerspectiveCamera(45, this.width / this.height, 1, 100);
+		this.camera.position.set(0, 0, 60);
+	}
 }
 
-function animate() {
+function loadTextureOffScreen(bgTexturePath) {
 
-	// group.rotation.x = Date.now() / 4000;
-	group.rotation.y = - Date.now() / 4000;
+	const path = import.meta.resolve('../../')
 
-	renderer.render( scene, camera );
 
-	if ( self.requestAnimationFrame ) {
+	return new Promise((resolve, reject) => {
+		const loader = new ImageBitmapLoader().setPath(path);
+		const onLoad = (imageBitmap) => {
+			const texture = new CanvasTexture(imageBitmap);
+			resolve(texture)
+		}
 
-		self.requestAnimationFrame( animate );
+		const onError = (err) => {
+			reject(err)
+		}
 
-	} else {
+		const onProgress = (xhr) => {
+			console.log((xhr.loaded / xhr.total * 100) + '% loaded')
+		}
 
-		// Firefox
+		loader.load(bgTexturePath, onLoad, onError, onProgress);
+	})
+}
+
+class Background {
+	constructor(scene, state, options, pixelRatio) {
+
+		this.scene = scene
+		this.state = state
+		this.characterClass = options.characterClass
+		this.zRange = []
+		this.frequency = 0.5
+		this.lastRAF = 0
+		this.initialized = false
+		this.gpuData = state.gpuData
+		this.cloudsCount = clamp(4 * this.gpuData.tier * pixelRatio, [4, 12])
+		this.init()
+
+	}
+
+
+	init() {
+		this.loadTexture().then((texture) => {
+			this.createClouds(texture)
+			this.createThunder()
+			this.initialized = true
+		})
+	}
+
+
+	loadTexture() {
+		const { bgTexturePath } = this.state
+		return loadTextureOffScreen(bgTexturePath)
+	}
+
+
+	createClouds(texture) {
+		const cloudGeo = new PlaneGeometry(175, 175)
+
+		const cloudMaterial = new MeshLambertMaterial({
+			map: texture,
+			transparent: true,
+		})
+
+		this.Clouds = new Group()
+
+		for (let count = 0; count < this.cloudsCount; count += 1) {
+			const cloud = new Mesh(cloudGeo, cloudMaterial)
+			const z = Math.abs(randomIntFromInterval(-36, -20, this.zRange)) * -1
+			this.zRange.push(z)
+			const x = randomIntFromInterval(-10, 10)
+			cloud.position.set(x, -9, z)
+			cloud.rotation.x = 0
+			cloud.rotation.y = -0.25
+			cloud.rotation.z = randomIntFromInterval(-5, 15)
+
+			cloud.material.opacity = 0.55
+			cloud.name = `${cloud}-${count}`
+			this.Clouds.add(cloud)
+		}
+
+		this.cloudParticlesCount = this.Clouds.children.length
+		this.scene.add(this.Clouds)
+	}
+
+	createThunder() {
+		const { backgroundColors } = this.state
+		const value = backgroundColors[this.characterClass] || backgroundColors[0]
+		this.flash = new PointLight(value, 175, 150, 0.99)
+		this.flashMaxZ = Math.max(...this.zRange)
+		this.flash.position.set(0, 0, 10)
+		this.scene.add(this.flash)
+	}
+
+	animateThunder() {
+		const thunder = Math.random() > this.frequency
+		if (thunder && this.flash) {
+			if (this.flash.power < 200) {
+				this.flash.intensity = randomIntFromInterval(90, 120)
+				const y = randomIntFromInterval(-30, 45)
+				const x = randomIntFromInterval(-18, 18)
+				const z = randomIntFromInterval(Math.min(...this.zRange), this.flashMaxZ)
+				this.flash.position.set(x, y, z)
+			}
+			this.flash.power = 50 + Math.random() * 450
+		}
+	}
+
+
+	rotateClouds() {
+		for (let i = 0; i < this.cloudParticlesCount; i += 1) {
+			const cloud = this.Clouds.children[i]
+			cloud.rotation.z -= 0.009
+		}
+	}
+
+	update() {
+		if (!this.initialized) return
+		cancelAnimationFrame(this.lastRAF)
+		this.lastRAF = requestAnimationFrame(() => {
+			this.animateThunder()
+			if (this.gpuData.tier > 1) {
+				this.rotateClouds()
+			}
+		})
+	}
+}
+
+class FasScene extends Stage {
+	constructor(width, height, pixelRatio, offscreen, state, options) {
+		super(width, height, pixelRatio, offscreen);
+
+		this.width = width;
+		this.height = height;
+		this.pixelRatio = pixelRatio;
+		this.canvas = offscreen;
+		this.state = state
+		this.options = options
+
+		this.init()
+		this.setAnimation()
+	}
+
+	init() {
+		this.background = new Background(this.scene, this.state, this.options, this.pixelRatio)
+
+		// scene, clock, state, pixelRatio, characterClass
+		this.sparks = new Sparks(this.scene, this.clock, this.state, this.pixelRatio, this.options.characterClass, {
+			width: this.width,
+			height: this.height,
+			pixelRatio: this.pixelRatio,
+		})
+
+		  // Create a cube
+		  const geometry = new BoxGeometry(8, 30, 4);
+		  const material = new MeshStandardMaterial({ color: '#0e0e0e' });
+		  this.cube = new Mesh(geometry, material);
+
+		  // Add the cube to the scene
+		  this.scene.add(this.cube);
+	}
+
+	setAnimation() {
+		this.renderer.setAnimationLoop((time) => {
+			this.renderer.render(this.scene, this.camera);
+			this.background.update(time)
+			this.sparks.update(time);
+			this.cube.rotation.y += 0.01;
+		});
 
 	}
 
 }
 
-// PRNG
 
-let seed = 1;
-
-function random() {
-
-	const x = Math.sin( seed ++ ) * 10000;
-
-	return x - Math.floor( x );
-
-}
-
-export default init;
+export default FasScene
