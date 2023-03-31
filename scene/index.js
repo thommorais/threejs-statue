@@ -135,7 +135,7 @@ class Scene extends Stage {
 
 			// tasks.pushTask(() => { this.setupBackground(); });
 			if (!this.devMode) {
-				tasks.pushTask(() => { this.setTupScroll(); });
+				// tasks.pushTask(() => { this.setTupScroll(); });
 				// tasks.pushTask(() => { this.turnOnTheLights(); });
 				// tasks.pushTask(() => { this.addModel(); });
 			}
