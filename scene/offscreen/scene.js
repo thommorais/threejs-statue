@@ -10,9 +10,8 @@ import Storm from './storm';
 import Stage from './stage';
 
 
-
 class FasScene extends Stage {
-	constructor(width, height, pixelRatio, offscreen, state, options) {
+	constructor(width, height, pixelRatio, offscreen, state, options, sparksShaders) {
 		super(width, height, pixelRatio, offscreen);
 
 		this.width = width;
@@ -21,6 +20,10 @@ class FasScene extends Stage {
 		this.canvas = offscreen;
 		this.state = state
 		this.options = options
+
+
+		this.sparksVertex = sparksShaders.vertexShader
+		this.sparksFragment = sparksShaders.fragmentShader
 
 		this.init()
 		this.setAnimation()
@@ -34,6 +37,9 @@ class FasScene extends Stage {
 			width: this.width,
 			height: this.height,
 			pixelRatio: this.pixelRatio,
+		}, {
+			fragmentShader: this.sparksFragment,
+			vertexShader: this.sparksVertex,
 		})
 
 		  // Create a cube

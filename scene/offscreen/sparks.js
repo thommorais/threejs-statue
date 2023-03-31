@@ -1,8 +1,6 @@
 /* eslint-disable no-plusplus */
 import { BufferGeometry, BufferAttribute, Points, ShaderMaterial, AdditiveBlending } from 'three'
 
-import fragmentShader from './shaders/sparks.fragment.glsl'
-import vertexShader from './shaders/sparks.vertex.glsl'
 
 import { randomIntFromInterval, clamp } from '../utils'
 
@@ -12,8 +10,9 @@ const classIntervals = {
 	barbarian: [0.5, 2.5],
 }
 
+
 class Sparks {
-	constructor(scene, clock, state, pixelRatio, characterClass, dimensions) {
+	constructor(scene, clock, state, pixelRatio, characterClass, dimensions, {fragmentShader, vertexShader}) {
 		this.clock = clock
 		this.scene = scene
 		this.pixelRatio = pixelRatio
@@ -30,6 +29,9 @@ class Sparks {
         this.state = state
 
         this.gpuData = this.state.gpuData
+
+        this.fragmentShader = fragmentShader
+        this.vertexShader = vertexShader
 
 
 
@@ -109,8 +111,8 @@ class Sparks {
 				u_boxHeight: { value: this.boxHeight },
 				u_characterClass: { value: characterClassUniform[this.characterClass] || 0.0 },
 			},
-			vertexShader,
-			fragmentShader,
+			vertexShader: this.vertexShader,
+			fragmentShader: this.fragmentShader,
 		})
 
 		return this.material

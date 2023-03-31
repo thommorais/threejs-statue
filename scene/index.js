@@ -27,6 +27,10 @@ const classDefaults = {
 
 window.mobileDebug = classDefaults;
 
+import fragmentShader from './shaders/sparks.fragment.glsl'
+import vertexShader from './shaders/sparks.vertex.glsl'
+
+
 class Scene extends Stage {
 	constructor() {
 		super();
@@ -94,7 +98,11 @@ class Scene extends Stage {
 				height,
 				state,
 				pixelRatio,
-				options: this.options
+				options: this.options,
+				sparksShaders: {
+					fragmentShader,
+					vertexShader
+				}
 			}
 
 			instance.offScreen(Comlink.transfer(transfer, [offscreen])).then(res => {
