@@ -133,13 +133,13 @@ class Scene extends Stage {
 
 		this.getGPUdata().finally(() => {
 
-			tasks.pushTask(() => { this.setupBackground(); });
+			// tasks.pushTask(() => { this.setupBackground(); });
 			if (!this.devMode) {
 				tasks.pushTask(() => { this.setTupScroll(); });
-				tasks.pushTask(() => { this.turnOnTheLights(); });
-				tasks.pushTask(() => { this.addModel(); });
+				// tasks.pushTask(() => { this.turnOnTheLights(); });
+				// tasks.pushTask(() => { this.addModel(); });
 			}
-			tasks.pushTask(() => { this.setAnimation(); });
+			// tasks.pushTask(() => { this.setAnimation(); });
 
 			this.initialized = true;
 
