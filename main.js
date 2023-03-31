@@ -54,7 +54,7 @@ try {
 
 				scrollToTop.addEventListener('click', () => {
 					myScene
-					.setScenePose({ from: 4, to: 0, duration: 500, camera: { from: 5, to: 1 }, ignoreCameraCurrentState: true })
+					.setScenePose({ from: 4, to: 0, duration: 500, camera: { from: 5, to: 1, rate: 5 }, ignoreCameraCurrentState: true })
 					.then(myScene.unLockScroll.bind(myScene))
 				})
 
@@ -67,9 +67,6 @@ try {
     myScene.subscribe(({
 		sections, sectionCurrent, cameraTransitionComplete, scrollingStarted,
 	}) => {
-
-		console.log(JSON.stringify({cameraTransitionComplete, scrollingStarted}, null, 2))
-
 
 		if (sections) {
 

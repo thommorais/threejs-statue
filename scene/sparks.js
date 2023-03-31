@@ -25,7 +25,7 @@ class Sparks {
 		this.initialized = false
 
 		this.gpuData = this.store.getState().gpuData
-		this.count = 240 * this.gpuData.tier * clamp(pixelRatio, [1, 1.5])
+		this.count = 360 * this.gpuData.tier * clamp(pixelRatio, [1, 1.8])
 		this.init()
 
 	}
