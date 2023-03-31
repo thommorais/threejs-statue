@@ -46,6 +46,7 @@ try {
 
 	myScene.subscribe(
 		({ modelLoadingProgress }) => {
+			console.log('modelLoadingProgress', modelLoadingProgress)
 			if (modelLoadingProgress === 100) {
 
 				myScene
