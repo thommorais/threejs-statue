@@ -67,8 +67,6 @@ class SmoothScroller extends ScrollCamera {
     });
 
     this.store.subscribe(({ locked }) => {
-      // eslint-disable-next-line no-console
-      console.log(locked, 'locked');
       this.bodyScrollBar.updatePluginOptions('lock', { locked });
     }, 'locked');
   }
@@ -122,11 +120,13 @@ class SmoothScroller extends ScrollCamera {
 
   changeScene({
     from, to, direction, rate, scrollToY, duration,
+    ignoreCameraCurrentState = false,
   }) {
     this.store.lockScroll();
     this.scrollTo({ scrollToY, givenDuration: duration });
     this.triggerCameraScroll({
       direction, from, to, rate,
+      ignoreCameraCurrentState
     });
     this.store.setState({ scrollingStarted: false });
   }
@@ -161,13 +161,13 @@ class SmoothScroller extends ScrollCamera {
   }
 
   triggerCameraScroll({
-    from, to, rate, direction, ignoreCurrentState = false,
+    from, to, rate, direction, ignoreCameraCurrentState = false,
   }) {
     const { cameraCurrentPose, cameraScenesCount } = this.store.getState();
 
     const cameraPose = { from, to };
 
-    if (!ignoreCurrentState) {
+    if (!ignoreCameraCurrentState) {
       if (direction === NORMAL) {
         cameraPose.from = cameraCurrentPose;
         cameraPose.to = clamp(max(cameraCurrentPose + 1, to), [0, cameraScenesCount]);
@@ -178,6 +178,7 @@ class SmoothScroller extends ScrollCamera {
         cameraPose.to = clamp(max(cameraCurrentPose - 1, to), [0, cameraScenesCount]);
       }
     }
+
 
     this.store.setState({
       direction,
@@ -338,7 +339,7 @@ class SmoothScroller extends ScrollCamera {
           const scrollToY = sectionsRect[sceneChange.to].bottom - viewportHeight;
           this.changeScene({ ...sceneChange, ...sceneChange.camera, scrollToY });
         });
-      }, 200);
+      }, 300);
     }
 
     if (sceneChange.direction === NORMAL) {

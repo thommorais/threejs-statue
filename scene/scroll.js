@@ -10,8 +10,7 @@ class ScrollHandler extends ScrollSmoth {
 		this.camera = camera;
 		this.initialized = false;
 
-
-		tasks.pushTask(this.init.bind(this));
+		this.init();
 	}
 
 	init() {
@@ -24,7 +23,6 @@ class ScrollHandler extends ScrollSmoth {
 
 
 	fetchCameraPositions() {
-		console.log(this.options.cameraPositionsPath, 'cameraPositionsPath')
 		return new Promise((resolve) => {
 			fetch(this.options.cameraPositionsPath)
 				.then((response) => response.json())
@@ -40,8 +38,6 @@ class ScrollHandler extends ScrollSmoth {
 					} catch (error) {
 						console.log(error)
 					}
-
-					console.log(cameraPositions, 'cameraPositions')
 
 					resolve(cameraPositions);
 				});
