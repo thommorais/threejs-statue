@@ -51,18 +51,18 @@ class Stage {
 		});
 
 
-		this.renderer.physicallyCorrectLights = true;
-		this.renderer.outputEncoding = sRGBEncoding;
-		this.renderer.toneMapping = ACESFilmicToneMapping;
-		this.renderer.toneMappingExposure = 1.25;
+		// this.renderer.physicallyCorrectLights = true;
+		// this.renderer.outputEncoding = sRGBEncoding;
+		// this.renderer.toneMapping = ACESFilmicToneMapping;
+		// this.renderer.toneMappingExposure = 1.25;
 
-		this.renderer.setSize(width, height);
-		this.renderer.setPixelRatio(pixelRatio);
+		// this.renderer.setSize(width, height);
+		// this.renderer.setPixelRatio(pixelRatio);
 
-		this.renderer.setClearColor('#100C0D', 1)
+		// this.renderer.setClearColor('#100C0D', 1)
 
-		this.pixelRatio = this.renderer.getPixelRatio()
-		this.renderer.render(this.scene, this.camera)
+		// this.pixelRatio = this.renderer.getPixelRatio()
+		// this.renderer.render(this.scene, this.camera)
 	}
 
 

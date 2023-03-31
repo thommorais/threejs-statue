@@ -87,6 +87,9 @@ class Scene extends Stage {
 		const pixelRatio = Math.min(window.devicePixelRatio, 2);
 		const canvas2 = document.querySelector('.webgl2')
 
+		canvas2.height = height
+		canvas2.width = width
+
 		const state = this.store.getState()
 
 		if ('transferControlToOffscreen' in canvas2) {
