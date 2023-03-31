@@ -96,11 +96,14 @@ class Scene extends Stage {
 
 		this.getGPUdata().finally(() => {
 
-			tasks.pushTask(() => { this.setAnimation(); });
 			tasks.pushTask(() => { this.setupBackground(); });
-			tasks.pushTask(() => { this.setTupScroll(); });
-			tasks.pushTask(() => { this.turnOnTheLights(); });
-			tasks.pushTask(() => { this.addModel(); });
+			if (!this.devMode) {
+				tasks.pushTask(() => { this.setTupScroll(); });
+				tasks.pushTask(() => { this.turnOnTheLights(); });
+				tasks.pushTask(() => { this.addModel(); });
+			}
+			tasks.pushTask(() => { this.setAnimation(); });
+
 
 			this.initialized = true;
 		})
@@ -111,7 +114,7 @@ class Scene extends Stage {
 	addTools() {
 
 		if (this.devMode) {
-			this.dev = new Dev(this.store, { camera: this.camera, scene: this.scene }, options);
+			this.dev = new Dev(this.store, { camera: this.camera, scene: this.scene }, this.options);
 			return null
 		}
 
