@@ -26,12 +26,10 @@ class ScrollHandler extends ScrollSmoth {
 			fetch(this.options.cameraPositionsPath)
 				.then((response) => response.json())
 				.then((cameraPositions) => {
-					this.store.setState({ cameraPositions })
 
 					try {
 						for (let item in cameraPositions.sheetsById) {
 							const cameraScenesCount = cameraPositions.sheetsById[item].sequence.length
-							console.log(cameraScenesCount)
 							this.store.setState({
 								cameraScenesCount
 							})

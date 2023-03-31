@@ -34,13 +34,12 @@ class Sparks {
 		this.addEventListener()
 		this.updateWindowDimensions()
 		this.createParticles()
-		this.updateSparksByCharacterClass()
+		this.updateSparksByCharacterClass().then((res) => {
+			this.scene.add(this.sparks)
+			this.runDrawLoop(classIntervals[this.characterClass], 100)
+			this.initialized = true
+		})
 
-		this.scene.add(this.sparks)
-
-		this.runDrawLoop(classIntervals[this.characterClass], 100)
-
-		this.initialized = true
 	}
 
 	addEventListener() {
@@ -118,34 +117,42 @@ class Sparks {
 	}
 
 	updateSparksByCharacterClass() {
-		const base = 8 * this.gpuData.tier
+		return new Promise((resolve) => {
+			const base = 8 * this.gpuData.tier
 
-		if (this.characterClass === 'mage') {
-			const depth = clamp(base * this.gpuData.tier, [32, 112])
-			const count = clamp(this.count, [60, 400])
-			this.updateGeometryAttributes(depth, count)
+			let depth = 0
+			let count = this.count
 
-			this.sparks.material.uniforms.u_twist.value = 1.0;
-			this.sparks.material.uniforms.u_falloff.value = 0.5;
-			this.sparks.material.uniforms.u_windY.value = 0.75;
-		}
+			if (this.characterClass === 'mage') {
+				depth = clamp(base * this.gpuData.tier, [56, 112])
+				count = clamp(this.count, [60, 400])
+				this.sparks.material.uniforms.u_twist.value = 1.0;
+				this.sparks.material.uniforms.u_falloff.value = 0.5;
+				this.sparks.material.uniforms.u_windY.value = 0.75;
 
-		if (this.characterClass === 'demon') {
-			const depth = clamp(base * 2, [12, 16])
-			this.updateGeometryAttributes(depth, this.count * 1.25)
-			this.sparks.material.uniforms.u_windY.value = -0.75
-			this.sparks.material.uniforms.u_temporalFrequency.value = 0.0005
-			this.sparks.material.uniforms.u_tailLength.value = 0.025
-			this.sparks.material.uniforms.u_amplitude.value = 0.1
-		}
+			}
 
-		if (this.characterClass === 'barbarian') {
-			const depth = clamp(base * this.gpuData.tier, [12, 28])
-			this.sparks.material.uniforms.u_temporalFrequency.value = 0.65
-			this.updateGeometryAttributes(depth, this.count * 0.65)
-		}
+			if (this.characterClass === 'demon') {
+				 depth = clamp(base * 2, [12, 16])
+				 count = this.count * 1.25
+				this.sparks.material.uniforms.u_windY.value = -0.75
+				this.sparks.material.uniforms.u_temporalFrequency.value = 0.0005
+				this.sparks.material.uniforms.u_tailLength.value = 0.025
+				this.sparks.material.uniforms.u_amplitude.value = 0.1
+			}
 
-		this.sparks.material.needsUpdate = true
+			if (this.characterClass === 'barbarian') {
+				depth = clamp(base * this.gpuData.tier, [12, 28])
+				this.sparks.material.uniforms.u_temporalFrequency.value = 0.65
+			}
+
+			this.sparks.material.needsUpdate = true
+
+			this.updateGeometryAttributes(depth, count).then((res) => {
+				resolve(res)
+			})
+
+		})
 	}
 
 
@@ -160,58 +167,29 @@ class Sparks {
 	}
 
 	updateGeometryAttributes(bitLength, count) {
-		const deep = count * bitLength
+		return new Promise((resolve) => {
+			const instance = new ComlinkWorker(new URL('./worker.js', import.meta.url))
 
-		const data0Array = new Float32Array(deep * 4)
-		const data1Array = new Float32Array(deep * 4)
-		const positions = new Float32Array(deep * 3)
+			instance.populateArray(count, bitLength, this.boxHeight, this.boxDepth, this.boxWidth).then(({
+				data0Array,
+				data1Array,
+				positions
+			}) => {
+				this.sparks.geometry.setAttribute('aData0', new BufferAttribute(data0Array, 4))
+				this.sparks.geometry.setAttribute('aData1', new BufferAttribute(data1Array, 4))
+				this.sparks.geometry.setAttribute('position', new BufferAttribute(positions, 3))
+				this.sparks.geometry.attributes.position.needsUpdate = true
+				this.sparks.geometry.attributes.aData0.needsUpdate = true
+				this.sparks.geometry.attributes.aData1.needsUpdate = true
+				resolve({
+					data0Array,
+					data1Array,
+					positions
+				})
+			})
 
-		const random = () => Math.random()
 
-		const yHeight = this.boxHeight * 4
-
-		let index1 = 0
-		let index2 = 0
-
-		for (let i = 0; i < count; i++) {
-			const xx = random()
-			const yy = random()
-			const zz = random()
-			const ww = random()
-
-			const posX = clamp((2 * random() - 1) * (this.boxWidth / 2), [-1, 1])
-			const posY = (2 * random() - 1) * yHeight
-			const posZ = randomIntFromInterval(this.boxDepth * -1, this.boxDepth)
-
-			for (let j = 0; j < bitLength; j++) {
-				const px = index1++
-				const py = index1++
-				const pz = index1++
-				const pw = index1++
-
-				positions[px] = posX
-				positions[py] = posY
-				positions[pz] = posZ
-
-				data0Array[px] = posX
-				data0Array[py] = posY
-				data0Array[pz] = posZ
-				data0Array[pw] = j / bitLength
-
-				data1Array[index2++] = xx
-				data1Array[index2++] = yy
-				data1Array[index2++] = zz
-				data1Array[index2++] = ww
-			}
-		}
-
-		this.sparks.geometry.setAttribute('aData0', new BufferAttribute(data0Array, 4))
-		this.sparks.geometry.setAttribute('aData1', new BufferAttribute(data1Array, 4))
-		this.sparks.geometry.setAttribute('position', new BufferAttribute(positions, 3))
-
-		this.sparks.geometry.attributes.position.needsUpdate = true
-		this.sparks.geometry.attributes.aData0.needsUpdate = true
-		this.sparks.geometry.attributes.aData1.needsUpdate = true
+		})
 	}
 
 	randomValueFromInterval([min, max]) {

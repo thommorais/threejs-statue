@@ -4,13 +4,9 @@ import {
 	sRGBEncoding,
 	ACESFilmicToneMapping,
 	Scene,
-	Color,
 	PerspectiveCamera,
 	Clock,
 } from 'three';
-
-
-import * as THREE from 'three'
 
 class Stage {
 
@@ -53,6 +49,7 @@ class Stage {
 			alpha: false,
 		});
 
+
 		this.renderer.physicallyCorrectLights = true;
 		this.renderer.outputEncoding = sRGBEncoding;
 		this.renderer.toneMapping = ACESFilmicToneMapping;
@@ -64,7 +61,6 @@ class Stage {
 		this.renderer.setClearColor('#100C0D', 1)
 
 		this.pixelRatio = this.renderer.getPixelRatio()
-
 		this.renderer.render(this.scene, this.camera)
 	}
 

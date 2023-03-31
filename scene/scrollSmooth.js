@@ -42,8 +42,6 @@ class SmoothScroller extends ScrollCamera {
 
     const damping = clamp(1 / gpuData.tier, [0.33, 1]).toPrecision(2);
 
-    console.log(damping )
-
     this.bodyScrollBar = Scrollbar.init(this.scroller, {
       damping,
       alwaysShowTracks: false,

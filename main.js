@@ -48,9 +48,9 @@ try {
 		({ modelLoadingProgress }) => {
 			if (modelLoadingProgress === 100) {
 
-				myScene
-				.setCameraPose({ from: 0, to: 1 })
-				.then(myScene.unLockScroll.bind(myScene))
+				// myScene
+				// .setCameraPose({ from: 0, to: 1 })
+				// .then(myScene.unLockScroll.bind(myScene))
 
 				scrollToTop.addEventListener('click', () => {
 					myScene
@@ -86,5 +86,5 @@ try {
 	  }, ['sections', 'sectionCurrent', 'cameraTransitionComplete', 'scrollingStarted']);
 
 } catch (e) {
-	alert(e)
+	console.log(e)
 }
