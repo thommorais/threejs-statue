@@ -17,7 +17,6 @@
     "@theatre/studio": "^0.5.0",
     "detect-gpu": "^5.0.16",
     "smooth-scrollbar": "^8.8.1",
-    "stats.js": "^0.17.0",
     "three": "^0.149.0",
     "vite-plugin-glsl": "^0.5.1",
     "zustand": "^4.3.5"

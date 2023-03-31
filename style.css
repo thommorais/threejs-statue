@@ -130,10 +130,6 @@ meter {
 	display: grid;
 }
 
-.chapter:first-child {
-	height: 200vh;
-}
-
 .chapter h2 {
 	width: 100%;
 	text-align: center;

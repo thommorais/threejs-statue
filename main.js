@@ -45,14 +45,13 @@ try {
 
 	myScene.subscribe(({ modelLoadingProgress, modelAdded }) => {
 		if (modelLoadingProgress === 100 && modelAdded) {
+			myScene.unLockScroll()
 
 			myScene.setCameraPose({ from: 0, to: 1 }).then(() => {
 				myScene.unLockScroll()
 			})
 
-			// myScene.setScenePose({ from: 4, to: 0, duration: 500 }).then(({ cameraCurrentPose, sectionCurrent }) => {
-			// 	console.log(cameraCurrentPose, sectionCurrent)
-			// })
+
 
 			// myScene.setSectionScroll({ from: 4, to: 2, duration: 500 }).then(({ cameraCurrentPose, sectionCurrent }) => {
 			// 	console.log(cameraCurrentPose, sectionCurrent)

@@ -97,12 +97,14 @@ class Store {
 			cameraPositions: null,
 			cameraScenesCount: 0,
 			cameraCurrentPose: 0,
+			rate: 0.33,
 			cameraPose: {
 				from: 0,
 				to: 1,
 				rate: 0.3,
 				direction: NORMAL,
 				enabled: false,
+				ignoreCameraCurrentState: false,
 			},
 			doCameraScroll: false,
 		}
@@ -164,6 +166,7 @@ class Store {
 				duration: 500,
 				direction: NORMAL,
 				enabled: false,
+				ignoreCameraCurrentState: false,
 			},
 			bgTexturePath: '/smoke-o.webp',
 			gpuData: {
@@ -286,7 +289,7 @@ class Store {
 		this.setState({ locked: false });
 	}
 
-	scrollTo({ to, from, duration = 200, keepScrollLocked = true }) {
+	setScenePose({ to, from, duration = 200, camera = {}, keepScrollLocked = true,  ignoreCameraCurrentState = false }) {
 
 		// check if to and f are valid numbers
 		if (!isNumber(to)) {
@@ -306,20 +309,30 @@ class Store {
 
 		const { sectionsRect } = this.getState();
 
+		const clampedTo = clamp(to, [0, sectionsRect.length - 1]);
+		const clampedFrom = clamp(from, [0, sectionsRect.length - 1]);
+
 		this.setState({
 			sceneChange: {
-				from: clamp(from, [0, sectionsRect.length - 1]),
-				to: clamp(to, [0, sectionsRect.length - 1]),
+				from: clampedFrom,
+				to: clampedTo,
 				duration,
 				direction,
 				enabled: true,
-				keepScrollLocked
+				keepScrollLocked,
+				ignoreCameraCurrentState,
+				camera: {
+					from: clampedFrom,
+					to: clampedTo,
+					rate: 0.33,
+					...camera,
+				}
 			}
 		});
 
 	}
 
-	cameraPose({ to, from, rate = 0.33, keepScrollLocked = false }) {
+	cameraPose({ to, from, rate = 0.33, keepScrollLocked = false, ignoreCameraCurrentState = false }) {
 		if (!isNumber(to)) {
 			throw new Error(`to must be a number, got ${to}`)
 		}
@@ -344,12 +357,12 @@ class Store {
 				rate,
 				direction,
 				enabled: true,
-				keepScrollLocked
+				keepScrollLocked,
+				ignoreCameraCurrentState
 			}
 		});
 
 	}
-
 
 	sectionScroll({ to, from, duration = 200, keepScrollLocked = true }) {
 

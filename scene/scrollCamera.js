@@ -16,8 +16,8 @@ class CameraOnScroll {
       this.project.ready.then(() => {
         this.sheet = this.project.sheet('camera');
         this.setListeners();
-      })
-    })
+      });
+    });
   }
 
   setListeners() {
@@ -31,6 +31,7 @@ class CameraOnScroll {
       this.camera.position.set(position.x, position.y, position.z);
       const { x, y, z } = lookAt;
       this.camera.lookAt(new Vector3(x, y, z));
+      // eslint-disable-next-line no-compare-neg-zero
       if (rotateZ !== -0.000) {
         this.camera.rotation.z = rotateZ;
       }
@@ -38,71 +39,66 @@ class CameraOnScroll {
 
     onChange(this.sheet.sequence.pointer.position, (position) => {
       this.store.setState({ cameraTransitionProgress: position });
-    })
-
+    });
 
     this.store.subscribe(
       ({ cameraPose }) => {
         if (cameraPose.enabled) {
-          this.onCameraChangePose(cameraPose)
+          this.onCameraChangePose(cameraPose);
           this.store.setState({ cameraPose: { enabled: false } });
         }
       },
       ['cameraPose'],
-    )
+    );
 
     this.store.subscribe(
       ({ cameraCurrentPose }) => {
         this.sheet.sequence.position = cameraCurrentPose;
       },
       ['cameraCurrentPose'],
-    )
+    );
 
     this.store.subscribe(({ doCameraScroll }) => {
-
       if (doCameraScroll) {
         this.onBodyScroll();
-        this.store.setState({ doCameraScroll: false })
+        this.store.setState({ doCameraScroll: false });
       }
-
     }, 'doCameraScroll');
   }
 
   onBodyScroll() {
-    const { cameraPose, sceneChange, cameraTransitionDuration } = this.store.getState();
+    const { cameraPose, rate = 0.33 } = this.store.getState();
 
     const { from, to } = cameraPose;
+    this.changeCameraPose({ from, to, rate });
+  }
 
+  onCameraChangePose({
+    from, to, rate, keepScrollLocked,
+  }) {
+    this.sheet.sequence.position = from;
+    this.changeCameraPose({
+      from, to, rate, keepScrollLocked,
+    });
+  }
+
+  // eslint-disable-next-line consistent-return
+  changeCameraPose({
+    from, to, rate = 0.33, keepScrollLocked = false,
+  }) {
     let direction = NORMAL;
 
     if (to < from) {
-      direction = REVERSE
+      direction = REVERSE;
     }
-
-    let rate = cameraTransitionDuration;
-
-    if (sceneChange.enabled) {
-      rate = sceneChange.duration / 100;
-    }
-
-    this.changeCameraPose({ direction, from, to, rate });
-  }
-
-  onCameraChangePose({ direction, from, to, rate, keepScrollLocked }) {
-    this.sheet.sequence.position = from
-    this.changeCameraPose({ direction, from, to, rate, keepScrollLocked });
-  }
-
-  changeCameraPose({ direction, from, to, rate = 0.33, keepScrollLocked = false }) {
-
-    this.store.setState({ cameraTransitionComplete: false });
 
     const range = direction === NORMAL ? [from, to] : [to, from];
 
     if (Math.abs(range[0] - range[1]) === 0) {
-      console.log(range)
-      return null
+      return null;
     }
+
+    this.store.setState({ cameraTransitionComplete: false });
 
     this.sheet.sequence.play({ direction, range, rate }).then((done) => {
       if (done) {
@@ -111,16 +107,12 @@ class CameraOnScroll {
         if (!keepScrollLocked) {
           this.store.unLockScroll();
         }
-      } else {
-        console.log('opsi')
       }
-    }).catch((e) => {
+    }).catch((error) => {
       this.store.unLockScroll();
-      throw new Error(e);
+      throw new Error(error);
     });
-
   }
-
 }
 
 export default CameraOnScroll;

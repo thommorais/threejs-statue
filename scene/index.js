@@ -214,15 +214,15 @@ class Scene extends Stage {
 		this.store.unLockScroll();
 	}
 
-	setScenePose({ to, from, duration, keepScrollLocked }) {
+	setScenePose(pose) {
 		this.lockScroll()
-		this.store.scrollTo({ to, from, duration, keepScrollLocked });
+		this.store.setScenePose(pose);
 		return new Promise((resolve) => {
 			this.subscribe(({ sectionTransitionComplete, cameraTransitionComplete }) => {
 				if (cameraTransitionComplete && sectionTransitionComplete) {
 					const state = this.store.getState();
 
-					if (!keepScrollLocked) {
+					if (!pose.keepScrollLocked) {
 						this.unLockScroll();
 					}
 
@@ -232,14 +232,14 @@ class Scene extends Stage {
 		})
 	}
 
-	setCameraPose({ to, from, duration, rate, keepScrollLocked }) {
+	setCameraPose(pose) {
 		this.lockScroll()
-		this.store.cameraPose({ to, from, duration, rate, keepScrollLocked });
+		this.store.cameraPose(pose);
 		return new Promise((resolve) => {
 			this.subscribe(({ cameraTransitionComplete }) => {
 				if (cameraTransitionComplete) {
 					const state = this.store.getState();
-					if (!keepScrollLocked) {
+					if (!pose.keepScrollLocked) {
 						this.unLockScroll();
 					}
 					resolve(state);
@@ -248,14 +248,14 @@ class Scene extends Stage {
 		})
 	}
 
-	setSectionScroll({ to, from, duration, keepScrollLocked }) {
+	setSectionScroll(pose) {
 		this.lockScroll()
-		this.store.sectionScroll({ to, from, duration, keepScrollLocked });
+		this.store.sectionScroll(pose);
 		return new Promise((resolve) => {
-			this.subscribe(({ sectionTransitionComplete, }) => {
+			this.subscribe(({ sectionTransitionComplete }) => {
 				if (sectionTransitionComplete) {
 					const state = this.store.getState();
-					if (!keepScrollLocked) {
+					if (!pose.keepScrollLocked) {
 						this.unLockScroll();
 					}
 					resolve(state);

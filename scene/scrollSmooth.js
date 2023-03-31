@@ -1,42 +1,46 @@
+/* eslint-disable no-shadow */
+/* eslint-disable class-methods-use-this */
 /* eslint-disable max-len */
-import Scrollbar from 'smooth-scrollbar'
-import { max, min, clamp, NORMAL, REVERSE, isNumberInRange, checkDirection } from './utils'
+import Scrollbar from 'smooth-scrollbar';
+import {
+  max, clamp, NORMAL, REVERSE, isNumberInRange, checkDirection,
+} from './utils';
 import { LockPlugin } from './scrollPlugin';
 
-import ScrollCamera from './scrollCamera'
+import ScrollCamera from './scrollCamera';
 
 class SmoothScroller extends ScrollCamera {
   constructor(store, camera, options) {
-    super(store, camera)
+    super(store, camera);
 
-    this.store = store
+    this.store = store;
 
-    this.scroller = document.querySelector(options.scrollSelector)
+    this.scroller = document.querySelector(options.scrollSelector);
 
     if (!this.scroller) {
-      throw new Error(`we need a container to scroll`)
+      throw new Error('we need a container to scroll');
     }
 
     this.store.setState({
       scrollerSection: this.scroller,
-    })
+    });
 
-    this.addEventListeners()
-    this.initScrollBody()
-    this.setScrollListeners()
+    this.addEventListeners();
+    this.initScrollBody();
+    this.setScrollListeners();
 
-    this.scrolling = false
+    this.scrolling = false;
 
-    this.onScrollTimeout = null
-    this.onDoneTimeout = null
-    this.RAF = null
+    this.onScrollTimeout = null;
+    this.onDoneTimeout = null;
+    this.RAF = null;
   }
 
   initScrollBody() {
-    Scrollbar.use(LockPlugin)
-    const { locked, gpuData } = this.store.getState()
+    Scrollbar.use(LockPlugin);
+    const { locked, gpuData } = this.store.getState();
 
-    const damping = clamp(1 / gpuData.tier, [0.33, 1]).toPrecision(2)
+    const damping = clamp(1 / gpuData.tier, [0.33, 1]).toPrecision(2);
 
     this.bodyScrollBar = Scrollbar.init(this.scroller, {
       damping,
@@ -51,7 +55,7 @@ class SmoothScroller extends ScrollCamera {
           locked: true,
         },
       },
-    })
+    });
 
     this.bodyScrollBar.updatePluginOptions('lock', { locked });
 
@@ -65,80 +69,83 @@ class SmoothScroller extends ScrollCamera {
     this.store.subscribe(({ locked }) => {
       this.bodyScrollBar.updatePluginOptions('lock', { locked });
     }, 'locked');
-
   }
 
   setScrollListeners() {
-
     this.store.subscribe(
       ({ sceneChange }) => {
         if (sceneChange.enabled) {
-          this.onChangeScene(sceneChange)
-          this.store.setState({ sceneChange: { enabled: false } })
+          this.onChangeScene(sceneChange);
+          this.store.setState({ sceneChange: { enabled: false } });
         }
       },
       ['sceneChange'],
-    )
+    );
 
     this.store.subscribe(
       ({ sectionScroll }) => {
         if (sectionScroll.enabled) {
-          this.onSectionScroll(sectionScroll)
-          this.store.setState({ sectionScroll: { enabled: false } })
+          this.onSectionScroll(sectionScroll);
+          this.store.setState({ sectionScroll: { enabled: false } });
         }
       },
       ['sectionScroll'],
-    )
-
+    );
   }
 
   addEventListeners() {
-    this.scroller.addEventListener('wheel', this.handleMouseWheel.bind(this), { passive: false })
-    this.scroller.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false })
-    this.scroller.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false })
+    this.scroller.addEventListener('wheel', this.handleMouseWheel.bind(this), { passive: false });
+    this.scroller.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+    this.scroller.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
   }
 
   getDirectionByDelta(deltaY) {
-    return checkDirection(deltaY)
+    return checkDirection(deltaY);
   }
 
   scrollTo({ scrollToY, givenDuration, callback }) {
-    const { duration } = this.store.getState()
-    const animationDuration = givenDuration ? max(givenDuration, 100) : max(duration || 0, 100)
-    this.store.setState({ sectionTransitionComplete: false })
+    const { duration } = this.store.getState();
+    const animationDuration = givenDuration ? max(givenDuration, 100) : max(duration || 0, 100);
+    this.store.setState({ sectionTransitionComplete: false });
     this.bodyScrollBar.scrollTo(0, max(scrollToY, 0), animationDuration, {
       callback: () => {
-        const currentIndex = this.getCurrentSectionIndex(scrollToY)
-        this.store.setState({ sectionCurrent: currentIndex, sectionTransitionComplete: true })
+        const currentIndex = this.getCurrentSectionIndex(scrollToY);
+        this.store.setState({ sectionCurrent: currentIndex, sectionTransitionComplete: true });
         if (typeof callback === 'function') {
-          callback()
+          callback();
         }
       },
-    })
+    });
   }
 
-  changeScene({ from, to, direction, scrollToY, duration }) {
-    this.store.lockScroll()
-    this.scrollTo({ scrollToY, givenDuration: duration })
-    this.triggerCameraScroll({ direction, from, to });
+  changeScene({
+    from, to, direction, rate, scrollToY, duration,
+  }) {
+    this.store.lockScroll();
+    this.scrollTo({ scrollToY, givenDuration: duration });
+    this.triggerCameraScroll({
+      direction, from, to, rate,
+    });
   }
 
   setScroolPosition({ scrollToY, withoutCallbacks = true }) {
     this.bodyScrollBar.setPosition(0, scrollToY, {
       withoutCallbacks,
-    })
+    });
   }
 
   getCurrentScrollState(direction) {
-    const { sectionsRect, sectionCurrent, viewportHeight, cameraCurrentPose } = this.store.getState()
+    const {
+      sectionsRect, sectionCurrent, viewportHeight, cameraCurrentPose,
+    } = this.store.getState();
 
-    const goingDown = direction === NORMAL
-    const scenesCount = sectionsRect.length - 1
+    const goingDown = direction === NORMAL;
+    const scenesCount = sectionsRect.length - 1;
 
-    const nextPoint = clamp(sectionCurrent + (goingDown ? +1 : -1), [0, scenesCount])
+    const nextPoint = clamp(sectionCurrent + (goingDown ? +1 : -1), [0, scenesCount]);
 
-    const { top, bottom } = sectionsRect[nextPoint]
-    const scrollToY = goingDown ? top : bottom - viewportHeight
+    const { top, bottom } = sectionsRect[nextPoint];
+    const scrollToY = goingDown ? top : bottom - viewportHeight;
 
     return {
       sectionsRect,
@@ -147,105 +154,113 @@ class SmoothScroller extends ScrollCamera {
       goingDown,
       scrollToY,
       cameraCurrentPose,
-    }
+    };
   }
 
-  triggerCameraScroll({ from, to, direction }) {
-    const { cameraCurrentPose, cameraScenesCount } = this.store.getState()
-    const { goingDown } = this.getCurrentScrollState(direction)
+  triggerCameraScroll({
+    from, to, rate, direction, ignoreCurrentState = false,
+  }) {
+    const { cameraCurrentPose, cameraScenesCount } = this.store.getState();
 
-    const actualFrom = clamp(cameraCurrentPose || from, [1, cameraScenesCount])
-    const actualTo = clamp(goingDown ? max(actualFrom + 1, to) : max(actualFrom - 1, to), [1, cameraScenesCount])
+    const cameraPose = { from, to };
 
-    if (goingDown && actualTo <= actualFrom || !goingDown && actualTo >= actualFrom || actualTo === actualFrom) {
-      return
+    if (!ignoreCurrentState) {
+      if (direction === NORMAL) {
+        cameraPose.from = cameraCurrentPose;
+        cameraPose.to = clamp(max(cameraCurrentPose + 1, to), [0, cameraScenesCount]);
+      }
+
+      if (direction === REVERSE) {
+        cameraPose.from = cameraCurrentPose;
+        cameraPose.to = clamp(max(cameraCurrentPose - 1, to), [0, cameraScenesCount]);
+      }
     }
 
     this.store.setState({
       direction,
-      cameraPose: {
-        from: actualFrom,
-        to: actualTo,
-      },
-      doCameraScroll: true
-    })
+      cameraPose,
+      rate,
+      doCameraScroll: true,
+    });
   }
 
   hasReachedBottom(currentIndex, threshold = 0) {
-    const { scrollStatus, viewportHeight, sectionsRect, scrollMarginVP } = this.store.getState()
+    const {
+      scrollStatus, viewportHeight, sectionsRect, scrollMarginVP,
+    } = this.store.getState();
     const {
       offset: { y: scrollTop },
-    } = scrollStatus
+    } = scrollStatus;
 
-    const scrollBottom = scrollTop + viewportHeight
+    const scrollBottom = scrollTop + viewportHeight;
 
-    const { bottom } = sectionsRect[currentIndex]
-    return ((scrollBottom - scrollMarginVP) + threshold) >= bottom
+    const { bottom } = sectionsRect[currentIndex];
+    return ((scrollBottom - scrollMarginVP) + threshold) >= bottom;
   }
 
   hasReachedTop(currentIndex, threshold = 0) {
-    const { scrollStatus, sectionsRect, scrollMarginVP } = this.store.getState()
+    const { scrollStatus, sectionsRect, scrollMarginVP } = this.store.getState();
     const {
       offset: { y: scrollTop },
-    } = scrollStatus
-    const { top } = sectionsRect[currentIndex]
+    } = scrollStatus;
+    const { top } = sectionsRect[currentIndex];
 
-    return (scrollTop) <= ((top - scrollMarginVP) + threshold)
+    return (scrollTop) <= ((top - scrollMarginVP) + threshold);
   }
 
   getNextSceneBottom(currentIndex, direction) {
-    const { scenesCount, sectionsRect } = this.getCurrentScrollState(direction)
-    const nextPoint = clamp(currentIndex + (direction === NORMAL ? +1 : -1), [0, scenesCount])
-    const { bottom } = sectionsRect[nextPoint]
-    return bottom
+    const { scenesCount, sectionsRect } = this.getCurrentScrollState(direction);
+    const nextPoint = clamp(currentIndex + (direction === NORMAL ? +1 : -1), [0, scenesCount]);
+    const { bottom } = sectionsRect[nextPoint];
+    return bottom;
   }
 
   getNextSceneTop(currentIndex, direction) {
-    const { scenesCount, sectionsRect } = this.getCurrentScrollState(direction)
-    const nextPoint = clamp(currentIndex + (direction === NORMAL ? +1 : -1), [0, scenesCount])
-    const { top } = sectionsRect[nextPoint]
-    return top
+    const { scenesCount, sectionsRect } = this.getCurrentScrollState(direction);
+    const nextPoint = clamp(currentIndex + (direction === NORMAL ? +1 : -1), [0, scenesCount]);
+    const { top } = sectionsRect[nextPoint];
+    return top;
   }
 
   getCurrentSceneBottom(currentIndex) {
-    const { sectionsRect, scenesCount } = this.getCurrentScrollState()
-    const sceneIndex = clamp(currentIndex, [0, scenesCount])
-    const { bottom } = sectionsRect[sceneIndex]
-    return bottom
+    const { sectionsRect, scenesCount } = this.getCurrentScrollState();
+    const sceneIndex = clamp(currentIndex, [0, scenesCount]);
+    const { bottom } = sectionsRect[sceneIndex];
+    return bottom;
   }
 
   getCurrentSceneTop(currentIndex) {
-    const { sectionsRect, scenesCount } = this.getCurrentScrollState()
-    const { top } = sectionsRect[clamp(currentIndex, [0, scenesCount])]
-    return top
+    const { sectionsRect, scenesCount } = this.getCurrentScrollState();
+    const { top } = sectionsRect[clamp(currentIndex, [0, scenesCount])];
+    return top;
   }
 
   getCurrentSectionIndex(scrollTop) {
-    const { sectionsRect } = this.store.getState()
-    const foundIndex = sectionsRect.findIndex((scene) => isNumberInRange(scrollTop, [scene.top, scene.bottom]))
-    return clamp(foundIndex, [0, sectionsRect.length - 1])
+    const { sectionsRect } = this.store.getState();
+    const foundIndex = sectionsRect.findIndex((scene) => isNumberInRange(scrollTop, [scene.top, scene.bottom]));
+    return clamp(foundIndex, [0, sectionsRect.length - 1]);
   }
 
   getCurrentScrollStatus() {
-    const { scrollStatus, sectionsRect, viewportHeight } = this.store.getState()
-    const { offset: { y: scrollTop } } = scrollStatus
+    const { scrollStatus, sectionsRect, viewportHeight } = this.store.getState();
+    const { offset: { y: scrollTop } } = scrollStatus;
 
-    const currentIndex = this.getCurrentSectionIndex(scrollTop)
+    const currentIndex = this.getCurrentSectionIndex(scrollTop);
 
-    const scrollBottom = scrollTop + viewportHeight
-    const currentScene = sectionsRect[currentIndex]
-    const scenesCount = sectionsRect.length - 1
+    const scrollBottom = scrollTop + viewportHeight;
+    const currentScene = sectionsRect[currentIndex];
+    const scenesCount = sectionsRect.length - 1;
 
-    const isFirstScene = currentIndex === 0
-    const isLastScene = currentIndex === sectionsRect.length - 1
+    const isFirstScene = currentIndex === 0;
+    const isLastScene = currentIndex === sectionsRect.length - 1;
 
-    return { scenesCount, currentIndex, scrollTop, scrollBottom, currentScene, isFirstScene, isLastScene, viewportHeight }
+    return {
+      scenesCount, currentIndex, scrollTop, scrollBottom, currentScene, isFirstScene, isLastScene, viewportHeight,
+    };
   }
 
   handleScroll({ deltaY }) {
-
-    const { scrollMarginVP, locked } = this.store.getState()
-
+    const { scrollMarginVP, locked } = this.store.getState();
 
     const {
       currentIndex,
@@ -254,104 +269,103 @@ class SmoothScroller extends ScrollCamera {
       scrollTop,
     } = this.getCurrentScrollStatus();
 
-    const { direction, goingDown } = this.getDirectionByDelta(deltaY)
+    const { direction, goingDown } = this.getDirectionByDelta(deltaY);
 
     if (locked || isLastScene) {
-      return
+      return;
     }
 
     if (goingDown) {
-      const scrollingDown = this.hasReachedBottom(currentIndex, -scrollMarginVP)
+      const scrollingDown = this.hasReachedBottom(currentIndex, -scrollMarginVP);
       if (scrollingDown) {
-        const nextSceneTop = this.getNextSceneTop(currentIndex, direction)
+        const nextSceneTop = this.getNextSceneTop(currentIndex, direction);
         this.changeScene({
           from: currentIndex,
           to: currentIndex + 1,
           direction,
           scrollToY: nextSceneTop,
-          duration: 450
-        })
+          duration: 450,
+        });
       }
-      return null
     }
 
     if (!goingDown) {
       const bottom = this.getCurrentSceneBottom(currentIndex);
       if (scrollTop > (bottom - scrollMarginVP)) {
+        const from = currentIndex + 1;
+        const to = currentIndex;
+
         this.changeScene({
-          from: currentIndex,
-          to: currentIndex - 1,
+          from,
+          to,
           direction,
-          scrollToY: (bottom - viewportHeight),
-          duration: 450
-        })
+          scrollToY: (bottom - viewportHeight) + 1,
+          duration: 450,
+        });
       }
     }
-
-    return null
   }
 
   handleMouseWheel({ deltaY }) {
-    this.handleScroll({ deltaY })
+    this.handleScroll({ deltaY });
   }
 
   handleTouchStart({ touches }) {
-    this.startY = touches[0].clientY
-    this.startX = touches[0].clientX
+    this.startY = touches[0].clientY;
+    this.startX = touches[0].clientX;
   }
 
   handleTouchMove({ touches }) {
-    const deltaY = this.startY - touches[0].clientY
-    this.handleScroll({ deltaY })
+    const deltaY = this.startY - touches[0].clientY;
+    this.handleScroll({ deltaY });
   }
 
   onChangeScene(sceneChange) {
-    this.store.setState({ sectionCurrent: sceneChange.from, cameraCurrentPose: sceneChange.from })
+    this.store.setState({ sectionCurrent: sceneChange.from, cameraCurrentPose: sceneChange.camera.from });
 
     if (sceneChange.direction === REVERSE) {
-      const { sectionsRect, viewportHeight } = this.store.getState()
-      const fromtop = sectionsRect[sceneChange.from].top
-      this.setScroolPosition({ scrollToY: fromtop })
+      const { sectionsRect, viewportHeight } = this.store.getState();
+      const fromtop = sectionsRect[sceneChange.from].top;
+      this.setScroolPosition({ scrollToY: fromtop });
 
       setTimeout(() => {
         requestAnimationFrame(() => {
-          const scrollToY = sectionsRect[sceneChange.to].bottom - viewportHeight
-          this.changeScene({ ...sceneChange, scrollToY })
-        })
-      }, 200)
+          const scrollToY = sectionsRect[sceneChange.to].bottom - viewportHeight;
+          this.changeScene({ ...sceneChange, ...sceneChange.camera, scrollToY });
+        });
+      }, 200);
     }
 
     if (sceneChange.direction === NORMAL) {
-      const nextSceneTop = this.getNextSceneTop(sceneChange.from, sceneChange.direction)
-      this.changeScene({ ...sceneChange, scrollToY: nextSceneTop })
+      const { sectionsRect } = this.store.getState();
+      const nextSceneTop = sectionsRect[sceneChange.to].top;
+      requestAnimationFrame(() => {
+        this.changeScene({ ...sceneChange, ...sceneChange.camera, scrollToY: nextSceneTop });
+      });
     }
-
   }
 
   onSectionScroll(sectionScroll) {
-    this.store.setState({ sectionCurrent: sectionScroll.from })
+    this.store.setState({ sectionCurrent: sectionScroll.from });
 
     if (sectionScroll.direction === REVERSE) {
-      const { sectionsRect, viewportHeight } = this.store.getState()
-      const fromtop = sectionsRect[sectionScroll.from].top
-      this.setScroolPosition({ scrollToY: fromtop })
+      const { sectionsRect, viewportHeight } = this.store.getState();
+      const fromtop = sectionsRect[sectionScroll.from].top;
+      this.setScroolPosition({ scrollToY: fromtop });
 
       setTimeout(() => {
         requestAnimationFrame(() => {
-          const scrollToY = sectionsRect[sectionScroll.to].bottom - viewportHeight
-          this.scrollTo({ scrollToY: scrollToY })
-        })
-      }, 200)
+          const scrollToY = sectionsRect[sectionScroll.to].bottom - viewportHeight;
+          this.scrollTo({ scrollToY });
+        });
+      }, 200);
     }
 
     if (sectionScroll.direction === NORMAL) {
-      const nextSceneTop = this.getNextSceneTop(sectionScroll.from, sectionScroll.direction)
-      this.scrollTo({ scrollToY: nextSceneTop })
+      const nextSceneTop = this.getNextSceneTop(sectionScroll.from, sectionScroll.direction);
+      this.scrollTo({ scrollToY: nextSceneTop });
     }
-
-
   }
-
 }
 
-export default SmoothScroller
+export default SmoothScroller;
