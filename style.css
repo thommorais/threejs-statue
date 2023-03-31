@@ -107,7 +107,7 @@ meter {
 
 .container-3d {
 	position: relative;
-	height: 100vh;
+	height: 100dvh;
 	overflow: hidden;
 	z-index: 4;
 	/* pointer-events: none; */

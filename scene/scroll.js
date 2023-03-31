@@ -56,7 +56,7 @@ class ScrollHandler extends ScrollSmoth {
 	onResize() {
 		const sectionsRect = this.sections.map((section) => {
 			const { top, bottom } = section.getBoundingClientRect();
-			return { top: top + 1, bottom };
+			return { top, bottom: bottom - 1 };
 		});
 
 		const viewportHeight = window.innerHeight;

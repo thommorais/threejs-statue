@@ -541,18 +541,6 @@
                     "value": 0
                   },
                   {
-                    "id": "-VIWUJgFrv",
-                    "position": 2.5,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "value": 0
-                  },
-                  {
                     "id": "ZCLJCb91py",
                     "position": 3,
                     "connectedRight": true,
@@ -563,18 +551,6 @@
                       0
                     ],
                     "value": -2.29
-                  },
-                  {
-                    "id": "UjcpjSrxcX",
-                    "position": 3.433,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "value": 0
                   },
                   {
                     "id": "JoTNNCEwYE",
@@ -619,6 +595,7 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "FJT82IpEtFbDqx6D",
     "43sn1o5xsI_LJoZx",
     "HF5GDF4mVOS1KI-F",
     "DRryTxQ_8tLQ3qBr",
