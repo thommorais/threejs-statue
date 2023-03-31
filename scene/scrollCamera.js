@@ -24,17 +24,21 @@ class CameraOnScroll {
     this.cameraObj = this.sheet.object('Camera', {
       position: types.compound({ ...this.camera.position }),
       lookAt: types.compound({ x: 0, y: 0, z: 0 }),
-      rotateZ: types.number(-0.000, { range: [-10, 10] }),
+      rotateZ: types.number(-0, { range: [-10, 10] }),
     });
 
     this.cameraObj.onValuesChange(({ position, lookAt, rotateZ }) => {
       this.camera.position.set(position.x, position.y, position.z);
       const { x, y, z } = lookAt;
       this.camera.lookAt(new Vector3(x, y, z));
-      // eslint-disable-next-line no-compare-neg-zero
-      if (rotateZ !== -0.000) {
-        this.camera.rotation.z = rotateZ;
+
+      if (rotateZ !== -0) {
+        this.camera.rotation.z = rotateZ
       }
+
+      this.camera.updateProjectionMatrix()
+      this.camera.updateMatrixWorld(true)
+
     });
 
     onChange(this.sheet.sequence.pointer.position, (position) => {

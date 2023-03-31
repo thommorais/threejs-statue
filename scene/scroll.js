@@ -30,8 +30,10 @@ class ScrollHandler extends ScrollSmoth {
 
 					try {
 						for (let item in cameraPositions.sheetsById) {
+							const cameraScenesCount = cameraPositions.sheetsById[item].sequence.length
+							console.log(cameraScenesCount)
 							this.store.setState({
-								cameraScenesCount: cameraPositions.sheetsById[item].sequence.length
+								cameraScenesCount
 							})
 						}
 					} catch (error) {

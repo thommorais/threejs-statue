@@ -125,6 +125,17 @@ meter {
 	z-index: 100;
 }
 
+.container-3d:before{
+	content: '';
+	position: absolute;
+	top: 63.5%;
+	left: 0;
+	width: 100svw;
+	height: 1px;
+	background: red;
+	z-index: 100;
+}
+
 #app {
 	position: absolute;
 	top: 0;

@@ -86,33 +86,23 @@ async function theatre(lights, model, camera, store) {
 	// })
 
 	const cameraObj = sheet.object('Camera', {
-		position: types.compound({
-			x: types.number(camera.position.x, { range: [-100, 100] }),
-			y: types.number(camera.position.y, { range: [-100, 100] }),
-			z: types.number(camera.position.z, { range: [-100, 100] }),
-		}),
-		lookAt: types.compound({
-			x: types.number(camera.position.x, { range: [-100, 100] }),
-			y: types.number(camera.position.y, { range: [-100, 100] }),
-			z: types.number(camera.position.z, { range: [-100, 100] }),
-		}),
-
-		rotateZ: types.number(0, { range: [-10, 10] }),
+		position: types.compound({ ...camera.position }),
+		lookAt: types.compound({ x: 0, y: 0, z: 0 }),
+		rotateZ: types.number(-0, { range: [-10, 10] }),
 	})
 
 	cameraObj.onValuesChange((values) => {
 		camera.position.set(values.position.x, values.position.y, values.position.z)
 
+		console.log(sheet.sequence.position)
 
 		const { x, y, z } = values.lookAt
 		camera.lookAt(new Vector3(x, y, z))
 
-		if (characterClass === 'barbarian') {
-			camera.rotation.z = values.rotateZ
-		}
+		if (values.rotateZ !== -0.000) {
+			camera.rotation.z = values.rotateZ;
+		  }
 
-		camera.updateProjectionMatrix()
-		camera.updateMatrixWorld(true)
 	})
 
 }
