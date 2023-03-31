@@ -14,8 +14,7 @@ import { clamp, randomIntFromInterval } from '../utils'
 
 function loadTextureOffScreen(bgTexturePath) {
 
-	const path = import.meta.resolve('../../')
-
+	const path = './'
 
 	return new Promise((resolve, reject) => {
 		const loader = new ImageBitmapLoader().setPath(path);
