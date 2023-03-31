@@ -34,8 +34,10 @@ class Sparks {
 		this.addEventListener()
 		this.updateWindowDimensions()
 		this.createParticles()
-		this.updateSparksByCharacterClass().then((res) => {
-			this.scene.add(this.sparks)
+		this.updateSparksByCharacterClass().then((sparks) => {
+			console.log('teste')
+			this.sparks = sparks
+			this.scene.add(sparks)
 			this.runDrawLoop(classIntervals[this.characterClass], 100)
 			this.initialized = true
 		})
@@ -136,20 +138,21 @@ class Sparks {
 				 depth = clamp(base * 2, [12, 16])
 				 count = this.count * 1.25
 				this.sparks.material.uniforms.u_windY.value = -0.75
-				this.sparks.material.uniforms.u_temporalFrequency.value = 0.0005
+				this.sparks.material.uniforms.u_temporalFrequency.value = 0.0015
 				this.sparks.material.uniforms.u_tailLength.value = 0.025
-				this.sparks.material.uniforms.u_amplitude.value = 0.1
+				this.sparks.material.uniforms.u_amplitude.value = 0.12
 			}
 
 			if (this.characterClass === 'barbarian') {
-				depth = clamp(base * this.gpuData.tier, [12, 28])
+				depth = clamp(base * this.gpuData.tier, [18, 28])
+				count = this.count * 0.75
 				this.sparks.material.uniforms.u_temporalFrequency.value = 0.65
 			}
 
 			this.sparks.material.needsUpdate = true
 
-			this.updateGeometryAttributes(depth, count).then((res) => {
-				resolve(res)
+			this.updateGeometryAttributes(depth, count).then((sparks) => {
+				resolve(sparks)
 			})
 
 		})
@@ -168,7 +171,7 @@ class Sparks {
 
 	updateGeometryAttributes(bitLength, count) {
 		return new Promise((resolve) => {
-			const instance = new ComlinkWorker(new URL('./worker.js', import.meta.url))
+			const instance = new ComlinkWorker(new URL('./sparks.worker.js', import.meta.url))
 
 			instance.populateArray(count, bitLength, this.boxHeight, this.boxDepth, this.boxWidth).then(({
 				data0Array,
@@ -181,11 +184,7 @@ class Sparks {
 				this.sparks.geometry.attributes.position.needsUpdate = true
 				this.sparks.geometry.attributes.aData0.needsUpdate = true
 				this.sparks.geometry.attributes.aData1.needsUpdate = true
-				resolve({
-					data0Array,
-					data1Array,
-					positions
-				})
+				resolve(this.sparks)
 			})
 
 

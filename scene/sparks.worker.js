@@ -11,7 +11,6 @@ export const populateArray = (count, bitLength, boxHeight, boxDepth, boxWidth) =
 	const data1Array = new Float32Array(deep * 4)
 	const positions = new Float32Array(deep * 3)
 
-
 	const yHeight = boxHeight * 4
 
 	let index1 = 0
