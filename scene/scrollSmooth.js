@@ -297,7 +297,7 @@ class SmoothScroller extends ScrollCamera {
 
     if (!goingDown) {
       const bottom = this.getCurrentSceneBottom(currentIndex);
-      if (scrollTop > (bottom - scrollMarginVP)) {
+      if (scrollTop > (bottom)) {
         const from = currentIndex + 1;
         const to = currentIndex;
 
