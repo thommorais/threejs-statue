@@ -67,6 +67,8 @@ class SmoothScroller extends ScrollCamera {
     });
 
     this.store.subscribe(({ locked }) => {
+      // eslint-disable-next-line no-console
+      console.log(locked, 'locked');
       this.bodyScrollBar.updatePluginOptions('lock', { locked });
     }, 'locked');
   }
@@ -126,6 +128,7 @@ class SmoothScroller extends ScrollCamera {
     this.triggerCameraScroll({
       direction, from, to, rate,
     });
+    this.store.setState({ scrollingStarted: false });
   }
 
   setScroolPosition({ scrollToY, withoutCallbacks = true }) {
@@ -275,6 +278,8 @@ class SmoothScroller extends ScrollCamera {
       return;
     }
 
+    this.store.setState({ scrollingStarted: true });
+
     if (goingDown) {
       const scrollingDown = this.hasReachedBottom(currentIndex, -scrollMarginVP);
       if (scrollingDown) {
@@ -284,7 +289,7 @@ class SmoothScroller extends ScrollCamera {
           to: currentIndex + 1,
           direction,
           scrollToY: nextSceneTop,
-          duration: 450,
+          duration: 600,
         });
       }
     }
@@ -300,7 +305,7 @@ class SmoothScroller extends ScrollCamera {
           to,
           direction,
           scrollToY: (bottom - viewportHeight) + 1,
-          duration: 450,
+          duration: 600,
         });
       }
     }

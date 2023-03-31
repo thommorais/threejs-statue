@@ -24,18 +24,25 @@ class ScrollHandler extends ScrollSmoth {
 
 
 	fetchCameraPositions() {
+		console.log(this.options.cameraPositionsPath, 'cameraPositionsPath')
 		return new Promise((resolve) => {
 			fetch(this.options.cameraPositionsPath)
 				.then((response) => response.json())
 				.then((cameraPositions) => {
+					this.store.setState({ cameraPositions })
 
-					for (let item in cameraPositions.sheetsById) {
-						this.store.setState({
-							cameraScenesCount: cameraPositions.sheetsById[item].sequence.length
-						})
+					try {
+						for (let item in cameraPositions.sheetsById) {
+							this.store.setState({
+								cameraScenesCount: cameraPositions.sheetsById[item].sequence.length
+							})
+						}
+					} catch (error) {
+						console.log(error)
 					}
 
-					this.store.setState({ cameraPositions })
+					console.log(cameraPositions, 'cameraPositions')
+
 					resolve(cameraPositions);
 				});
 		});

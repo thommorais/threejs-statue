@@ -118,7 +118,7 @@ class Store {
 			scrollProgress: 0,
 			scrollable: false,
 			viewportHeight: window.innerHeight,
-
+			scrollingStarted: false,
 			scrollStatus: {
 				"offset": {
 					"x": 0,
