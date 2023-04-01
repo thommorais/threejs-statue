@@ -114,20 +114,6 @@ class Scene extends Stage {
 				console.log(err)
 			})
 
-
-			const path = import.meta.resolve('./worker.js')
-
-			function callback(value) {
-				console.log(`Result: ${value}`);
-			}
-
-			async function init() {
-				const remoteFunction = Comlink.wrap(new Worker(path));
-				await remoteFunction(Comlink.proxy(callback));
-			}
-
-			init();
-
 		}
 
 

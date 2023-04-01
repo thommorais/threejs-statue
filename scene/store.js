@@ -1,5 +1,3 @@
-import * as Comlink from "comlink";
-
 import { createStore } from "zustand/vanilla";
 
 import { NORMAL, REVERSE, clamp } from "./utils";
@@ -65,7 +63,7 @@ function shallowEqual(objA, objB) {
 	return true;
 }
 
-function isNumber(number) {
+export function isNumber(number) {
 	return number !== null && typeof number === "number";
 }
 
@@ -401,8 +399,12 @@ class Store {
 
 }
 
-
-export const store = new Store();
+const store = new Store();
 
 
 export default Store;
+
+export {
+	store
+}
+

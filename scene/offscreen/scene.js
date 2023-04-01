@@ -4,10 +4,13 @@ import {
 	Mesh,
 } from 'three';
 
+import getModel from './model';
+
 
 import Sparks from './sparks';
 import Storm from './storm';
 import Stage from './stage';
+import Lights from './lights';
 
 
 class FasScene extends Stage {
@@ -27,6 +30,7 @@ class FasScene extends Stage {
 
 		this.init()
 		this.setAnimation()
+
 	}
 
 	init() {
@@ -42,13 +46,16 @@ class FasScene extends Stage {
 			vertexShader: this.sparksVertex,
 		})
 
-		  // Create a cube
-		  const geometry = new BoxGeometry(8, 30, 4);
-		  const material = new MeshStandardMaterial({ color: '#0e0e0e' });
-		  this.cube = new Mesh(geometry, material);
 
-		  // Add the cube to the scene
-		  this.scene.add(this.cube);
+		const path = import.meta.env.DEV ? import.meta.resolve('../../barbarian/scene.glb') : './'
+
+		getModel(path).then((model) => {
+			this.scene.add(model);
+			new Lights(this.state, this.scene)
+		}).catch((error) => {
+			throw new Error(error);
+		})
+
 	}
 
 	setAnimation() {
@@ -56,7 +63,6 @@ class FasScene extends Stage {
 			this.renderer.render(this.scene, this.camera);
 			this.background.update(time)
 			this.sparks.update(time);
-			this.cube.rotation.y += 0.01;
 		});
 
 	}

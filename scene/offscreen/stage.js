@@ -52,8 +52,8 @@ class Stage {
 	}
 
 	createPerspectiveCamera() {
-		this.camera = new PerspectiveCamera(45, this.width / this.height, 1, 100);
-		this.camera.position.set(0, 0, 60);
+		this.camera = new PerspectiveCamera(45, this.width / this.height, 1, 180);
+		this.camera.position.set(0, 20, 60);
 	}
 }
 
