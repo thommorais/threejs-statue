@@ -115,7 +115,7 @@ class Scene extends Stage {
 			})
 
 
-			const path = import.meta.resolve('./offscreen/worker.js')
+			const path = import.meta.resolve('./worker.js')
 
 			function callback(value) {
 				console.log(`Result: ${value}`);
