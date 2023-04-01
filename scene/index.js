@@ -113,6 +113,21 @@ class Scene extends Stage {
 			}).catch(err => {
 				console.log(err)
 			})
+
+
+			const path = import.meta.env.DEV ? import.meta.resolve('./offscreen/worker.js') : './worker.js'
+
+			function callback(value) {
+				console.log(`Result: ${value}`);
+			}
+
+			async function init() {
+				const remoteFunction = Comlink.wrap(new Worker(path));
+				await remoteFunction(Comlink.proxy(callback));
+			}
+
+			init();
+
 		}
 
 

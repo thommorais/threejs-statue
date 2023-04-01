@@ -6,7 +6,8 @@ import {
 	Group,
 	PointLight,
 	ImageBitmapLoader,
-	CanvasTexture,
+    CanvasTexture,
+    sRGBEncoding
 } from 'three';
 
 import { clamp, randomIntFromInterval } from '../utils'
@@ -14,12 +15,13 @@ import { clamp, randomIntFromInterval } from '../utils'
 
 function loadTextureOffScreen(bgTexturePath) {
 
-	const path = './'
+    const path = import.meta.env.DEV ? import.meta.resolve('../../assets/') : './'
 
 	return new Promise((resolve, reject) => {
 		const loader = new ImageBitmapLoader().setPath(path);
 		const onLoad = (imageBitmap) => {
-			const texture = new CanvasTexture(imageBitmap);
+            const texture = new CanvasTexture(imageBitmap);
+            texture.encoding = sRGBEncoding;
 			resolve(texture)
 		}
 

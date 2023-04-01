@@ -86,7 +86,6 @@ class CameraOnScroll {
     });
   }
 
-  // eslint-disable-next-line consistent-return
   changeCameraPose({
     from, to, rate = 0.33, keepScrollLocked = false,
   }) {

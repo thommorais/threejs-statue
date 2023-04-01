@@ -1,3 +1,5 @@
+import * as Comlink from "comlink";
+
 import { createStore } from "zustand/vanilla";
 
 import { NORMAL, REVERSE, clamp } from "./utils";
@@ -401,5 +403,6 @@ class Store {
 
 
 export const store = new Store();
+
 
 export default Store;
