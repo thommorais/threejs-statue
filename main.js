@@ -47,10 +47,7 @@ try {
 	myScene.subscribe(
 		({ modelLoadingProgress }) => {
 			if (modelLoadingProgress === 100) {
-				myScene
-				.setCameraPose({ from: 0, to: 1 })
-				.then(myScene.unLockScroll.bind(myScene))
-
+				myScene.unLockScroll()
 				scrollToTop.addEventListener('click', () => {
 					myScene
 					.setScenePose({ from: 4, to: 0, duration: 500, camera: { from: 5, to: 1, rate: 5 }, ignoreCameraCurrentState: true })
