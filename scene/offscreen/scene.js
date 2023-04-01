@@ -47,7 +47,9 @@ class FasScene extends Stage {
 		})
 
 
-		const path = import.meta.env.DEV ? import.meta.resolve('../../barbarian/scene.glb') : './'
+		const path = import.meta.env.DEV ? import.meta.resolve(`../../${this.options.characterClass}/scene.glb`) : `../${this.options.characterClass}/scene.glb`
+
+		console.log({path})
 
 		getModel(path).then((model) => {
 			this.scene.add(model);
