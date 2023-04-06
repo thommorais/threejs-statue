@@ -62,7 +62,6 @@ class Scene {
 
 		const instance = new ComlinkWorker(new URL('./offscreen.js', import.meta.url))
 
-
 		const width = window.innerWidth;
 		const height = window.innerHeight;
 		const pixelRatio = Math.min(window.devicePixelRatio, 2);
@@ -105,6 +104,7 @@ class Scene {
 		this.store.setState({ gpuData: { tier: 2 } });
 		this.validateInit({ characterClass: 'demon', ...options });
 		this.testOffScreen()
+		console.log('offscreen')
 	}
 
 
