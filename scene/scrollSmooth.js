@@ -282,14 +282,15 @@ class SmoothScroller extends ScrollCamera {
     this.store.setState({ scrollingStarted: true });
 
     if (goingDown) {
-      const scrollingDown = this.hasReachedBottom(currentIndex, -scrollMarginVP);
-      if (scrollingDown) {
+      const top = this.getCurrentSceneTop(currentIndex);
+      const enough = isNumberInRange(scrollTop, [(top - scrollMarginVP), (top + scrollMarginVP)])
+      if (enough) {
         const nextSceneTop = this.getNextSceneTop(currentIndex, direction);
         this.changeScene({
           from: currentIndex,
           to: currentIndex + 1,
           direction,
-          scrollToY: nextSceneTop,
+          scrollToY: nextSceneTop - 1,
           duration: 600,
         });
       }
@@ -297,11 +298,7 @@ class SmoothScroller extends ScrollCamera {
 
     if (!goingDown) {
       const bottom = this.getCurrentSceneBottom(currentIndex);
-
       const enough = isNumberInRange(scrollTop, [(bottom - scrollMarginVP), (bottom + scrollMarginVP)])
-
-      console.log(JSON.stringify({enough}, null, 2))
-
       if (enough) {
         const from = currentIndex + 1;
         const to = currentIndex;

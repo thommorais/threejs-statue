@@ -48,10 +48,11 @@ try {
 		({ modelLoadingProgress }) => {
 			if (modelLoadingProgress === 100) {
 				myScene.unLockScroll()
+				myScene.setCameraPose({ from: 0, to: 1 })
 				scrollToTop.addEventListener('click', () => {
 					myScene
-					.setScenePose({ from: 4, to: 0, duration: 500, camera: { from: 5, to: 1, rate: 5 }, ignoreCameraCurrentState: true })
-					.then(myScene.unLockScroll.bind(myScene))
+						.setScenePose({ from: 4, to: 0, duration: 500, camera: { from: 5, to: 1, rate: 5 }, ignoreCameraCurrentState: true })
+						.then(myScene.unLockScroll.bind(myScene))
 				})
 
 			}
@@ -60,26 +61,26 @@ try {
 	)
 
 
-    myScene.subscribe(({
+	myScene.subscribe(({
 		sections, sectionCurrent, cameraTransitionComplete, scrollingStarted,
 	}) => {
 
 		if (sections) {
 
-		  if (scrollingStarted) {
-			sections.forEach((section) => {
-			  section.style.setProperty('--opacity', '0');
-			  section.classList.remove('active');
-			});
-		  }
+			if (scrollingStarted) {
+				sections.forEach((section) => {
+					section.style.setProperty('--opacity', '0');
+					section.classList.remove('active');
+				});
+			}
 
-		  if (cameraTransitionComplete) {
-			sections[sectionCurrent].style.setProperty('--opacity', '1');
-			sections[sectionCurrent].classList.add('active');
-		  }
+			if (cameraTransitionComplete) {
+				sections[sectionCurrent].style.setProperty('--opacity', '1');
+				sections[sectionCurrent].classList.add('active');
+			}
 
 		}
-	  }, ['sections', 'sectionCurrent', 'cameraTransitionComplete', 'scrollingStarted']);
+	}, ['sections', 'sectionCurrent', 'cameraTransitionComplete', 'scrollingStarted']);
 
 } catch (e) {
 	console.log(e)
