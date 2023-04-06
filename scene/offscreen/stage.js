@@ -31,8 +31,8 @@ class Stage {
 			stencil: true,
 			depth: true,
 			antialias: true,
-            alpha: false,
-            powerPreference: 'high-performance',
+			alpha: false,
+			powerPreference: 'high-performance',
 		});
 
 		this.renderer.physicallyCorrectLights = true;
@@ -42,7 +42,6 @@ class Stage {
 		this.renderer.setSize(this.width, this.height, false);
 		this.renderer.setPixelRatio(this.pixelRatio);
 		this.renderer.setClearColor('#100C0D', 1)
-
 
 		this.renderer.render(this.scene, this.camera)
 	}

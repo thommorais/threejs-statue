@@ -46,13 +46,13 @@ export const populateArray = (count, bitLength, boxHeight, boxDepth, boxWidth) =
 			data1Array[index2++] = zz
 			data1Array[index2++] = ww
 		}
-    }
+	}
 
 
-    return {
-        data0Array,
-        data1Array,
-        positions
-    }
+	return {
+		data0Array,
+		data1Array,
+		positions
+	}
 
 }

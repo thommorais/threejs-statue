@@ -1,8 +1,8 @@
 /* eslint-disable no-plusplus */
 import { BufferGeometry, BufferAttribute, Points, ShaderMaterial, AdditiveBlending } from 'three'
-
-
 import { randomIntFromInterval, clamp } from '../utils'
+
+import * as Comlink from 'comlink'
 
 const classIntervals = {
 	demon: [0.85, 2],
@@ -10,9 +10,8 @@ const classIntervals = {
 	barbarian: [0.5, 2.5],
 }
 
-
 class Sparks {
-	constructor(scene, clock, state, pixelRatio, characterClass, dimensions, {fragmentShader, vertexShader}) {
+	constructor(scene, clock, state, pixelRatio, characterClass, dimensions, { fragmentShader, vertexShader }) {
 		this.clock = clock
 		this.scene = scene
 		this.pixelRatio = pixelRatio
@@ -20,26 +19,21 @@ class Sparks {
 		this.characterClass = characterClass
 		this.minimalDrawTimeout = 2000
 		this.currentDrwaTimeout = 0
-        this.initialized = false
+		this.initialized = false
 
-        this.width = dimensions.width
-        this.height = dimensions.height
-        this.pixelRatio = dimensions.pixelRatio
+		this.width = dimensions.width
+		this.height = dimensions.height
+		this.pixelRatio = dimensions.pixelRatio
 
-        this.state = state
+		this.state = state
 
-        this.gpuData = this.state.gpuData
+		this.gpuData = this.state.gpuData
+		this.fragmentShader = fragmentShader
+		this.vertexShader = vertexShader
 
-        this.fragmentShader = fragmentShader
-        this.vertexShader = vertexShader
-
-
-
-        this.count = 360 * this.gpuData.tier * clamp(pixelRatio, [1, 1.8])
-
+		this.count = 360 * this.gpuData.tier * clamp(pixelRatio, [1, 1.8])
 
 		this.init()
-
 	}
 
 	init() {
@@ -47,13 +41,13 @@ class Sparks {
 		this.createParticles()
 		this.updateSparksByCharacterClass().then((sparks) => {
 			this.sparks = sparks
+			this.runDrawLoop(classIntervals[this.characterClass], 24)
 			this.scene.add(sparks)
-			this.runDrawLoop(classIntervals[this.characterClass], 100)
 			this.initialized = true
+			console.log('sparks done')
 		})
 
 	}
-
 
 	updateWindowDimensions() {
 		const h = {
@@ -75,10 +69,12 @@ class Sparks {
 		this.boxHeight = this.boxWidth * h
 		this.boxDepth = (this.boxWidth * 2)
 
+
 		if (this.sparks) {
 			this.sparks.material.uniforms.u_screenHeight.value = this.wHeight
 		}
 	}
+
 	createParticles() {
 		this.createGeometry()
 		this.createMaterial()
@@ -94,8 +90,8 @@ class Sparks {
 			blending: AdditiveBlending,
 			uniforms: {
 				u_hardness: { value: 0.9 },
-				u_time: { value: 1.2 },
-				u_opacity: { value: 0.1 },
+				u_time: { value: 0 },
+				u_opacity: { value: 0.9 },
 				u_screenHeight: { value: this.wHeight },
 				u_pointSize: { value: 0.005 * this.pixelRatio },
 				u_tailLength: { value: 0.15 },
@@ -124,6 +120,7 @@ class Sparks {
 	}
 
 	updateSparksByCharacterClass() {
+
 		return new Promise((resolve) => {
 			const base = 8 * this.gpuData.tier
 
@@ -140,8 +137,8 @@ class Sparks {
 			}
 
 			if (this.characterClass === 'demon') {
-				 depth = clamp(base * 2, [12, 16])
-				 count = this.count * 1.25
+				depth = clamp(base * 2, [12, 16])
+				count = this.count * 1.25
 				this.sparks.material.uniforms.u_windY.value = -0.75
 				this.sparks.material.uniforms.u_temporalFrequency.value = 0.0015
 				this.sparks.material.uniforms.u_tailLength.value = 0.025
@@ -154,15 +151,12 @@ class Sparks {
 				this.sparks.material.uniforms.u_temporalFrequency.value = 0.65
 			}
 
-			this.sparks.material.needsUpdate = true
-
 			this.updateGeometryAttributes(depth, count).then((sparks) => {
 				resolve(sparks)
 			})
 
 		})
 	}
-
 
 	updateDrawLoop() {
 		clearTimeout(this.currentDrwaTimeout)
@@ -174,26 +168,42 @@ class Sparks {
 		this.sparks.material.uniforms.u_characterClass.value = characterClassUniform[this.characterClass] || 0.0
 	}
 
+
 	updateGeometryAttributes(bitLength, count) {
 		return new Promise((resolve) => {
-			const instance = new ComlinkWorker(new URL('./sparks.worker.js', import.meta.url))
+			const deep = count * bitLength;
+			const workerApi = new ComlinkWorker(new URL('./sparks.worker.js', import.meta.url), { type: 'module' });
 
-			instance.populateArray(count, bitLength, this.boxHeight, this.boxDepth, this.boxWidth).then(({
-				data0Array,
-				data1Array,
-				positions
-			}) => {
-				this.sparks.geometry.setAttribute('aData0', new BufferAttribute(data0Array, 4))
-				this.sparks.geometry.setAttribute('aData1', new BufferAttribute(data1Array, 4))
-				this.sparks.geometry.setAttribute('position', new BufferAttribute(positions, 3))
-				this.sparks.geometry.attributes.position.needsUpdate = true
-				this.sparks.geometry.attributes.aData0.needsUpdate = true
-				this.sparks.geometry.attributes.aData1.needsUpdate = true
-				resolve(this.sparks)
-			})
+			const attributesArray = new Float32Array(deep * 12);
+			attributesArray.buffer.uuid = 'unique-identifier';
 
+			const params = {
+				count,
+				bitLength,
+				boxHeight: this.boxHeight,
+				boxDepth: this.boxDepth,
+				boxWidth: this.boxWidth,
+				attributesArray
+			};
 
-		})
+			console.log('main thread', params.attributesArray.buffer.uuid);
+
+			// Call the proxy object of the worker thread function
+			workerApi.populateArray(Comlink.transfer(params, [params.attributesArray.buffer])).then((updatedAttributesArray) => {
+
+				const positions = updatedAttributesArray.subarray(0, deep * 3);
+				const data0Array = updatedAttributesArray.subarray(deep * 3, deep * 7);
+				const data1Array = updatedAttributesArray.subarray(deep * 7, deep * 11);
+
+				this.sparks.geometry.setAttribute('aData0', new BufferAttribute(data0Array, 4));
+				this.sparks.geometry.setAttribute('aData1', new BufferAttribute(data1Array, 4));
+				this.sparks.geometry.setAttribute('position', new BufferAttribute(positions, 3));
+
+				resolve(this.sparks);
+			}).catch((error) => {
+				resolve(this.sparks);
+			});
+		});
 	}
 
 	randomValueFromInterval([min, max]) {

@@ -63,7 +63,7 @@ try {
 	// )
 
 
-    // myScene.subscribe(({
+	// myScene.subscribe(({
 	// 	sections, sectionCurrent, cameraTransitionComplete, scrollingStarted,
 	// }) => {
 

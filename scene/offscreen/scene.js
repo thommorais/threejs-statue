@@ -1,11 +1,4 @@
-import {
-	BoxGeometry,
-	MeshStandardMaterial,
-	Mesh,
-} from 'three';
-
 import getModel from './model';
-
 
 import Sparks from './sparks';
 import Storm from './storm';
@@ -24,18 +17,14 @@ class FasScene extends Stage {
 		this.state = state
 		this.options = options
 
-
 		this.sparksVertex = sparksShaders.vertexShader
 		this.sparksFragment = sparksShaders.fragmentShader
 
 		this.init()
 		this.setAnimation()
-
 	}
 
 	init() {
-		this.background = new Storm(this.scene, this.state, this.options, this.pixelRatio)
-
 		// scene, clock, state, pixelRatio, characterClass
 		this.sparks = new Sparks(this.scene, this.clock, this.state, this.pixelRatio, this.options.characterClass, {
 			width: this.width,
@@ -46,14 +35,14 @@ class FasScene extends Stage {
 			vertexShader: this.sparksVertex,
 		})
 
+		this.background = new Storm(this.scene, this.state, this.options, this.pixelRatio)
+
+		this.lights = new Lights(this.state, this.scene)
 
 		const path = import.meta.env.DEV ? import.meta.resolve(`../../${this.options.characterClass}/scene.glb`) : `../${this.options.characterClass}/scene.glb`
 
-		console.log({path})
-
 		getModel(path).then((model) => {
 			this.scene.add(model);
-			new Lights(this.state, this.scene)
 		}).catch((error) => {
 			throw new Error(error);
 		})

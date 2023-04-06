@@ -50,7 +50,7 @@ class Scene {
 
 		const params = getQueryParams(document.location.search);
 
-		let { dev, fps, debug } = params
+		let { dev, debug } = params
 
 		this.devMode = !!dev;
 		this.debug = !!debug;
@@ -89,14 +89,12 @@ class Scene {
 			}
 
 			instance.offScreen(Comlink.transfer(transfer, [offscreen])).then(res => {
-				console.log(res)
+				console.log('offscreen:', res)
 			}).catch(err => {
 				console.log(err)
 			})
 
 		}
-
-
 	}
 
 
@@ -104,7 +102,6 @@ class Scene {
 		this.store.setState({ gpuData: { tier: 2 } });
 		this.validateInit({ characterClass: 'demon', ...options });
 		this.testOffScreen()
-		console.log('offscreen')
 	}
 
 

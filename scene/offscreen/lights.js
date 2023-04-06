@@ -41,6 +41,7 @@ class Lights {
 	init() {
 		this.createLights();
 		this.initialized = true
+		console.log('lights done')
 	}
 
 	createLights() {

@@ -27,7 +27,7 @@ export const clamp = (number, [lowerBound, upperBound]) => min(max(number, lower
 export const getDistance = (a, b) => Math.abs(a - b);
 
 // eslint-disable-next-line no-shadow
-export function randomIntFromInterval(min, max, avoid = []) {
+export function randomIntFromIntervalWithAvoid(min, max, avoid = []) {
     if (!Array.isArray(avoid)) {
         // eslint-disable-next-line no-param-reassign
         avoid = [avoid];
@@ -36,6 +36,12 @@ export function randomIntFromInterval(min, max, avoid = []) {
     if (avoid.includes(number)) {
         return randomIntFromInterval(min, max, avoid);
     }
+    return number;
+}
+
+
+export function randomIntFromInterval(min, max) {
+    const number = Math.round(Math.random() * (max - min + 1)) + min;
     return number;
 }
 

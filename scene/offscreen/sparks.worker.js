@@ -1,58 +1,60 @@
-import { randomIntFromInterval, clamp } from '../utils'
+import { randomIntFromInterval } from '../utils'
+// sparks.worker.js
+import * as Comlink from 'comlink';
 
-export const add = (a, b) => a + b
+const populateArray = (params) => {
 
-const random = () => Math.random()
+	const { count, bitLength, boxHeight, boxDepth, boxWidth } = params;
 
-export const populateArray = (count, bitLength, boxHeight, boxDepth, boxWidth) => {
-	const deep = count * bitLength
+	const deep = count * bitLength;
+	const yHeight = boxHeight * 4;
+	const xWidth = boxWidth / 2;
+	const dataODeep = deep * 3;
+	const data1Deep = deep * 7;
+	const random = () => Math.random();
+	const getZeroCenteredValue = () => 2 * random() - 1;
 
-	const data0Array = new Float32Array(deep * 4)
-	const data1Array = new Float32Array(deep * 4)
-	const positions = new Float32Array(deep * 3)
+	let index = 0;
 
-	const yHeight = boxHeight * 4
+	console.log('worker thread', params.attributesArray.buffer.uuid);
 
-	let index1 = 0
-	let index2 = 0
 
 	for (let i = 0; i < count; i++) {
-		const xx = random()
-		const yy = random()
-		const zz = random()
-		const ww = random()
-
-		const posX = clamp((2 * random() - 1) * (boxWidth / 2), [-1, 1])
-		const posY = (2 * random() - 1) * yHeight
-		const posZ = randomIntFromInterval(boxDepth * -1, boxDepth)
+		const randomX = random();
+		const randomY = random();
+		const randomZ = random();
+		const randomW = random();
+		const posX = getZeroCenteredValue() * xWidth;
+		const posY = getZeroCenteredValue() * yHeight;
+		const posZ = randomIntFromInterval(-boxDepth, boxDepth);
 
 		for (let j = 0; j < bitLength; j++) {
-			const px = index1++
-			const py = index1++
-			const pz = index1++
-			const pw = index1++
+			const px = index++;
+			const py = index++;
+			const pz = index++;
+			const pw = index++;
 
-			positions[px] = posX
-			positions[py] = posY
-			positions[pz] = posZ
+			// positions
+			params.attributesArray[px] = posX;
+			params.attributesArray[py] = posY;
+			params.attributesArray[pz] = posZ;
 
-			data0Array[px] = posX
-			data0Array[py] = posY
-			data0Array[pz] = posZ
-			data0Array[pw] = j / bitLength
+			// data0Array
+			params.attributesArray[px + dataODeep] = posX;
+			params.attributesArray[py + dataODeep] = posY;
+			params.attributesArray[pz + dataODeep] = posZ;
+			params.attributesArray[pw + dataODeep] = j / bitLength;
 
-			data1Array[index2++] = xx
-			data1Array[index2++] = yy
-			data1Array[index2++] = zz
-			data1Array[index2++] = ww
+			// data1Array
+			params.attributesArray[px + data1Deep] = randomX;
+			params.attributesArray[py + data1Deep] = randomY;
+			params.attributesArray[pz + data1Deep] = randomZ;
+			params.attributesArray[pw + data1Deep] = randomW;
 		}
-    }
+	}
+
+	return Comlink.transfer(params.attributesArray, [params.attributesArray.buffer]);
+};
 
 
-    return {
-        data0Array,
-        data1Array,
-        positions
-    }
-
-}
+Comlink.expose({ populateArray });

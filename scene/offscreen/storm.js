@@ -6,8 +6,8 @@ import {
 	Group,
 	PointLight,
 	ImageBitmapLoader,
-    CanvasTexture,
-    sRGBEncoding
+	CanvasTexture,
+	sRGBEncoding
 } from 'three';
 
 import { clamp, randomIntFromInterval } from '../utils'
@@ -15,13 +15,13 @@ import { clamp, randomIntFromInterval } from '../utils'
 
 function loadTextureOffScreen(bgTexturePath) {
 
-    const path = import.meta.env.DEV ? import.meta.resolve('../../assets/') : './'
+	const path = import.meta.env.DEV ? import.meta.resolve('../../assets/') : './'
 
 	return new Promise((resolve, reject) => {
 		const loader = new ImageBitmapLoader().setPath(path);
 		const onLoad = (imageBitmap) => {
-            const texture = new CanvasTexture(imageBitmap);
-            texture.encoding = sRGBEncoding;
+			const texture = new CanvasTexture(imageBitmap);
+			texture.encoding = sRGBEncoding;
 			resolve(texture)
 		}
 
@@ -44,7 +44,7 @@ class Storm {
 		this.state = state
 		this.characterClass = options.characterClass
 		this.zRange = []
-		this.frequency = 0.5
+		this.frequency = 0.85
 		this.lastRAF = 0
 		this.initialized = false
 		this.gpuData = state.gpuData
@@ -53,12 +53,12 @@ class Storm {
 
 	}
 
-
 	init() {
 		this.loadTexture().then((texture) => {
 			this.createClouds(texture)
 			this.createThunder()
 			this.initialized = true
+			console.log('storm done')
 		})
 	}
 

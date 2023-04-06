@@ -22,9 +22,9 @@ function getModel(modelPath) {
                 if (xhr.lengthComputable) {
                     const percentComplete = xhr.loaded / xhr.total * 100;
                     const roundedPercent = Math.round(percentComplete);
-                    if (roundedPercent % 10 === 0) {
-                        console.log( Number((roundedPercent).toFixed(2)))
-                    }
+                    // if (roundedPercent % 10 === 0) {
+                    //     console.log( Number((roundedPercent).toFixed(2)))
+                    // }
                 }
             }
 
