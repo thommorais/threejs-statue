@@ -72,7 +72,6 @@ class CameraOnScroll {
 
   onBodyScroll() {
     const { cameraPose, rate = 0.33 } = this.store.getState();
-
     const { from, to } = cameraPose;
     this.changeCameraPose({ from, to, rate });
   }
@@ -114,6 +113,7 @@ class CameraOnScroll {
       }
     }).catch((error) => {
       this.store.unLockScroll();
+      console.log({ error })
       throw new Error(error);
     });
   }

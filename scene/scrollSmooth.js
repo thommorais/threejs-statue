@@ -38,13 +38,13 @@ class SmoothScroller extends ScrollCamera {
 
   initScrollBody() {
     Scrollbar.use(LockPlugin);
-    const { locked, gpuData } = this.store.getState();
 
-    const damping = clamp(1 / gpuData.tier, [0.33, 1]).toPrecision(2);
+    const { locked, gpuData } = this.store.getState();
+    const damping = clamp(1 / gpuData.tier, [0.66, 1]).toPrecision(2);
 
     this.bodyScrollBar = Scrollbar.init(this.scroller, {
       damping,
-      alwaysShowTracks: false,
+      alwaysShowTracks: true,
       continuousScrolling: false,
       delegateTo: document.body,
       track: {
@@ -94,9 +94,9 @@ class SmoothScroller extends ScrollCamera {
   }
 
   addEventListeners() {
-    this.scroller.addEventListener('wheel', this.handleMouseWheel.bind(this), { passive: false });
-    this.scroller.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
-    this.scroller.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+    this.scroller.addEventListener('wheel', this.handleMouseWheel.bind(this), { passive: true });
+    this.scroller.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
+    this.scroller.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: true });
   }
 
   getDirectionByDelta(deltaY) {
@@ -118,17 +118,12 @@ class SmoothScroller extends ScrollCamera {
     });
   }
 
-  changeScene({
-    from, to, direction, rate, scrollToY, duration,
-    ignoreCameraCurrentState = false,
-  }) {
+  changeScene({ from, to, direction, rate, scrollToY, duration, ignoreCameraCurrentState = false }) {
     this.store.lockScroll();
-    this.scrollTo({ scrollToY, givenDuration: duration });
-    this.triggerCameraScroll({
-      direction, from, to, rate,
-      ignoreCameraCurrentState
-    });
+    this.bodyScrollBar.updatePluginOptions('lock', { locked: true });
     this.store.setState({ scrollingStarted: false });
+    this.scrollTo({ scrollToY, givenDuration: duration });
+    this.triggerCameraScroll({ direction, from, to, rate, ignoreCameraCurrentState });
   }
 
   setScroolPosition({ scrollToY, withoutCallbacks = true }) {
@@ -179,44 +174,12 @@ class SmoothScroller extends ScrollCamera {
       }
     }
 
-
     this.store.setState({
       direction,
       cameraPose,
       rate,
       doCameraScroll: true,
     });
-  }
-
-  hasReachedBottom(currentIndex, threshold = 0) {
-    const {
-      scrollStatus, viewportHeight, sectionsRect, scrollMarginVP,
-    } = this.store.getState();
-    const {
-      offset: { y: scrollTop },
-    } = scrollStatus;
-
-    const scrollBottom = scrollTop + viewportHeight;
-
-    const { bottom } = sectionsRect[currentIndex];
-    return ((scrollBottom - scrollMarginVP) + threshold) >= bottom;
-  }
-
-  hasReachedTop(currentIndex, threshold = 0) {
-    const { scrollStatus, sectionsRect, scrollMarginVP } = this.store.getState();
-    const {
-      offset: { y: scrollTop },
-    } = scrollStatus;
-    const { top } = sectionsRect[currentIndex];
-
-    return (scrollTop) <= ((top - scrollMarginVP) + threshold);
-  }
-
-  getNextSceneBottom(currentIndex, direction) {
-    const { scenesCount, sectionsRect } = this.getCurrentScrollState(direction);
-    const nextPoint = clamp(currentIndex + (direction === NORMAL ? +1 : -1), [0, scenesCount]);
-    const { bottom } = sectionsRect[nextPoint];
-    return bottom;
   }
 
   getNextSceneTop(currentIndex, direction) {
@@ -248,13 +211,10 @@ class SmoothScroller extends ScrollCamera {
   getCurrentScrollStatus() {
     const { scrollStatus, sectionsRect, viewportHeight } = this.store.getState();
     const { offset: { y: scrollTop } } = scrollStatus;
-
     const currentIndex = this.getCurrentSectionIndex(scrollTop);
-
     const scrollBottom = scrollTop + viewportHeight;
     const currentScene = sectionsRect[currentIndex];
     const scenesCount = sectionsRect.length - 1;
-
     const isFirstScene = currentIndex === 0;
     const isLastScene = currentIndex === sectionsRect.length - 1;
 
@@ -264,7 +224,7 @@ class SmoothScroller extends ScrollCamera {
   }
 
   handleScroll({ deltaY }) {
-    const { scrollMarginVP, locked } = this.store.getState();
+    const { scrollMarginVP } = this.store.getState();
 
     const {
       currentIndex,
@@ -273,9 +233,10 @@ class SmoothScroller extends ScrollCamera {
       scrollTop,
     } = this.getCurrentScrollStatus();
 
+    const { locked } = this.store.getState();
     const { direction, goingDown } = this.getDirectionByDelta(deltaY);
 
-    if (locked || isLastScene) {
+    if (isLastScene || locked) {
       return;
     }
 
@@ -294,15 +255,12 @@ class SmoothScroller extends ScrollCamera {
           duration: 600,
         });
       }
-    }
-
-    if (!goingDown) {
+    } else {
       const bottom = this.getCurrentSceneBottom(currentIndex);
       const enough = isNumberInRange(scrollTop, [(bottom - scrollMarginVP), (bottom + scrollMarginVP)])
       if (enough) {
         const from = currentIndex + 1;
         const to = currentIndex;
-
         this.changeScene({
           from,
           to,
@@ -314,8 +272,8 @@ class SmoothScroller extends ScrollCamera {
     }
   }
 
-  handleMouseWheel({ deltaY }) {
-    this.handleScroll({ deltaY });
+  handleMouseWheel(event) {
+    this.handleScroll({ deltaY: event.deltaY });
   }
 
   handleTouchStart({ touches }) {
