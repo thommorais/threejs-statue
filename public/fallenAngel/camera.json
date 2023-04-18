@@ -34,7 +34,7 @@
                       0.5,
                       0
                     ],
-                    "value": -0.75
+                    "value": 0
                   },
                   {
                     "id": "f1mkjfHCoX",
@@ -268,7 +268,7 @@
                       0.5,
                       0
                     ],
-                    "value": -0.75
+                    "value": 0
                   },
                   {
                     "id": "4qoKTfHwRp",
@@ -492,6 +492,7 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "Xp7AxAd4tzyVCJuG",
     "Hs8c0lMct-2c3Y41",
     "bhoPsRBgvLNY8ioF",
     "ChBQ3cOHQbw_6sIU",
