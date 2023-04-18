@@ -70,7 +70,7 @@
                       0.5,
                       0
                     ],
-                    "value": -0.75
+                    "value": 0
                   },
                   {
                     "id": "K3gv6JHgaO",
@@ -304,7 +304,7 @@
                       0.5,
                       0
                     ],
-                    "value": -0.75
+                    "value": 0
                   },
                   {
                     "id": "kUBz2UN3Jh",
@@ -492,6 +492,7 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "ksGaxHo3JQe8rAFQ",
     "CgO5hpDgqYJ9I3pR",
     "Xp7AxAd4tzyVCJuG",
     "Hs8c0lMct-2c3Y41",
