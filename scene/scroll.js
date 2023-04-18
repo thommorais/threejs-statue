@@ -15,7 +15,6 @@ class ScrollHandler extends ScrollSmoth {
 	init() {
 		this.fetchCameraPositions().then((cameraPositions) => { this.loadProject(cameraPositions) });
 		this.saveSections();
-		this.onResize();
 		this.initScrollBody();
 		this.initialized = true;
 	}
@@ -51,17 +50,22 @@ class ScrollHandler extends ScrollSmoth {
 	saveSections() {
 		this.sections = [...(document.querySelectorAll(this.options.sectionSelectors) || [])];
 		this.store.setState({ sections: this.sections, sectionsCount: this.sections.length });
+		this.getSectionsRect(this.sections)
 	}
 
-	onResize() {
-		const sectionsRect = this.sections.map((section) => {
+	getSectionsRect(sections) {
+		const sectionsRect = sections.map((section) => {
 			const { top, bottom } = section.getBoundingClientRect();
-			return { top, bottom: bottom - 1 };
+			return { top, bottom };
 		});
 
 		const viewportHeight = window.innerHeight;
-		const scrollMarginVP = clamp( Math.abs(Math.floor(viewportHeight * 0.05)), [10, 40])
+		const scrollMarginVP = clamp(Math.abs(Math.floor(viewportHeight * 0.05)), [10, 40])
 		this.store.setState({ sectionsRect, viewportHeight, scrollMarginVP });
+	}
+
+	onResize() {
+		this.getSectionsRect(this.sections);
 	}
 }
 

@@ -7,7 +7,7 @@ import vertexShader from './shaders/sparks.vertex.glsl'
 import { randomIntFromInterval, clamp } from './utils'
 
 const classIntervals = {
-	demon: [0.85, 2],
+	'fallenAngel': [0.85, 2],
 	mage: [1.25, 3],
 	barbarian: [0.5, 2.5],
 }
@@ -35,7 +35,6 @@ class Sparks {
 		this.updateWindowDimensions()
 		this.createParticles()
 		this.updateSparksByCharacterClass().then((sparks) => {
-			console.log('teste')
 			this.sparks = sparks
 			this.scene.add(sparks)
 			this.runDrawLoop(classIntervals[this.characterClass], 100)
@@ -53,13 +52,13 @@ class Sparks {
 	updateWindowDimensions() {
 		const h = {
 			'mage': 1.5,
-			'demon': 2.25,
+			'fallenAngel': 2.25,
 			'barbarian': 2.5,
 		}[this.characterClass]
 
 		const a = {
 			'mage': 1,
-			'demon': 1,
+			'fallenAngel': 1,
 			'barbarian': 1.5,
 		}[this.characterClass]
 
@@ -134,9 +133,9 @@ class Sparks {
 
 			}
 
-			if (this.characterClass === 'demon') {
-				 depth = clamp(base * 2, [12, 16])
-				 count = this.count * 1.25
+			if (this.characterClass === 'fallenAngel') {
+				depth = clamp(base * 2, [12, 16])
+				count = this.count * 1.25
 				this.sparks.material.uniforms.u_windY.value = -0.75
 				this.sparks.material.uniforms.u_temporalFrequency.value = 0.0015
 				this.sparks.material.uniforms.u_tailLength.value = 0.025

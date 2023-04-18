@@ -87,7 +87,7 @@ class CameraOnScroll {
 
   // eslint-disable-next-line consistent-return
   changeCameraPose({
-    from, to, rate = 0.33, keepScrollLocked = false,
+    from, to, rate = 0.66, keepScrollLocked = false,
   }) {
     let direction = NORMAL;
 
@@ -96,10 +96,6 @@ class CameraOnScroll {
     }
 
     const range = direction === NORMAL ? [from, to] : [to, from];
-
-    if (Math.abs(range[0] - range[1]) === 0) {
-      return null;
-    }
 
     this.store.setState({ cameraTransitionComplete: false });
 

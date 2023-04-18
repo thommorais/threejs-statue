@@ -19,6 +19,7 @@
     "@theatre/studio": "^0.5.0",
     "comlink": "^4.4.1",
     "detect-gpu": "^5.0.16",
+    "scrollmagic": "^2.0.8",
     "smooth-scrollbar": "^8.8.1",
     "three": "^0.149.0",
     "vite-plugin-glsl": "^0.5.1",

@@ -58,7 +58,7 @@ vec3 spectrum(float b, float c) {
 
   bool mage = c == 1.0;
   bool barbarian = c == 2.0;
-  // bool demon = c == 0.0;
+  // bool fallenAngel = c == 0.0;
 
 
     return mage ? vec3(b * 2.0, b * 1.5, b * 0.5) :
@@ -77,11 +77,11 @@ void main() {
   float cc = u_characterClass;
   // bool mage = cc == 1.0;
   bool barbarian = cc == 2.0;
-  bool demon = cc == 0.0;
+  bool fallenAngel = cc == 0.0;
 
   float cy = 1.0;
   cy = barbarian ? 1.05 : cy;
-  cy = demon ? 1.2 : cy;
+  cy = fallenAngel ? 1.2 : cy;
   // cy = mage ? 1.0 : cy;
 
   vec3 p = aPos;

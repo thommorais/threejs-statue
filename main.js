@@ -19,13 +19,15 @@ const params = getQueryParams(document.location.search)
 
 let { class: characterClass, dev, fps } = params
 
-if (['barbarian', 'demon', 'mage'].includes(characterClass)) {
+if (['barbarian', 'fallenAngel', 'mage'].includes(characterClass)) {
 	characterClass = characterClass
 } else {
 	characterClass = 'barbarian'
 }
 
-const characterPath = `${characterClass}/scene.glb`
+
+
+const characterPath = `o/${characterClass}-d.glb`
 
 const scrollToTop = document.querySelector('.scrollToTop')
 

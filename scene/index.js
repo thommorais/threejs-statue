@@ -88,7 +88,7 @@ class Scene extends Stage {
 
 
 	init(options) {
-		this.validateInit({ characterClass: 'demon', ...options });
+		this.validateInit({ characterClass: 'fallenAngel', ...options });
 
 		this.initStage(this.store)
 

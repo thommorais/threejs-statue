@@ -113,7 +113,7 @@ meter {
 	/* pointer-events: none; */
 }
 
-.container-3d:after{
+.container-3d:after {
 	content: '';
 	position: absolute;
 	top: 0;
@@ -125,7 +125,7 @@ meter {
 	z-index: 100;
 }
 
-.container-3d:before{
+.container-3d:before {
 	content: '';
 	position: absolute;
 	top: 63.5%;
@@ -149,11 +149,18 @@ meter {
 .chapter {
 	position: relative;
 	z-index: 4;
-	height: 100svh;
 	width: 100vw;
 	display: grid;
 	--opacity: 0;
-	opacity: var(--opacity);
+	opacity: 1;
+}
+
+.chapter:not(:last-child) {
+	height: 100svh;
+}
+
+.chapter:last-child {
+	height: 150svh;
 }
 
 .chapter h2 {
@@ -192,16 +199,15 @@ meter {
   height: 100vmin;
 } */
 
-.scrollToTop{
+.scrollToTop {
 	position: absolute;
 	bottom: 2dvh;
 	left: 50%;
 	transform: translateX(-50%);
-	background: rgba(10,10,10,0.9);
+	background: rgba(10, 10, 10, 0.9);
 	color: #fff;
 	padding: 1rem 2rem;
 	margin: 0 auto;
-
 }
 
 .scroll-top {
@@ -210,6 +216,20 @@ meter {
 	width: 10px;
 	background: #f00;
 	z-index: 100;
+}
+
+body {
+	position: relative;
+}
+
+#target {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	translate: -50% -50%;
+	padding: 1rem;
+	z-index: 100;
+	background: black;
 }
 
 @media (hover: hover) and (pointer: fine) {

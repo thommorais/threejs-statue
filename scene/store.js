@@ -133,19 +133,19 @@ class Store {
 
 		const modelState = {
 			classColors: {
-				demon: [0xc9bbff, 0xff3d0c, 0xff0633, 0xc9bbff],
+				'fallenAngel': [0xc9bbff, 0xff3d0c, 0xff0633, 0xc9bbff],
 				mage: [0xbd50ff, 0xff6b47, 0xff03a5, 0xbd50ff],
 				barbarian: [0xbf744a, 0xff7a50, 0xff7760, 0xbf744a]
 			},
 
 			backgroundColors: {
 				mage: 0x7c00ff,
-				demon: 0xff0000,
+				'fallenAngel': 0xff0000,
 				barbarian: 0xFF401A,
 			},
 
 			characterClassUniform: {
-				demon: 0.0,
+				'fallenAngel': 0.0,
 				barbarian: 1.0,
 				mage: 2.0,
 			},
@@ -289,7 +289,7 @@ class Store {
 		this.setState({ locked: false });
 	}
 
-	setScenePose({ to, from, duration = 200, camera = {}, keepScrollLocked = true,  ignoreCameraCurrentState = false }) {
+	setScenePose({ to, from, duration = 200, camera = {}, keepScrollLocked = true, ignoreCameraCurrentState = false }) {
 
 		// check if to and f are valid numbers
 		if (!isNumber(to)) {
