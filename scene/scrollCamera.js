@@ -97,6 +97,10 @@ class CameraOnScroll {
 
     const range = direction === NORMAL ? [from, to] : [to, from];
 
+    if (Math.abs(range[0] - range[1]) === 0) {
+      return null;
+    }
+
     this.store.setState({ cameraTransitionComplete: false });
 
     this.sheet.sequence.play({ direction, range, rate }).then((done) => {
