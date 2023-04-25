@@ -25,8 +25,6 @@ if (['barbarian', 'fallenAngel', 'mage'].includes(characterClass)) {
 	characterClass = 'barbarian'
 }
 
-
-
 const characterPath = `o/${characterClass}-d.glb`
 
 const scrollToTop = document.querySelector('.scrollToTop')

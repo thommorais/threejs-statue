@@ -100,28 +100,28 @@ class SmoothScroller extends ScrollCamera {
               from,
               to,
               direction,
-              scrollToY: sectionsRect[to].top + 2,
+              scrollToY: sectionsRect[to].top + 10,
               duration: 600,
             })
 
           }
 
 
-          const progressIsInRange = isNumberInRange(progress, [0.85, 1])
+          console.log(progress)
 
-          if (direction === REVERSE && progressIsInRange && !isLastScene) {
-            const to = max(index, 0)
-            const from = min(index + 1, sections.length - 1)
+          // if (direction === REVERSE && !isLastScene) {
+          //   const to = max(index, 0)
+          //   const from = min(index + 1, sections.length - 1)
 
 
-            this.changeScene({
-              from,
-              to,
-              direction,
-              scrollToY: sectionsRect[to].bottom - (viewportHeight),
-              duration: 600,
-            })
-          }
+          //   this.changeScene({
+          //     from,
+          //     to,
+          //     direction,
+          //     scrollToY: sectionsRect[to].bottom - (viewportHeight),
+          //     duration: 600,
+          //   })
+          // }
         })
     }
   }
