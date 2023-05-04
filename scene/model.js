@@ -7,6 +7,7 @@ function getModel(modelPath, store) {
         try {
 
             const dracoLoader = new DRACOLoader();
+            dracoLoader.dispose();
             const loader = new GLTFLoader();
 
             dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
