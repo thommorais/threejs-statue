@@ -30,6 +30,8 @@ const characterPath = `o/${characterClass}-d.glb`
 const scrollToTop = document.querySelector('.scrollToTop')
 
 try {
+
+
 	const myScene = new Scene()
 
 	myScene.init({
@@ -81,6 +83,7 @@ try {
 
 		}
 	}, ['sections', 'sectionCurrent', 'cameraTransitionComplete', 'scrollingStarted']);
+
 
 } catch (e) {
 	console.log(e)

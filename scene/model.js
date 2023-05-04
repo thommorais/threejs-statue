@@ -50,6 +50,7 @@ function getModel(modelPath, store) {
                 if (modelLoadingProgress < 100) {
                     store.setState({ modelLoadingProgress: 100 });
                 }
+                box.name = 'character'
                 resolve(box);
             }).catch((error) => {
                 store.setState({ modelLoadingProgress: 0, modelError: error });

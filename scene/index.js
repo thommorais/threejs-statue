@@ -17,6 +17,7 @@ import Stats from './stats'
 import Dev from './dev';
 
 
+import { Cache, Mesh } from 'three';
 
 const classDefaults = {
 	update() { },
@@ -106,9 +107,36 @@ class Scene extends Stage {
 
 
 			this.initialized = true;
+
+
+		})
+
+		const btns = [...document.querySelectorAll('.character-selector')]
+		console.log(this.renderer.info)
+
+		btns.forEach((btn) => {
+
+			if (btn.dataset.character === this.options.characterClass) {
+				btn.classList.add('active')
+			}
+
+			btn.addEventListener('click', () => {
+				const { character } = btn.dataset
+				if (character) {
+					this.clearMemory()
+					window.location.href = `?class=${character}`
+				}
+			})
+		})
+
+
+		// on page leave clean up memory
+		window.addEventListener('beforeunload', () => {
+			this.clearMemory()
 		})
 
 	}
+
 
 
 	addTools() {
@@ -198,6 +226,7 @@ class Scene extends Stage {
 			if (this.showFPS) {
 				this.stats.update();
 			}
+
 		});
 
 
@@ -267,6 +296,33 @@ class Scene extends Stage {
 		})
 	}
 
+	clearMemory() {
+		this.renderer.info.reset()
+		this.renderer.dispose();
+
+		for (let i = 0; i < this.scene.children.length; i++) {
+
+			const object = this.scene.children[i]
+
+			if (object.name === 'character') {
+				object.traverse(disposeNode)
+			}
+
+			if (!object.isMesh) return
+
+			object.geometry.dispose()
+
+			if (object.material.isMaterial) {
+				cleanMaterial(object.material)
+			}
+
+			this.scene.remove(object)
+		}
+
+		this.scene.dispose();
+		Cache.clear();
+	}
+
 	subscribe(callback, key) {
 		if (typeof callback === 'function') {
 			this.store.subscribe(callback, key);
@@ -274,4 +330,14 @@ class Scene extends Stage {
 	}
 }
 
+
+const cleanMaterial = material => {
+	material.dispose()
+	for (const key of Object.keys(material)) {
+		const value = material[key]
+		if (value && typeof value === 'object' && 'minFilter' in value) {
+			value.dispose()
+		}
+	}
+}
 export default Scene;
