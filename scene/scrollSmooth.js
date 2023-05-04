@@ -4,7 +4,7 @@
 import Scrollbar from 'smooth-scrollbar'
 import ScrollMagic from 'scrollmagic'
 
-import 'scrollmagic/scrollmagic/minified/plugins/debug.addIndicators.min.js'
+// import 'scrollmagic/scrollmagic/minified/plugins/debug.addIndicators.min.js'
 
 import { max, min, clamp, NORMAL, REVERSE, isNumberInRange, checkDirection } from './utils'
 import { LockPlugin } from './scrollPlugin'
@@ -39,12 +39,13 @@ class SmoothScroller extends ScrollCamera {
     })
 
     this.scrollDirection = NORMAL
+    this.transitioning = false
   }
 
   initScrollBody() {
     Scrollbar.use(LockPlugin)
 
-    const { locked, gpuData } = this.store.getState()
+    const { locked } = this.store.getState()
 
     this.bodyScrollBar = Scrollbar.init(this.scroller, {
       damping: 1,
@@ -73,11 +74,14 @@ class SmoothScroller extends ScrollCamera {
     }, 'locked')
 
     const { sectionsRect, sections, viewportHeight } = this.store.getState()
+    const { scenesCount } = this.getCurrentScrollState()
 
     for (let index = 0; index < sections.length; index += 1) {
       const section = sections[index]
       const title = section.querySelector('h2')
       const name = `section ${title.innerText}`
+      const discount = viewportHeight * 0.025
+      const duration = 600
 
       new ScrollMagic.Scene({
         triggerElement: section,
@@ -86,42 +90,35 @@ class SmoothScroller extends ScrollCamera {
         offset: 0,
       })
         .addTo(this.sMC)
-        .addIndicators({ name })
+        // .addIndicators({ name })
         .on('progress', ({ progress }) => {
-          const { isLastScene } = this.getCurrentScrollStatus()
+
+          const isLastScene = index === scenesCount
+
+          if (this.transitioning || isLastScene) {
+            return
+          }
 
           const direction = this.scrollDirection
 
-          if (direction === NORMAL && progress > 0.15 && !isLastScene) {
-            const to = min(index + 1, sections.length - 1)
+          if (direction === NORMAL && progress > 0.25) {
+            const to = min(index + 1, scenesCount)
             const from = max(index, 0)
-
-            this.changeScene({
-              from,
-              to,
-              direction,
-              scrollToY: sectionsRect[to].top + 10,
-              duration: 600,
-            })
-
+            const scrollToY = sectionsRect[to].top + 10
+            this.changeScene({ from, to, direction, scrollToY, duration })
+            this.transitioning = true
+            return
           }
 
+          if (direction === REVERSE && isNumberInRange(progress, [0.40, 0.95])) {
+            const to = max(index, 0)
+            const from = min(index + 1, scenesCount)
+            const scrollToY = (sectionsRect[to].bottom - viewportHeight) + discount
+            this.changeScene({ from, to, direction, scrollToY, duration })
+            this.transitioning = true
+            return
+          }
 
-          console.log(progress)
-
-          // if (direction === REVERSE && !isLastScene) {
-          //   const to = max(index, 0)
-          //   const from = min(index + 1, sections.length - 1)
-
-
-          //   this.changeScene({
-          //     from,
-          //     to,
-          //     direction,
-          //     scrollToY: sectionsRect[to].bottom - (viewportHeight),
-          //     duration: 600,
-          //   })
-          // }
         })
     }
   }
@@ -166,7 +163,7 @@ class SmoothScroller extends ScrollCamera {
       callback: () => {
         const currentIndex = this.getCurrentSectionIndex(scrollToY)
         this.store.setState({ sectionCurrent: currentIndex, sectionTransitionComplete: true })
-
+        this.transitioning = false
         if (typeof callback === 'function') {
           callback()
         }
@@ -267,8 +264,6 @@ class SmoothScroller extends ScrollCamera {
     const scrollBottom = scrollTop + viewportHeight
     const currentScene = sectionsRect[currentIndex]
     const scenesCount = sectionsRect.length - 1
-    const isFirstScene = currentIndex === 0
-    const isLastScene = currentIndex === sectionsRect.length - 1
 
     return {
       scenesCount,
@@ -276,8 +271,6 @@ class SmoothScroller extends ScrollCamera {
       scrollTop,
       scrollBottom,
       currentScene,
-      isFirstScene,
-      isLastScene,
       viewportHeight,
     }
   }

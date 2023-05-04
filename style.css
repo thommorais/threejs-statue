@@ -113,27 +113,28 @@ meter {
 	/* pointer-events: none; */
 }
 
+.container-3d:before,
 .container-3d:after {
 	content: '';
 	position: absolute;
+	z-index: 100;
+	background: red;
+	display: none;
+}
+
+.container-3d:after {
 	top: 0;
 	left: 50%;
 	height: 100svh;
 	width: 1px;
 	translate: -50% 0;
-	background: red;
-	z-index: 100;
 }
 
 .container-3d:before {
-	content: '';
-	position: absolute;
 	top: 63.5%;
 	left: 0;
 	width: 100svw;
 	height: 1px;
-	background: red;
-	z-index: 100;
 }
 
 #app {
@@ -222,15 +223,6 @@ body {
 	position: relative;
 }
 
-#target {
-	position: fixed;
-	left: 50%;
-	top: 50%;
-	translate: -50% -50%;
-	padding: 1rem;
-	z-index: 100;
-	background: black;
-}
 
 @media (hover: hover) and (pointer: fine) {
 	body:hover .debug {
