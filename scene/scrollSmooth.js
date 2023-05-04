@@ -101,7 +101,7 @@ class SmoothScroller extends ScrollCamera {
 
           const direction = this.scrollDirection
 
-          if (direction === NORMAL && progress > 0.25) {
+          if (direction === NORMAL && progress > 0.1) {
             const to = min(index + 1, scenesCount)
             const from = max(index, 0)
             const scrollToY = sectionsRect[to].top + 10
