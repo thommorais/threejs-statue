@@ -31,6 +31,21 @@ const scrollToTop = document.querySelector('.scrollToTop')
 
 try {
 
+	const btns = [...document.querySelectorAll('.character-selector')]
+
+	btns.forEach((btn) => {
+
+		if (btn.dataset.character === characterClass) {
+			btn.classList.add('active')
+		}
+
+		btn.addEventListener('click', () => {
+			const { character } = btn.dataset
+			if (character) {
+				window.location.href = `?class=${character}`
+			}
+		})
+	})
 
 	const myScene = new Scene()
 

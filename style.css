@@ -246,7 +246,7 @@ body {
 	background: hsla(0, 0%, 100%, 0.9);
 	color: #f00;
 	outline: #fff;
-	outline-offset: 1px;
+	outline-offset: 2px;
 	outline-style: solid;
 	outline-width: 3px;
 }

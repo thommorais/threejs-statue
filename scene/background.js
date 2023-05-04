@@ -58,7 +58,7 @@ class Background {
 			cloud.rotation.z = randomIntFromInterval(-5, 15)
 
 			cloud.material.opacity = 0.55
-			cloud.name = `${cloud}-${count}`
+			cloud.name = `cloud-${count}`
 			this.Clouds.add(cloud)
 		}
 

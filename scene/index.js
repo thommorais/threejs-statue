@@ -17,7 +17,7 @@ import Stats from './stats'
 import Dev from './dev';
 
 
-import { Cache, Mesh } from 'three';
+import { Cache } from 'three';
 
 const classDefaults = {
 	update() { },
@@ -30,6 +30,7 @@ window.mobileDebug = classDefaults;
 class Scene extends Stage {
 	constructor() {
 		super();
+		Cache.enabled = true;
 
 		this.store = new Store();
 
@@ -98,37 +99,16 @@ class Scene extends Stage {
 		this.getGPUdata().finally(() => {
 
 			tasks.pushTask(() => { this.setupBackground(); });
+
 			if (!this.devMode) {
 				tasks.pushTask(() => { this.setTupScroll(); });
 				tasks.pushTask(() => { this.turnOnTheLights(); });
 				tasks.pushTask(() => { this.addModel(); });
 			}
+
 			tasks.pushTask(() => { this.setAnimation(); });
-
-
 			this.initialized = true;
-
-
 		})
-
-		const btns = [...document.querySelectorAll('.character-selector')]
-		console.log(this.renderer.info)
-
-		btns.forEach((btn) => {
-
-			if (btn.dataset.character === this.options.characterClass) {
-				btn.classList.add('active')
-			}
-
-			btn.addEventListener('click', () => {
-				const { character } = btn.dataset
-				if (character) {
-					this.clearMemory()
-					window.location.href = `?class=${character}`
-				}
-			})
-		})
-
 
 		// on page leave clean up memory
 		window.addEventListener('beforeunload', () => {
@@ -184,6 +164,7 @@ class Scene extends Stage {
 		}).catch((error) => {
 			throw new Error(error);
 		})
+
 	}
 
 	turnOnTheLights() {
@@ -226,9 +207,7 @@ class Scene extends Stage {
 			if (this.showFPS) {
 				this.stats.update();
 			}
-
 		});
-
 
 	}
 
@@ -297,36 +276,44 @@ class Scene extends Stage {
 	}
 
 	clearMemory() {
-		this.renderer.info.reset()
-		this.renderer.dispose();
 
 		for (let i = 0; i < this.scene.children.length; i++) {
-
 			const object = this.scene.children[i]
-
-			if (object.name === 'character') {
-				object.traverse(disposeNode)
-			}
-
-			if (!object.isMesh) return
-
-			object.geometry.dispose()
-
-			if (object.material.isMaterial) {
-				cleanMaterial(object.material)
-			}
-
+			disposeNode(object)
 			this.scene.remove(object)
 		}
+		this.renderer.renderLists.dispose();
+		this.renderer.dispose();
 
-		this.scene.dispose();
-		Cache.clear();
+		Cache.clear()
+
+		console.log(this.renderer.info)
 	}
 
 	subscribe(callback, key) {
 		if (typeof callback === 'function') {
 			this.store.subscribe(callback, key);
 		}
+	}
+}
+
+
+const disposeNode = node => {
+	console.log(node)
+	if (node.isMesh) {
+		node.geometry.dispose()
+
+		if (node.material.isMaterial) {
+			cleanMaterial(node.material)
+		}
+	}
+
+	if (node.dispose) {
+		node.dispose()
+	}
+
+	if (node.children) {
+		node.children.forEach(disposeNode)
 	}
 }
 
