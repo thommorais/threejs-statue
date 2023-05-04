@@ -1,4 +1,4 @@
-import { SpotLight } from 'three';
+import { SpotLight, LinearSRGBColorSpace } from 'three';
 
 const LIGHTS_CONFIG = [
 	{
@@ -48,7 +48,9 @@ class Lights {
 
 		this.lights = LIGHTS_CONFIG.map((config, index) => {
 			const color = classColors[this.characterClass][index];
+			console.log()
 			const light = new SpotLight(color, 1);
+			light.color.setHex(color, LinearSRGBColorSpace)
 			light.distance = config.distance;
 			light.position.set(...config.position);
 			light.intensity = config.intensity * this.intensityFactor;

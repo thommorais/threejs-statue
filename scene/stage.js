@@ -1,7 +1,7 @@
 import { getDefaultSizes } from './utils';
 import {
 	WebGLRenderer,
-	sRGBEncoding,
+	SRGBColorSpace,
 	ACESFilmicToneMapping,
 	Scene,
 	PerspectiveCamera,
@@ -50,8 +50,8 @@ class Stage {
 		});
 
 
-		this.renderer.physicallyCorrectLights = true;
-		this.renderer.outputEncoding = sRGBEncoding;
+		this.renderer.useLegacyLights = false;
+		this.renderer.outputColorSpace = SRGBColorSpace;
 		this.renderer.toneMapping = ACESFilmicToneMapping;
 		this.renderer.toneMappingExposure = 1.25;
 
