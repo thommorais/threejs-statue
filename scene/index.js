@@ -21,8 +21,6 @@ import Dev from './dev';
 
 import { Cache } from 'three';
 
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-
 
 const classDefaults = {
 	update() { },
@@ -115,16 +113,10 @@ class Scene extends Stage {
 			this.initialized = true;
 		})
 
-		// on page leave clean up memory
-		window.addEventListener('beforeunload', () => {
-			// // long task here
-
-			for (let i = 0; i < this.scene.children.length; i++) {
-				console.log
-			}
-
-			this.clearMemory()
-		})
+		// // on page leave clean up memory
+		// window.addEventListener('beforeunload', () => {
+		// 	this.clearMemory()
+		// })
 
 	}
 
@@ -290,7 +282,6 @@ class Scene extends Stage {
 		clearThreeJSMemory(this.scene)
 		this.renderer.renderLists.dispose();
 		this.renderer.dispose();
-		console.log(DRACOLoader)
 		Cache.clear()
 		return new Promise((resolve) => {
 			resolve(this.renderer.info)

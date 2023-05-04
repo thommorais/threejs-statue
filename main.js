@@ -27,7 +27,6 @@ if (['barbarian', 'fallenAngel', 'mage'].includes(characterClass)) {
 
 const characterPath = `o/${characterClass}-d.glb`
 
-const scrollToTop = document.querySelector('.scrollToTop')
 
 try {
 
@@ -53,6 +52,12 @@ try {
 	})
 
 
+	const clearMemoryBTN = document.querySelector('.clearMemory')
+	clearMemoryBTN.addEventListener('click', () => {
+		myScene.clearMemory()
+	})
+
+
 	myScene.init({
 		characterClass,
 		characterPath,
@@ -70,12 +75,6 @@ try {
 			if (modelLoadingProgress === 100) {
 				myScene.unLockScroll()
 				myScene.setCameraPose({ from: 0, to: 1 })
-				scrollToTop.addEventListener('click', () => {
-					myScene
-						.setScenePose({ from: 4, to: 0, duration: 500, camera: { from: 5, to: 1, rate: 5 }, ignoreCameraCurrentState: true })
-						.then(myScene.unLockScroll.bind(myScene))
-				})
-
 			}
 		},
 		['modelLoadingProgress'],

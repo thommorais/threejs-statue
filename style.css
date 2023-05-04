@@ -194,30 +194,10 @@ meter {
 	place-self: end;
 }
 
-/* html, body{
+html, body{
   smooth-scrolling: touch;
-  width: 100vmin;
-  height: 100vmin;
-} */
-
-.scrollToTop {
-	position: absolute;
-	bottom: 2dvh;
-	left: 50%;
-	transform: translateX(-50%);
-	background: rgba(10, 10, 10, 0.9);
-	color: #fff;
-	padding: 1rem 2rem;
-	margin: 0 auto;
 }
 
-.scroll-top {
-	position: fixed;
-	height: 5px;
-	width: 10px;
-	background: #f00;
-	z-index: 100;
-}
 
 body {
 	position: relative;
@@ -249,6 +229,15 @@ body {
 	outline-offset: 2px;
 	outline-style: solid;
 	outline-width: 3px;
+}
+
+.clearMemory{
+	position: fixed;
+	bottom: 1vh;
+	left: 1vh;
+	z-index: 100;
+	padding: 1rem;
+	cursor: pointer;
 }
 
 

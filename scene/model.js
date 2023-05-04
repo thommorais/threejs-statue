@@ -17,6 +17,10 @@ function getModel(modelPath, store) {
                 reject(new Error('modelPath is required'));
             }
 
+            window.addEventListener('beforeunload', () => {
+                dracoLoader.dispose();
+            })
+
 
             const onProgress = (xhr) => {
                 if (xhr.lengthComputable) {
