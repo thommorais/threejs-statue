@@ -44,9 +44,10 @@ try {
 		btn.addEventListener('click', () => {
 			const { character } = btn.dataset
 			if (character) {
-				myScene.clearMemory()
-				alert('clearMemory')
-				window.location.href = `?class=${character}`
+				myScene.clearMemory().then(() => {
+					window.location.href = `?class=${character}`
+				})
+
 			}
 		})
 	})

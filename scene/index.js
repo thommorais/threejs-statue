@@ -288,6 +288,9 @@ class Scene extends Stage {
 		this.renderer.renderLists.dispose();
 		this.renderer.dispose();
 		Cache.clear()
+		return new Promise((resolve) => {
+			resolve(this.renderer.info)
+		})
 	}
 
 	subscribe(callback, key) {
