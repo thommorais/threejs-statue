@@ -9,6 +9,8 @@ import Sparks from './sparks';
 
 import MobileDebugOverlay from './mobileDebug';
 
+import clearThreeJSMemory from './clearThreeJSMemory';
+
 import tasks from './globalTaskQueue';
 
 import { getGPUTier } from 'detect-gpu';
@@ -112,6 +114,12 @@ class Scene extends Stage {
 
 		// on page leave clean up memory
 		window.addEventListener('beforeunload', () => {
+			// // long task here
+
+			for (let i = 0; i < this.scene.children.length; i++) {
+				console.log
+			}
+
 			this.clearMemory()
 		})
 
@@ -276,18 +284,10 @@ class Scene extends Stage {
 	}
 
 	clearMemory() {
-
-		for (let i = 0; i < this.scene.children.length; i++) {
-			const object = this.scene.children[i]
-			disposeNode(object)
-			this.scene.remove(object)
-		}
+		clearThreeJSMemory(this.scene)
 		this.renderer.renderLists.dispose();
 		this.renderer.dispose();
-
 		Cache.clear()
-
-		console.log(this.renderer.info)
 	}
 
 	subscribe(callback, key) {
@@ -297,34 +297,4 @@ class Scene extends Stage {
 	}
 }
 
-
-const disposeNode = node => {
-	console.log(node)
-	if (node.isMesh) {
-		node.geometry.dispose()
-
-		if (node.material.isMaterial) {
-			cleanMaterial(node.material)
-		}
-	}
-
-	if (node.dispose) {
-		node.dispose()
-	}
-
-	if (node.children) {
-		node.children.forEach(disposeNode)
-	}
-}
-
-
-const cleanMaterial = material => {
-	material.dispose()
-	for (const key of Object.keys(material)) {
-		const value = material[key]
-		if (value && typeof value === 'object' && 'minFilter' in value) {
-			value.dispose()
-		}
-	}
-}
 export default Scene;

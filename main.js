@@ -31,6 +31,8 @@ const scrollToTop = document.querySelector('.scrollToTop')
 
 try {
 
+	const myScene = new Scene()
+
 	const btns = [...document.querySelectorAll('.character-selector')]
 
 	btns.forEach((btn) => {
@@ -42,12 +44,13 @@ try {
 		btn.addEventListener('click', () => {
 			const { character } = btn.dataset
 			if (character) {
+				myScene.clearMemory()
+				alert('clearMemory')
 				window.location.href = `?class=${character}`
 			}
 		})
 	})
 
-	const myScene = new Scene()
 
 	myScene.init({
 		characterClass,
