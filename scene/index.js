@@ -101,12 +101,11 @@ class Scene extends Stage {
 
 		this.getGPUdata().finally(() => {
 
-			tasks.pushTask(() => { this.setupBackground(); });
-
 			if (!this.devMode) {
-				tasks.pushTask(() => { this.setTupScroll(); });
-				tasks.pushTask(() => { this.turnOnTheLights(); });
-				tasks.pushTask(() => { this.addModel(); });
+				this.setupBackground();
+				this.setTupScroll();
+				this.turnOnTheLights();
+				this.addModel();
 			}
 
 			tasks.pushTask(() => { this.setAnimation(); });

@@ -17,8 +17,6 @@ function disposeMaterial(material) {
 }
 
 
-
-
 function disposeResources(object) {
     if (object.geometry) {
         object.geometry.dispose();
