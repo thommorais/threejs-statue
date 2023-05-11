@@ -165,6 +165,7 @@ meter {
 }
 
 .chapter:last-child {
+	height: 150vh;
 	height: 150svh;
 }
 
