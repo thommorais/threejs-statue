@@ -107,6 +107,7 @@ meter {
 
 .container-3d {
 	position: relative;
+	height: 100vh;
 	height: 100svh;
 	overflow: hidden;
 	z-index: 4;
@@ -125,6 +126,7 @@ meter {
 .container-3d:after {
 	top: 0;
 	left: 50%;
+	height: 100vh;
 	height: 100svh;
 	width: 1px;
 	translate: -50% 0;
@@ -144,6 +146,7 @@ meter {
 	bottom: 0;
 	left: 0;
 	z-index: 3;
+	height: 100vh;
 	height: 100svh;
 }
 
@@ -157,6 +160,7 @@ meter {
 }
 
 .chapter:not(:last-child) {
+	height: 100vh;
 	height: 100svh;
 }
 
