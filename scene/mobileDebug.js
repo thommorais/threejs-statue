@@ -34,8 +34,6 @@ class MobileDebugOverlay {
             }
         }, 'modelLoadingProgress')
 
-
-
     }
 
     clearAll() {

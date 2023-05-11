@@ -278,13 +278,18 @@ class Scene extends Stage {
 	}
 
 	clearMemory() {
-		clearThreeJSMemory(this.scene)
-		this.renderer.renderLists.dispose();
-		this.renderer.dispose();
-		Cache.clear()
-		return new Promise((resolve) => {
-			resolve(this.renderer.info)
-		})
+		return new Promise((resolve, reject) => {
+			try {
+				this.renderer.setAnimationLoop(null);
+				clearThreeJSMemory(this.scene);
+				this.renderer.renderLists.dispose();
+				this.renderer.dispose();
+				Cache.clear();
+				resolve(this.renderer.info);
+			} catch (error) {
+				reject(error);
+			}
+		});
 	}
 
 	subscribe(callback, key) {

@@ -3,6 +3,7 @@
 /* eslint-disable max-len */
 import Scrollbar from 'smooth-scrollbar'
 import ScrollMagic from 'scrollmagic'
+import globalTaskQueue from './globalTaskQueue';
 
 // import 'scrollmagic/scrollmagic/minified/plugins/debug.addIndicators.min.js'
 
@@ -73,13 +74,11 @@ class SmoothScroller extends ScrollCamera {
       this.bodyScrollBar.updatePluginOptions('lock', { locked })
     }, 'locked')
 
-    const { sectionsRect, sections, viewportHeight } = this.store.getState()
+    const { sectionsRect, sections, viewportHeight, eventFromApi } = this.store.getState()
     const { scenesCount } = this.getCurrentScrollState()
 
     for (let index = 0; index < sections.length; index += 1) {
       const section = sections[index]
-      const title = section.querySelector('h2')
-      const name = `section ${title.innerText}`
       const discount = viewportHeight * 0.025
       const duration = 600
 
@@ -95,7 +94,7 @@ class SmoothScroller extends ScrollCamera {
 
           const isLastScene = index === scenesCount
 
-          if (this.transitioning || isLastScene) {
+          if (this.transitioning || isLastScene || eventFromApi) {
             return
           }
 
@@ -302,7 +301,7 @@ class SmoothScroller extends ScrollCamera {
       this.setScroolPosition({ scrollToY: fromtop })
 
       setTimeout(() => {
-        requestAnimationFrame(() => {
+        globalTaskQueue.pushTask(() => {
           const scrollToY = sectionsRect[sceneChange.to].bottom - viewportHeight
           this.changeScene({ ...sceneChange, ...sceneChange.camera, scrollToY })
         })
@@ -310,9 +309,9 @@ class SmoothScroller extends ScrollCamera {
     }
 
     if (sceneChange.direction === NORMAL) {
-      const { sectionsRect } = this.store.getState()
-      const nextSceneTop = sectionsRect[sceneChange.to].top
-      requestAnimationFrame(() => {
+      globalTaskQueue.pushTask(() => {
+        const { sectionsRect } = this.store.getState()
+        const nextSceneTop = sectionsRect[sceneChange.to].top
         this.changeScene({ ...sceneChange, ...sceneChange.camera, scrollToY: nextSceneTop })
       })
     }
@@ -327,7 +326,7 @@ class SmoothScroller extends ScrollCamera {
       this.setScroolPosition({ scrollToY: fromtop })
 
       setTimeout(() => {
-        requestAnimationFrame(() => {
+        globalTaskQueue.pushTask(() => {
           const scrollToY = sectionsRect[sectionScroll.to].bottom - viewportHeight
           this.scrollTo({ scrollToY })
         })
@@ -336,7 +335,7 @@ class SmoothScroller extends ScrollCamera {
 
     if (sectionScroll.direction === NORMAL) {
       const nextSceneTop = this.getNextSceneTop(sectionScroll.from, sectionScroll.direction)
-      this.scrollTo({ scrollToY: nextSceneTop })
+      globalTaskQueue.pushTask(() => this.scrollTo({ scrollToY: nextSceneTop }));
     }
   }
 }

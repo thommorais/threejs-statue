@@ -17,7 +17,7 @@ const getQueryParams = (qs) => {
 
 const params = getQueryParams(document.location.search)
 
-let { class: characterClass, dev, fps } = params
+let { class: characterClass } = params
 
 if (['barbarian', 'fallenAngel', 'mage'].includes(characterClass)) {
 	characterClass = characterClass
@@ -53,10 +53,10 @@ try {
 
 
 	const clearMemoryBTN = document.querySelector('.clearMemory')
+
 	clearMemoryBTN.addEventListener('click', () => {
 		myScene.clearMemory()
 	})
-
 
 	myScene.init({
 		characterClass,
@@ -73,8 +73,9 @@ try {
 	myScene.subscribe(
 		({ modelLoadingProgress }) => {
 			if (modelLoadingProgress === 100) {
-				myScene.unLockScroll()
-				myScene.setCameraPose({ from: 0, to: 1 })
+				setTimeout(() => {
+					myScene.setCameraPose({ from: 0, to: 1 });
+				}, 250);
 			}
 		},
 		['modelLoadingProgress'],
@@ -82,25 +83,24 @@ try {
 
 
 	myScene.subscribe(({
-		sections, sectionCurrent, cameraTransitionComplete, scrollingStarted,
+		sections, sectionCurrent, cameraTransitionComplete,
 	}) => {
 
 		if (sections) {
 
-			if (scrollingStarted) {
-				sections.forEach((section) => {
-					section.style.setProperty('--opacity', '0');
-					section.classList.remove('active');
-				});
-			}
+			sections.forEach((section) => {
+				section.style.setProperty('--opacity', '0');
+				section.classList.remove('active');
+			});
 
-			if (cameraTransitionComplete) {
+			const currentSection = sections[sectionCurrent]
+			if (cameraTransitionComplete && currentSection) {
 				sections[sectionCurrent].style.setProperty('--opacity', '1');
 				sections[sectionCurrent].classList.add('active');
 			}
 
 		}
-	}, ['sections', 'sectionCurrent', 'cameraTransitionComplete', 'scrollingStarted']);
+	}, ['sections', 'sectionCurrent', 'cameraTransitionComplete']);
 
 
 } catch (e) {

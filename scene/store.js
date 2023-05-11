@@ -119,6 +119,7 @@ class Store {
 			scrollable: false,
 			viewportHeight: window.innerHeight,
 			scrollingStarted: false,
+			eventFromApi: false,
 			scrollStatus: {
 				"offset": {
 					"x": 0,
@@ -321,6 +322,7 @@ class Store {
 				enabled: true,
 				keepScrollLocked,
 				ignoreCameraCurrentState,
+				eventFromApi: true,
 				camera: {
 					from: clampedFrom,
 					to: clampedTo,
@@ -358,7 +360,8 @@ class Store {
 				direction,
 				enabled: true,
 				keepScrollLocked,
-				ignoreCameraCurrentState
+				ignoreCameraCurrentState,
+				eventFromApi: true
 			}
 		});
 
@@ -391,7 +394,8 @@ class Store {
 				duration,
 				direction,
 				enabled: true,
-				keepScrollLocked
+				keepScrollLocked,
+				eventFromApi: true
 			}
 		});
 

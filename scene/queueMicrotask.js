@@ -21,7 +21,3 @@ const createQueueMicrotaskViaMutationObserver = () => {
 export const queueMicrotask = typeof Promise === 'function' && Promise.toString().indexOf('[native code]') > -1
     ? createQueueMicrotaskViaPromises()
     : createQueueMicrotaskViaMutationObserver()
-
-
-
-export default queueMicrotask

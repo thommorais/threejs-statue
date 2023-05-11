@@ -87,7 +87,7 @@ class CameraOnScroll {
 
   // eslint-disable-next-line consistent-return
   changeCameraPose({
-    from, to, rate = 0.66, keepScrollLocked = false,
+    from, to, rate = 0.33, keepScrollLocked = false,
   }) {
     let direction = NORMAL;
 
@@ -97,7 +97,7 @@ class CameraOnScroll {
 
     const range = direction === NORMAL ? [from, to] : [to, from];
 
-    if (Math.abs(range[0] - range[1]) === 0) {
+    if (Math.abs(range[0] - range[1]) <= 0) {
       return null;
     }
 
@@ -106,7 +106,7 @@ class CameraOnScroll {
     this.sheet.sequence.play({ direction, range, rate }).then((done) => {
       if (done) {
         const cameraCurrentPose = this.sheet.sequence.position;
-        this.store.setState({ cameraCurrentPose, cameraTransitionComplete: done });
+        this.store.setState({ cameraCurrentPose, cameraTransitionComplete: done, eventFromApi: false });
         if (!keepScrollLocked) {
           this.store.unLockScroll();
         }

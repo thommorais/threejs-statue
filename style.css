@@ -153,7 +153,7 @@ meter {
 	width: 100vw;
 	display: grid;
 	--opacity: 0;
-	opacity: 1;
+	opacity: var(--opacity);
 }
 
 .chapter:not(:last-child) {
@@ -183,7 +183,7 @@ meter {
 }
 
 .chapter :is(h1, h2) {
-	opacity: 1;
+	opacity:  var(--opacity);
 }
 
 .chapter .top {
@@ -243,6 +243,6 @@ body {
 
 @media (hover: hover) and (pointer: fine) {
 	body:hover .debug {
-		/* opacity: 0; */
+		opacity: 0;
 	}
 }
