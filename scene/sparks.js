@@ -37,7 +37,7 @@ class Sparks {
 		this.updateSparksByCharacterClass().then((sparks) => {
 			this.sparks = sparks
 			this.scene.add(sparks)
-			this.runDrawLoop(classIntervals[this.characterClass], 100)
+			this.runDrawLoop(100)
 			this.initialized = true
 		})
 
@@ -186,6 +186,7 @@ class Sparks {
 				resolve(this.sparks)
 			})
 
+
 		})
 	}
 
@@ -193,25 +194,28 @@ class Sparks {
 		return Math.random() * (max - min + 1) + min
 	}
 
-	runDrawLoop(classInterval, timeout) {
+	runDrawLoop(timeout) {
+		this.currentDrwaTimeout = timeout
 		const run = () => {
 			const newTimeout = randomIntFromInterval(this.minimalDrawTimeout, this.minimalDrawTimeout * 1.5)
 			this.currentDrwaTimeout = newTimeout
-			requestAnimationFrame(this.runDrawLoop.bind(this, classInterval, newTimeout))
-			this.draw(this.clock.getDelta(), classInterval)
+			requestAnimationFrame(this.runDrawLoop.bind(this, newTimeout))
+			this.draw()
 		}
 		setTimeout(run, timeout)
 	}
 
-	draw(deltaTime, classInterval) {
+	draw() {
 		if (!this.initialized) return
+		const classInterval = classIntervals[this.characterClass]
 		const multiplyer = this.randomValueFromInterval(classInterval)
-		this.sparks.material.uniforms.u_opacity.value = multiplyer * deltaTime
+		this.sparks.material.uniforms.u_opacity.value = multiplyer * this.clock.getDelta()
 	}
 
 	update(time) {
-		if (!this.initialized) return
-		this.sparks.material.uniforms.u_time.value = time * 0.002
+		if (this.initialized) {
+			this.sparks.material.uniforms.u_time.value = time * 0.002
+		}
 	}
 }
 

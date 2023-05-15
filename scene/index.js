@@ -90,13 +90,15 @@ class Scene extends Stage {
 
 	init(options) {
 		this.validateInit({ characterClass: 'fallenAngel', ...options });
-
 		this.initStage(this.store)
 
+
 		tasks.pushTask(() => { this.addTools(); });
+
 		if (this.devMode) {
 			return
 		}
+
 		this.getGPUdata().finally(() => {
 
 			tasks.pushTask(() => {
@@ -107,25 +109,16 @@ class Scene extends Stage {
 
 			getModel(characterPath, this.store, this.renderer).then((model) => {
 
-
 				tasks.pushTask(() => {
-					if (!this.gpuData.isMobile) {
-						this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
-					}
+					this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
 					this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
-					new CreateLights(this.store, this.scene, this.options.characterClass);
+					this.lights = new CreateLights(this.scene, this.store, this.options.characterClass);
 				});
 
 				tasks.pushTask(() => {
 					this.model = model;
 					this.scene.add(this.model);
-				});
-
-				tasks.pushTask(() => {
 					this.store.setState({ modelAdded: true });
-				})
-
-				tasks.pushTask(() => {
 					this.setAnimation();
 					this.initialized = true;
 					console.log(this.renderer.info);
@@ -139,8 +132,6 @@ class Scene extends Stage {
 		})
 
 	}
-
-
 
 	addTools() {
 

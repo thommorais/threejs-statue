@@ -1,6 +1,6 @@
 import { MeshStandardMaterial } from 'three';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export function getModel(modelPath, store) {
 
@@ -87,4 +87,3 @@ export function getModel(modelPath, store) {
     });
 }
 
-export default getModel;

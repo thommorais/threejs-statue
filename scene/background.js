@@ -84,7 +84,7 @@ class Background {
 		}
 
 		const thunder = Math.random() > this.frequency;
-		if (thunder && this.flash) {
+		if (thunder) {
 			if (this.flash.power < 200) {
 				this.flash.intensity = randomIntFromInterval(90, 120);
 				const y = randomIntFromInterval(-35, 45);
@@ -95,6 +95,7 @@ class Background {
 				);
 				this.flash.position.set(x, y, z);
 			}
+
 			this.flash.power = 50 + Math.random() * 400;
 		}
 	}

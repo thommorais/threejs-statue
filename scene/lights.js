@@ -28,7 +28,7 @@ const LIGHTS_CONFIG = [
 ];
 
 class Lights {
-	constructor(store, scene, characterClass) {
+	constructor(scene, store, characterClass) {
 		this.intensityFactor = 1;
 		this.characterClass = characterClass;
 		this.lights = [];
@@ -47,7 +47,10 @@ class Lights {
 
 	createLights() {
 		const { classColors } = this.store.getState();
-		this.lights = LIGHTS_CONFIG.map((config, index) => {
+
+		const lights = LIGHTS_CONFIG.filter((_, i) => (this.gpuData.isMobile && i !== 2) || !this.gpuData.isMobile)
+
+		this.lights = lights.map((config, index) => {
 			const color = classColors[this.characterClass][index];
 			const light = new SpotLight(color, 1);
 			light.color.setHex(color, LinearSRGBColorSpace)
@@ -58,27 +61,7 @@ class Lights {
 			return light;
 		});
 
-		for (const light of this.lights) {
-			this.scene.add(light);
-		}
-
-
-
-		// const directionalLight = new DirectionalLight()
-		// directionalLight.intensity = 1
-		// directionalLight.position.set(1, 0.5, -1.5).normalize().multiplyScalar(3)
-		// directionalLight.castShadow = true
-		// directionalLight.shadow.mapSize.set(1024, 1024)
-		// directionalLight.shadow.camera.near = 0.5
-		// directionalLight.shadow.camera.far = 5.5
-		// directionalLight.shadow.camera.left = -2
-		// directionalLight.shadow.camera.right = 2
-		// directionalLight.shadow.camera.top = 1.5
-		// directionalLight.shadow.camera.bottom = -0.5
-		// directionalLight.shadow.normalBias = 0.005
-		// directionalLight.shadow.bias = 0.01
-		// // this.scene.add(directionalLight)
-
+		this.scene.add(...this.lights);
 	}
 
 
