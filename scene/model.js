@@ -19,7 +19,7 @@ function getModel(modelPath, store) {
             const dracoLoader = new DRACOLoader();
 
             dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.5/');
-            dracoLoader.setWorkerLimit(4)
+            dracoLoader.setWorkerLimit(5)
             dracoLoader.preload();
 
             loader.setDRACOLoader(dracoLoader);

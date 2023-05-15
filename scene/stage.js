@@ -45,7 +45,6 @@ class Stage {
 			canvas,
 			stencil: true,
 			depth: true,
-			antialias: true,
 			alpha: false,
 		});
 
@@ -71,7 +70,7 @@ class Stage {
 
 	createPerspectiveCamera() {
 		const { width, height } = getDefaultSizes();
-		this.camera = new PerspectiveCamera(45, width / height, 0.1, 1000);
+		this.camera = new PerspectiveCamera(45, width / height, 1, 180);
 		this.camera.position.set(0, 24, 20);
 	}
 }
