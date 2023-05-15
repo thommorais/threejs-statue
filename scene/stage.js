@@ -8,6 +8,9 @@ import {
 	Clock,
 } from 'three';
 
+
+
+
 class Stage {
 
 	initStage(store) {
