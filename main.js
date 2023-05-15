@@ -78,7 +78,7 @@ try {
 	myScene.init({
 		characterClass,
 		characterPath: `oo/oo-${characterClass}.glb`,
-		optimizedCharacterPath: `oo/oo-${characterClass}.opt.glb`,
+		optimizedCharacterPath: `oo/oo-${characterClass}-opt.glb`,
 		cameraPositionsPath: `${characterClass}/camera.json`,
 		sectionSelectors: '.chapter',
 		scrollSelector: '.container-3d',

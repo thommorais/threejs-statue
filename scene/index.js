@@ -90,7 +90,6 @@ class Scene extends Stage {
 		this.validateInit({ characterClass: 'fallenAngel', ...options });
 		this.initStage(this.store)
 
-
 		tasks.pushTask(() => { this.addTools(); });
 
 		if (this.devMode) {
