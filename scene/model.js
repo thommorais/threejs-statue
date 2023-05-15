@@ -6,7 +6,6 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 function getModel(modelPath, store) {
 
     const { isMobile } = store.getState().gpuData
-    console.log(store.getState().gpuData)
 
     return new Promise((resolve, reject) => {
         try {
@@ -17,13 +16,11 @@ function getModel(modelPath, store) {
             dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
             dracoLoader.setWorkerLimit(5)
 
-            // if (isMobile) {
-            //     dracoLoader.setDecoderConfig({ type: 'js' });
-            // }
+            if (isMobile) {
+                dracoLoader.setDecoderConfig({ type: 'js' });
+            }
 
             dracoLoader.preload();
-            dracoLoader.setDr
-
             loader.setDRACOLoader(dracoLoader);
 
             if (!modelPath) {
@@ -47,6 +44,10 @@ function getModel(modelPath, store) {
             }
 
             loader.loadAsync(modelPath, onProgress).then(({ scene, }) => {
+                dracoLoader.dispose()
+                loader.unregister()
+                loader.setDRACOLoader(null)
+
 
                 try {
 
@@ -73,8 +74,7 @@ function getModel(modelPath, store) {
                     box.matrixAutoUpdate = false
                     box.name = 'character'
 
-                    dracoLoader.dispose()
-                    loader.setDRACOLoader(null)
+
                     resolve(box);
 
                 } catch (error) {

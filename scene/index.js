@@ -35,6 +35,7 @@ class Scene extends Stage {
 
 		this.options = {
 			characterPath: '',
+			optimizedCharacterPath: '',
 			characterClass: '',
 			cameraPositionsPath: '',
 			sectionSelectors: '',
@@ -101,7 +102,9 @@ class Scene extends Stage {
 					this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
 				});
 
-				getModel(this.options.characterPath, this.store).then((model) => {
+				const characterPath = this.gpuData.tier !== 3 ? this.options.optimizedCharacterPath : this.options.characterPath;
+
+				getModel(characterPath, this.store).then((model) => {
 
 					tasks.pushTask(() => {
 						this.model = model;
@@ -122,6 +125,7 @@ class Scene extends Stage {
 					tasks.pushTask(() => {
 						this.setAnimation();
 						this.initialized = true;
+						console.log(this.renderer.info);
 					});
 
 				}).catch((error) => {
@@ -164,7 +168,7 @@ class Scene extends Stage {
 		}
 	}
 
-	validateInit({ sectionSelectors, scrollSelector, characterPath, cameraPositionsPath, modelLoading, characterClass }) {
+	validateInit({ sectionSelectors, scrollSelector, characterPath, cameraPositionsPath, modelLoading, characterClass, optimizedCharacterPath }) {
 		try {
 			if (!sectionSelectors) {
 				throw new Error('sectionSelectors is required');
@@ -178,12 +182,17 @@ class Scene extends Stage {
 				throw new Error('characterPath is required');
 			}
 
+			if (!optimizedCharacterPath) {
+				throw new Error('optimizedCharacterPath is required');
+			}
+
+
 			if (!cameraPositionsPath) {
 				throw new Error('cameraPositionsPath is required');
 			}
 
 			this.modelLoading(modelLoading);
-			this.options = { sectionSelectors, scrollSelector, characterPath, cameraPositionsPath, modelLoading, characterClass };
+			this.options = { sectionSelectors, scrollSelector, characterPath, cameraPositionsPath, modelLoading, characterClass, optimizedCharacterPath };
 			this.scrollOptions = { sectionSelectors, scrollSelector, cameraPositionsPath, characterPath };
 			this.store.setState({ characterClass: this.options.characterClass })
 		} catch (error) {

@@ -14,25 +14,25 @@ const getQueryParams = (qs) => {
 	}
 	return params
 }
-const isMobile = () => {
+// const isMobile = () => {
 
 
-	const { userAgent, platform, maxTouchPoints } = window.navigator;
+// 	const { userAgent, platform, maxTouchPoints } = window.navigator;
 
-	const isIOS = /(iphone|ipod|ipad)/i.test(userAgent);
+// 	const isIOS = /(iphone|ipod|ipad)/i.test(userAgent);
 
-	// Workaround for ipadOS, force detection as tablet
-	// SEE: https://github.com/lancedikson/bowser/issues/329
-	// SEE: https://stackoverflow.com/questions/58019463/how-to-detect-device-name-in-safari-on-ios-13-while-it-doesnt-show-the-correct
-	const isIpad =
-		platform === 'iPad' ||
-		// @ts-expect-error window.MSStream is non standard
-		(platform === 'MacIntel' && maxTouchPoints > 0 && !window.MSStream);
+// 	// Workaround for ipadOS, force detection as tablet
+// 	// SEE: https://github.com/lancedikson/bowser/issues/329
+// 	// SEE: https://stackoverflow.com/questions/58019463/how-to-detect-device-name-in-safari-on-ios-13-while-it-doesnt-show-the-correct
+// 	const isIpad =
+// 		platform === 'iPad' ||
+// 		// @ts-expect-error window.MSStream is non standard
+// 		(platform === 'MacIntel' && maxTouchPoints > 0 && !window.MSStream);
 
-	const isAndroid = /android/i.test(userAgent);
+// 	const isAndroid = /android/i.test(userAgent);
 
-	return isAndroid || isIOS || isIpad
-}
+// 	return isAndroid || isIOS || isIpad
+// }
 
 
 const params = getQueryParams(document.location.search)
@@ -75,11 +75,10 @@ try {
 		myScene.clearMemory()
 	})
 
-	const characterPath = isMobile() ? `oo/${characterClass}.opt.glb` : `oo/${characterClass}.glb`
-
 	myScene.init({
 		characterClass,
-		characterPath,
+		characterPath: `oo/${characterClass}.glb`,
+		optimizedCharacterPath: `oo/${characterClass}.opt.glb`,
 		cameraPositionsPath: `${characterClass}/camera.json`,
 		sectionSelectors: '.chapter',
 		scrollSelector: '.container-3d',
