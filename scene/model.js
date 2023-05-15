@@ -16,9 +16,9 @@ function getModel(modelPath, store) {
             dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
             dracoLoader.setWorkerLimit(5)
 
-            if (isMobile) {
-                dracoLoader.setDecoderConfig({ type: 'js' });
-            }
+            // if (isMobile) {
+            //     dracoLoader.setDecoderConfig({ type: 'js' });
+            // }
 
             dracoLoader.preload();
             loader.setDRACOLoader(dracoLoader);
