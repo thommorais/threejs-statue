@@ -18,7 +18,7 @@ function getModel(modelPath, store) {
             const loader = new GLTFLoader();
             const dracoLoader = new DRACOLoader();
 
-            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.5/');
+            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
             dracoLoader.setWorkerLimit(5)
             dracoLoader.preload();
 
