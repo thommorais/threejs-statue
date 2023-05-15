@@ -11,6 +11,7 @@ function printDataOnHTML(data) {
 function getModel(modelPath, store) {
 
     const { isMobile } = store.getState().gpuData
+    console.log(store.getState().gpuData)
 
     return new Promise((resolve, reject) => {
         try {
@@ -19,8 +20,12 @@ function getModel(modelPath, store) {
             const dracoLoader = new DRACOLoader();
 
             dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
-            dracoLoader.setWorkerLimit(5)
+            if (isMobile) {
+                dracoLoader.setWorkerLimit(5)
+                dracoLoader.setDecoderConfig({ type: 'js' });
+            }
             dracoLoader.preload();
+            dracoLoader.setDr
 
             loader.setDRACOLoader(dracoLoader);
 

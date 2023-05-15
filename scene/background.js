@@ -10,7 +10,7 @@ import {
 import { randomIntFromInterval, clamp } from './utils';
 
 class Background {
-	constructor(scene, store, options, pixelRatio) {
+	constructor(scene, store, options) {
 		this.scene = scene;
 		this.store = store;
 		this.characterClass = options.characterClass;
@@ -80,7 +80,7 @@ class Background {
 
 	animateThumder() {
 		if (this.gpuData.isMobile) {
-			this.frequency = 0.97;
+			this.frequency = 0.98;
 		}
 
 		const thunder = Math.random() > this.frequency;

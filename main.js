@@ -69,14 +69,14 @@ try {
 	})
 
 	myScene.subscribe(
-		({ modelLoadingProgress }) => {
-			if (modelLoadingProgress === 100) {
+		({ modelLoadingProgress, modelAdded }) => {
+			if (modelLoadingProgress === 100 && modelAdded) {
 				setTimeout(() => {
 					myScene.setCameraPose({ from: 0, to: 1 });
 				}, 250);
 			}
 		},
-		['modelLoadingProgress'],
+		['modelLoadingProgress', 'modelAdded'],
 	)
 
 
