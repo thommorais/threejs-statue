@@ -102,7 +102,7 @@ class Scene extends Stage {
 					this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
 				});
 
-				const characterPath = this.gpuData.tier !== 3 ? this.options.optimizedCharacterPath : this.options.characterPath;
+				const characterPath = this.gpuData.isMobile ? this.options.optimizedCharacterPath : this.options.characterPath;
 
 				getModel(characterPath, this.store).then((model) => {
 

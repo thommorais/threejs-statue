@@ -74,7 +74,6 @@ function getModel(modelPath, store) {
                     box.matrixAutoUpdate = false
                     box.name = 'character'
 
-
                     resolve(box);
 
                 } catch (error) {
