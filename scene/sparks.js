@@ -186,8 +186,6 @@ class Sparks {
 				resolve(this.sparks)
 			})
 
-
-
 		})
 	}
 

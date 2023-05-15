@@ -2,12 +2,11 @@ import { MeshStandardMaterial } from 'three';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-
-function getModel(modelPath, store) {
-
-    const { isMobile } = store.getState().gpuData
+function getModel(modelPath, store, renderer) {
 
     return new Promise((resolve, reject) => {
+
+
         try {
 
             const loader = new GLTFLoader();
@@ -15,13 +14,9 @@ function getModel(modelPath, store) {
 
             dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
             dracoLoader.setWorkerLimit(5)
-
-            // if (isMobile) {
-            //     dracoLoader.setDecoderConfig({ type: 'js' });
-            // }
-
             dracoLoader.preload();
             loader.setDRACOLoader(dracoLoader);
+            // dracoLoader.setDecoderConfig({ type: 'js' })
 
             if (!modelPath) {
                 reject(new Error('modelPath is required'));

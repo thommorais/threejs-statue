@@ -94,44 +94,47 @@ class Scene extends Stage {
 		this.initStage(this.store)
 
 		tasks.pushTask(() => { this.addTools(); });
-
+		if (this.devMode) {
+			return
+		}
 		this.getGPUdata().finally(() => {
 
-			if (!this.devMode) {
+			tasks.pushTask(() => {
+				this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
+			});
+
+			const characterPath = this.gpuData.isMobile ? this.options.optimizedCharacterPath : this.options.characterPath;
+
+			getModel(characterPath, this.store, this.renderer).then((model) => {
+
+
 				tasks.pushTask(() => {
-					this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
+					if (!this.gpuData.isMobile) {
+						this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
+					}
+					this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
+					new CreateLights(this.store, this.scene, this.options.characterClass);
 				});
 
-				const characterPath = this.gpuData.isMobile ? this.options.optimizedCharacterPath : this.options.characterPath;
+				tasks.pushTask(() => {
+					this.model = model;
+					this.scene.add(this.model);
+				});
 
-				getModel(characterPath, this.store).then((model) => {
-
-
-					tasks.pushTask(() => {
-						this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
-						this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
-						new CreateLights(this.store, this.scene, this.options.characterClass);
-					});
-
-					tasks.pushTask(() => {
-						this.model = model;
-						this.scene.add(this.model);
-					});
-
-					tasks.pushTask(() => {
-						this.store.setState({ modelAdded: true });
-					})
-
-					tasks.pushTask(() => {
-						this.setAnimation();
-						this.initialized = true;
-						console.log(this.renderer.info);
-					});
-
-				}).catch((error) => {
-					throw new Error(error);
+				tasks.pushTask(() => {
+					this.store.setState({ modelAdded: true });
 				})
-			}
+
+				tasks.pushTask(() => {
+					this.setAnimation();
+					this.initialized = true;
+					console.log(this.renderer.info);
+				});
+
+			}).catch((error) => {
+				throw new Error(error);
+			})
+
 
 		})
 
