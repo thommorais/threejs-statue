@@ -31,8 +31,6 @@ class Scene extends Stage {
 		super();
 
 		this.store = new Store();
-
-
 		this.options = {
 			characterPath: '',
 			optimizedCharacterPath: '',
