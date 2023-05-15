@@ -15,12 +15,10 @@ import tasks from './globalTaskQueue';
 
 import { getGPUTier } from 'detect-gpu';
 
+import * as SPECTOR from 'spectorjs';
+
 import Stats from './stats'
 import Dev from './dev';
-
-
-import { Cache } from 'three';
-
 
 const classDefaults = {
 	update() { },
@@ -33,7 +31,6 @@ window.mobileDebug = classDefaults;
 class Scene extends Stage {
 	constructor() {
 		super();
-		Cache.enabled = true;
 
 		this.store = new Store();
 
@@ -46,6 +43,7 @@ class Scene extends Stage {
 			scrollSelector: ''
 		}
 
+		this.model = null;
 
 		this.scrollOptions = {}
 		this.initialized = false;
@@ -72,7 +70,6 @@ class Scene extends Stage {
 		this.devMode = !!dev;
 		this.showFPS = !!fps;
 		this.debug = !!debug;
-
 	}
 
 
@@ -81,7 +78,6 @@ class Scene extends Stage {
 			const glContext = this.renderer.getContext();
 			getGPUTier({ glContext }).then((gpuData) => {
 				this.store.setState({ gpuData });
-				this.renderer.resetState()
 				resolve(gpuData)
 			}).catch((err) => {
 				reject(err)
@@ -101,15 +97,40 @@ class Scene extends Stage {
 
 		this.getGPUdata().finally(() => {
 
-			tasks.pushTask(() => { this.setupBackground(); });
-
 			if (!this.devMode) {
-				tasks.pushTask(() => { this.setTupScroll(); });
-				tasks.pushTask(() => { this.turnOnTheLights(); this.addModel(); });
+				tasks.pushTask(() => {
+					this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
+				});
+				getModel(this.options.characterPath, this.store).then((model) => {
+
+					tasks.pushTask(() => {
+						this.model = model;
+						this.scene.add(this.model);
+					});
+
+					tasks.pushTask(() => {
+						new CreateLights(this.store, this.scene, this.options.characterClass);
+						this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
+						this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
+					});
+
+
+					tasks.pushTask(() => {
+						this.store.setState({ modelAdded: true });
+					})
+
+					tasks.pushTask(() => {
+						this.setAnimation();
+						this.initialized = true;
+					});
+
+					const spector = new SPECTOR.Spector();
+					spector.displayUI();
+				}).catch((error) => {
+					throw new Error(error);
+				})
 			}
 
-			tasks.pushTask(() => { this.setAnimation(); });
-			this.initialized = true;
 		})
 
 		// // on page leave clean up memory
@@ -148,29 +169,6 @@ class Scene extends Stage {
 			}, 'modelError')
 
 		}
-	}
-
-	setTupScroll() {
-		this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
-	}
-
-	setupBackground() {
-		this.sparks = new Sparks(this.scene, this.clock, this.store, this.pixelRatio, this.options.characterClass);
-		this.background = new Background(this.scene, this.store, this.options, this.pixelRatio);
-	}
-
-	addModel() {
-		getModel(this.options.characterPath, this.store).then((model) => {
-			this.scene.add(model);
-			this.store.setState({ modelAdded: true });
-		}).catch((error) => {
-			throw new Error(error);
-		})
-
-	}
-
-	turnOnTheLights() {
-		new CreateLights(this.store, this.scene, this.options.characterClass);
 	}
 
 	validateInit({ sectionSelectors, scrollSelector, characterPath, cameraPositionsPath, modelLoading, characterClass }) {
@@ -280,11 +278,27 @@ class Scene extends Stage {
 	clearMemory() {
 		return new Promise((resolve, reject) => {
 			try {
+
+				if (this.model) {
+					this.scene.remove(this.model);
+
+					this.model.traverse((object) => {
+						if (object.geometry) {
+							object.geometry.dispose();
+						}
+						if (object.material) {
+							if (object.material.map) {
+								object.material.map.dispose();
+							}
+							object.material.dispose();
+						}
+					});
+				}
+
 				this.renderer.setAnimationLoop(null);
 				clearThreeJSMemory(this.scene);
 				this.renderer.renderLists.dispose();
 				this.renderer.dispose();
-				Cache.clear();
 				resolve(this.renderer.info);
 			} catch (error) {
 				reject(error);

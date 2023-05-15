@@ -35,7 +35,9 @@ class Lights {
 		this.initialized = false
 		this.store = store
 		this.scene = scene
+		this.gpuData = this.store.getState().gpuData
 		this.init();
+
 	}
 
 	init() {
@@ -45,8 +47,7 @@ class Lights {
 
 	createLights() {
 		const { classColors } = this.store.getState();
-
-		this.lights = LIGHTS_CONFIG.map((config, index) => {
+		this.lights = LIGHTS_CONFIG.filter((_, i) => (this.gpuData.isMobile && i !== 2 || !this.gpuData.isMobile)).map((config, index) => {
 			const color = classColors[this.characterClass][index];
 			const light = new SpotLight(color, 1);
 			light.color.setHex(color, LinearSRGBColorSpace)

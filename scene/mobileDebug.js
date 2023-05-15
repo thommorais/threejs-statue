@@ -4,13 +4,9 @@ import { now } from './utils';
 class MobileDebugOverlay {
 
     constructor(store) {
-
         this.store = store;
-
         this.has = true;
-
         this.debug = document.createElement('div');
-
         this.debug.classList.add('debug')
 
         Object.assign(this.debug.style, {

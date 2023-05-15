@@ -25,13 +25,12 @@ if (['barbarian', 'fallenAngel', 'mage'].includes(characterClass)) {
 	characterClass = 'barbarian'
 }
 
-const characterPath = `o/${characterClass}-d.glb`
+const characterPath = `oo/${characterClass}.glb`
 
 
 try {
 
 	const myScene = new Scene()
-
 	const btns = [...document.querySelectorAll('.character-selector')]
 
 	btns.forEach((btn) => {
@@ -46,7 +45,6 @@ try {
 				myScene.clearMemory().then(() => {
 					window.location.href = `?class=${character}`
 				})
-
 			}
 		})
 	})

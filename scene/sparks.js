@@ -125,7 +125,7 @@ class Sparks {
 			let count = this.count
 
 			if (this.characterClass === 'mage') {
-				depth = clamp(base * this.gpuData.tier, [56, 112])
+				depth = clamp(base, [56, 80])
 				count = clamp(this.count, [60, 400])
 				this.sparks.material.uniforms.u_twist.value = 1.0;
 				this.sparks.material.uniforms.u_falloff.value = 0.5;
@@ -143,7 +143,7 @@ class Sparks {
 			}
 
 			if (this.characterClass === 'barbarian') {
-				depth = clamp(base * this.gpuData.tier, [18, 28])
+				depth = clamp(base, [18, 24])
 				count = this.count * 0.75
 				this.sparks.material.uniforms.u_temporalFrequency.value = 0.65
 			}
@@ -185,6 +185,7 @@ class Sparks {
 				this.sparks.geometry.attributes.aData1.needsUpdate = true
 				resolve(this.sparks)
 			})
+
 
 
 		})

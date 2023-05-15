@@ -22,7 +22,7 @@ class Background {
 		this.initialized = false;
 
 		this.gpuData = this.store.getState().gpuData;
-		this.cloudsCount = clamp(4 * this.gpuData.tier * pixelRatio, [4, 12]);
+		this.cloudsCount = this.gpuData.isMobile ? 3 : 5;
 		this.init();
 	}
 
@@ -79,7 +79,7 @@ class Background {
 	}
 
 	animateThumder() {
-		if (this.gpuData.tier === 1) {
+		if (this.gpuData.isMobile) {
 			this.frequency = 0.97;
 		}
 
@@ -103,7 +103,7 @@ class Background {
 		for (let i = 0; i < this.cloudParticlesCount; i += 1) {
 			const cloud = this.Clouds.children[i];
 			if (cloud) {
-				cloud.rotation.z -= 0.009;
+				cloud.rotation.z -= 0.007;
 			} else {
 				cancelAnimationFrame(this.lastRAF);
 			}

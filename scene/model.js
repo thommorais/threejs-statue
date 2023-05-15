@@ -1,68 +1,98 @@
 import { MeshStandardMaterial } from 'three';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+
+function printDataOnHTML(data) {
+    const dataContainer = document.getElementById('dataContainer');
+    dataContainer.innerHTML = data;
+}
 
 function getModel(modelPath, store) {
+
+    const { isMobile } = store.getState().gpuData
+
     return new Promise((resolve, reject) => {
         try {
 
-            const dracoLoader = new DRACOLoader();
-            dracoLoader.dispose();
             const loader = new GLTFLoader();
+            const dracoLoader = new DRACOLoader();
 
-            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+            dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.5/');
+            dracoLoader.setWorkerLimit(4)
             dracoLoader.preload();
+
             loader.setDRACOLoader(dracoLoader);
 
             if (!modelPath) {
                 reject(new Error('modelPath is required'));
             }
 
-            window.addEventListener('beforeunload', () => {
-                dracoLoader.dispose();
-            })
-
-
             const onProgress = (xhr) => {
                 if (xhr.lengthComputable) {
                     const percentComplete = xhr.loaded / xhr.total * 100;
                     const roundedPercent = Math.round(percentComplete);
                     if (roundedPercent % 10 === 0) {
-                        store.setState({ modelLoadingProgress: Number((roundedPercent).toFixed(2)) });
+                        const modelLoadingProgress = Number((roundedPercent).toFixed(2))
+                        printDataOnHTML(`model loading: ${modelLoadingProgress}`)
+                        store.setState({ modelLoadingProgress });
                     }
                 }
+
+                if (xhr.loaded === xhr.total) {
+                    return true
+                }
+
             }
 
+            const actualModelPath = isMobile ? `${modelPath.replace('.glb', '.opt.glb')}` : `${modelPath}`
+            loader.loadAsync(actualModelPath, onProgress).then(({ scene, }) => {
+                printDataOnHTML(`model loaded`)
 
-            loader.loadAsync(modelPath, onProgress).then(({ scene }) => {
+                try {
 
-                const box = scene;
+                    printDataOnHTML('loaded')
 
-                const boxMaterial = new MeshStandardMaterial({
-                    roughness: 0.455,
-                    metalness: 0.475,
-                });
+                    const box = scene;
 
-                box.traverse((child) => {
-                    if (child.isMesh) {
-                        // eslint-disable-next-line no-param-reassign
-                        child.material = boxMaterial;
+                    const boxMaterial = new MeshStandardMaterial({
+                        roughness: 0.455,
+                        metalness: 0.475,
+                    });
+
+                    box.traverse((child) => {
+                        if (child.isMesh) {
+                            // eslint-disable-next-line no-param-reassign
+                            child.material = boxMaterial;
+                        }
+                    });
+
+                    const { modelLoadingProgress } = store.getState();
+
+                    if (modelLoadingProgress < 100) {
+                        store.setState({ modelLoadingProgress: 100 });
                     }
-                });
 
-                const { modelLoadingProgress } = store.getState();
+                    box.matrixAutoUpdate = false
+                    box.name = 'character'
 
-                if (modelLoadingProgress < 100) {
-                    store.setState({ modelLoadingProgress: 100 });
+                    dracoLoader.dispose()
+                    loader.setDRACOLoader(null)
+                    resolve(box);
+
+                } catch (error) {
+                    console.log(error)
+                    printDataOnHTML(error)
+
                 }
-                box.name = 'character'
-                resolve(box);
             }).catch((error) => {
+                printDataOnHTML('error 1')
                 store.setState({ modelLoadingProgress: 0, modelError: error });
                 reject(error);
             })
 
         } catch (error) {
+            printDataOnHTML('error 2')
             reject(error);
         }
 
