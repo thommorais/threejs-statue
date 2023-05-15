@@ -3,11 +3,6 @@ import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 
-function printDataOnHTML(data) {
-    const dataContainer = document.getElementById('dataContainer');
-    dataContainer.innerHTML = data;
-}
-
 function getModel(modelPath, store) {
 
     const { isMobile } = store.getState().gpuData
@@ -20,10 +15,12 @@ function getModel(modelPath, store) {
             const dracoLoader = new DRACOLoader();
 
             dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
-            if (isMobile) {
-                dracoLoader.setWorkerLimit(5)
-                dracoLoader.setDecoderConfig({ type: 'js' });
-            }
+            dracoLoader.setWorkerLimit(5)
+
+            // if (isMobile) {
+            //     dracoLoader.setDecoderConfig({ type: 'js' });
+            // }
+
             dracoLoader.preload();
             dracoLoader.setDr
 
@@ -39,7 +36,6 @@ function getModel(modelPath, store) {
                     const roundedPercent = Math.round(percentComplete);
                     if (roundedPercent % 10 === 0) {
                         const modelLoadingProgress = Number((roundedPercent).toFixed(2))
-                        printDataOnHTML(`model loading: ${modelLoadingProgress}`)
                         store.setState({ modelLoadingProgress });
                     }
                 }
@@ -50,13 +46,9 @@ function getModel(modelPath, store) {
 
             }
 
-            const actualModelPath = isMobile ? `${modelPath.replace('.glb', '.opt.glb')}` : `${modelPath}`
-            loader.loadAsync(actualModelPath, onProgress).then(({ scene, }) => {
-                printDataOnHTML(`model loaded`)
+            loader.loadAsync(modelPath, onProgress).then(({ scene, }) => {
 
                 try {
-
-                    printDataOnHTML('loaded')
 
                     const box = scene;
 
@@ -87,17 +79,14 @@ function getModel(modelPath, store) {
 
                 } catch (error) {
                     console.log(error)
-                    printDataOnHTML(error)
 
                 }
             }).catch((error) => {
-                printDataOnHTML('error 1')
                 store.setState({ modelLoadingProgress: 0, modelError: error });
                 reject(error);
             })
 
         } catch (error) {
-            printDataOnHTML('error 2')
             reject(error);
         }
 

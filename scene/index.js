@@ -15,8 +15,6 @@ import tasks from './globalTaskQueue';
 
 import { getGPUTier } from 'detect-gpu';
 
-import * as SPECTOR from 'spectorjs';
-
 import Stats from './stats'
 import Dev from './dev';
 
@@ -77,6 +75,7 @@ class Scene extends Stage {
 		return new Promise((resolve, reject) => {
 			const glContext = this.renderer.getContext();
 			getGPUTier({ glContext }).then((gpuData) => {
+				this.gpuData = gpuData
 				this.store.setState({ gpuData });
 				resolve(gpuData)
 			}).catch((err) => {
@@ -101,6 +100,7 @@ class Scene extends Stage {
 				tasks.pushTask(() => {
 					this.scroll = new Scroll(this.store, this.camera, this.scrollOptions);
 				});
+
 				getModel(this.options.characterPath, this.store).then((model) => {
 
 					tasks.pushTask(() => {
@@ -124,19 +124,12 @@ class Scene extends Stage {
 						this.initialized = true;
 					});
 
-					const spector = new SPECTOR.Spector();
-					spector.displayUI();
 				}).catch((error) => {
 					throw new Error(error);
 				})
 			}
 
 		})
-
-		// // on page leave clean up memory
-		// window.addEventListener('beforeunload', () => {
-		// 	this.clearMemory()
-		// })
 
 	}
 
