@@ -36,6 +36,7 @@ class CameraOnScroll {
         this.camera.rotation.z = rotateZ
       }
 
+
       this.camera.updateProjectionMatrix()
       this.camera.updateMatrixWorld(true)
 
@@ -113,7 +114,6 @@ class CameraOnScroll {
       }
     }).catch((error) => {
       this.store.unLockScroll();
-      console.log({ error })
       throw new Error(error);
     });
   }

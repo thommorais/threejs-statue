@@ -68,13 +68,6 @@ try {
 		})
 	})
 
-
-	const clearMemoryBTN = document.querySelector('.clearMemory')
-
-	clearMemoryBTN.addEventListener('click', () => {
-		myScene.clearMemory()
-	})
-
 	myScene.init({
 		characterClass,
 		characterPath: `oo/oo-${characterClass}.glb`,
